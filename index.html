@@ -1,58 +1,2137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Test DSOG API</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HOG Franchisee">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="HOG Franchisee">
+    
+    <title>House of Glamour - Franchisee Ordering</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-black: #1a1a1a;
+            --primary-gold: #D4AF37;
+            --primary-cream: #F5F0E6;
+            --secondary-gold: #B8941F;
+            --light-gold: #F8F3E6;
+            --dark-gold: #8B6914;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --border-color: #e0e0e0;
+            --success: #2E7D32;
+            --error: #D32F2F;
+            --warning: #ED6C02;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--primary-black);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--primary-black);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            border-bottom: 3px solid var(--primary-gold);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-black);
+            font-size: 0.9rem;
+        }
+        
+        .franchisee-info {
+            text-align: right;
+        }
+        
+        .franchisee-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary-gold);
+        }
+        
+        .franchisee-id {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-cream) 0%, var(--light-gold) 100%);
+            padding: 3rem 0;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+        
+        .welcome-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-black);
+        }
+        
+        .welcome-text p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .todays-date {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+        
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-summary {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .summary-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Updates Section */
+        .updates-section {
+            padding: 3rem 0;
+            background: var(--bg-primary);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-gold);
+        }
+        
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .update-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        
+        .update-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .update-header {
+            background: var(--primary-black);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .update-date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .update-type {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .update-body {
+            padding: 1.5rem;
+        }
+        
+        .update-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-black);
+        }
+        
+        .update-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* New Arrivals Auto-Scroll */
+        .new-arrivals-section {
+            padding: 3rem 0;
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .arrivals-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .arrivals-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .arrivals-subtitle {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .auto-scroll-container {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .scroll-track {
+            display: flex;
+            gap: 2rem;
+            height: 100%;
+            animation: scrollAnimation 30s linear infinite;
+            padding: 1rem;
+        }
+        
+        .scroll-track:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scrollAnimation {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .arrival-card {
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .arrival-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-gold);
+        }
+        
+        .arrival-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+        
+        .arrival-info {
+            padding: 1.5rem;
+        }
+        
+        .arrival-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-black);
+        }
+        
+        .arrival-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+        
+        .arrival-badge {
+            background: var(--primary-black);
+            color: var(--primary-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .scroll-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .scroll-btn {
+            background: var(--primary-black);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .scroll-btn:hover {
+            background: var(--primary-gold);
+            transform: scale(1.1);
+        }
+        
+        /* Products Section */
+        .products-section {
+            padding: 3rem 0;
+            background: var(--bg-primary);
+        }
+        
+        .collection-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .collection-tab {
+            padding: 0.8rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        
+        .collection-tab:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .collection-tab.active {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            border-color: var(--primary-gold);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .products-grid.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            flex: 1;
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-left: 1rem;
+        }
+        
+        .product-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        .product-specs {
+            margin-bottom: 1.5rem;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        .spec-label {
+            color: var(--text-secondary);
+        }
+        
+        .spec-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .order-btn {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+        }
+        
+        .order-btn:hover {
+            background: var(--secondary-gold);
+            transform: translateY(-2px);
+        }
+        
+        .quick-view-btn {
+            background: var(--primary-black);
+            color: white;
+        }
+        
+        .quick-view-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        /* Order Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .order-modal {
+            background: white;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+            border: 3px solid var(--primary-gold);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-header {
+            background: var(--primary-black);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .product-preview {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .preview-info {
+            flex: 1;
+        }
+        
+        .preview-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-black);
+        }
+        
+        .preview-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+        
+        .preview-collection {
+            background: var(--bg-secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-btn:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .quantity-display {
+            width: 60px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+        
+        .submit-order-btn {
+            background: var(--primary-black);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .submit-order-btn:hover {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            transform: translateY(-2px);
+        }
+        
+        .submit-order-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Quick View Modal */
+        .quick-view-modal {
+            max-width: 800px;
+        }
+        
+        .quick-view-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .quick-view-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .quick-view-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .quick-view-name {
+            font-size: 1.8rem;
+            color: var(--primary-black);
+        }
+        
+        .quick-view-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+        
+        .quick-view-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--primary-black);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+            border-left: 4px solid var(--primary-gold);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.success {
+            border-left-color: var(--success);
+        }
+        
+        .notification.error {
+            border-left-color: var(--error);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--primary-black);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-gold);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 992px) {
+            .welcome-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .quick-view-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .quick-view-image {
+                height: 250px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .franchisee-info {
+                text-align: center;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2rem;
+            }
+            
+            .order-summary {
+                flex-wrap: wrap;
+            }
+            
+            .summary-item {
+                min-width: 120px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .auto-scroll-container {
+                height: 350px;
+            }
+            
+            .arrival-card {
+                min-width: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .welcome-section,
+            .updates-section,
+            .new-arrivals-section,
+            .products-section {
+                padding: 2rem 0;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .auto-scroll-container {
+                height: 300px;
+            }
+            
+            .arrival-card {
+                min-width: 200px;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .product-preview {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .preview-image {
+                width: 100%;
+                height: 150px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .welcome-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .summary-value {
+                font-size: 1.5rem;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>DSOG API Test</h1>
-    
-    <div>
-        <label>API URL: </label>
-        <input type="text" id="apiUrl" value="https://script.google.com/macros/s/AKfycbyQxTr7jIDGOrRXm8BouNgchHC5Mq_pKSQDlxZbDmZX-F6K05FhXSZ9g1t4p6ZydVEr/exec" style="width: 500px;">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <span class="logo-icon">HOG</span>
+                    House of Glamour
+                </a>
+                <div class="franchisee-info">
+                    <div class="franchisee-name" id="franchiseeName">Welcome, Franchise Partner</div>
+                    <div class="franchisee-id" id="franchiseeId">ID: Loading...</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+        <div class="container">
+            <div class="welcome-content">
+                <div class="welcome-text">
+                    <h1 id="greetingMessage">Welcome Back!</h1>
+                    <p>Your exclusive franchisee dashboard for House of Glamour. Access the latest products, place orders, and manage your business effortlessly.</p>
+                    <div class="todays-date">
+                        <div class="date-display" id="currentDate">Loading date...</div>
+                        <div class="order-summary">
+                            <div class="summary-item">
+                                <div class="summary-value" id="todayOrders">0</div>
+                                <div class="summary-label">Today's Orders</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value" id="pendingOrders">0</div>
+                                <div class="summary-label">Pending</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-value" id="totalRevenue">0</div>
+                                <div class="summary-label">Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="welcome-image">
+                    <!-- This would be an image in production -->
+                    <div style="width: 100%; height: 300px; background: linear-gradient(135deg, var(--primary-black) 0%, var(--dark-gold) 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Playfair Display', serif; font-size: 1.2rem;">
+                        <div style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-crown" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-gold);"></i>
+                            <div>Exclusive Franchisee Portal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updates Section -->
+    <section class="updates-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Updates</h2>
+                <button class="scroll-btn" id="refreshUpdates">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="updates-grid" id="updatesContainer">
+                <!-- Updates will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Auto-Scroll -->
+    <section class="new-arrivals-section">
+        <div class="container">
+            <div class="arrivals-header">
+                <h2 class="arrivals-title">New Arrivals</h2>
+                <p class="arrivals-subtitle">Fresh from House of Glamour. Scroll automatically or hover to pause.</p>
+            </div>
+            <div class="auto-scroll-container">
+                <div class="scroll-track" id="scrollTrack">
+                    <!-- New arrival cards will be duplicated here for seamless scrolling -->
+                </div>
+            </div>
+            <div class="scroll-controls">
+                <button class="scroll-btn" id="pauseScroll">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="scroll-btn" id="playScroll">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Order Products</h2>
+                <div class="collection-filter" id="collectionFilter">
+                    <!-- Collection tabs will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="collection-tabs" id="collectionTabs">
+                <!-- Collection tabs will be loaded here -->
+            </div>
+            
+            <div class="products-grid" id="productsContainer">
+                <!-- Products will be loaded here -->
+            </div>
+            
+            <div class="loading" id="productsLoading">
+                <div class="loading-spinner"></div>
+                <p>Loading products...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="order-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Place Order</h3>
+                <button class="close-modal" id="closeOrderModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="product-preview" id="orderPreview">
+                    <!-- Product preview will be loaded here -->
+                </div>
+                
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label class="form-label" for="colorSelect">Color</label>
+                        <select class="form-select" id="colorSelect" required>
+                            <option value="">Select Color</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="materialSelect">Material</label>
+                        <select class="form-select" id="materialSelect" required>
+                            <option value="">Select Material</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="sizeSelect">Size</label>
+                        <select class="form-select" id="sizeSelect" required>
+                            <option value="">Select Size</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <div class="quantity-control">
+                            <button type="button" class="quantity-btn" id="decreaseQty">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantity-display" id="quantityDisplay" value="1" min="1" max="99" readonly>
+                            <button type="button" class="quantity-btn" id="increaseQty">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="order-total">
+                    Total: KSh <span id="orderTotal">0</span>
+                </div>
+                <button type="submit" class="submit-order-btn" id="submitOrderBtn" form="orderForm">
+                    <i class="fas fa-check-circle"></i>
+                    Place Order
+                </button>
+            </div>
+        </div>
     </div>
-    
-    <button onclick="testConnection()">Test Connection</button>
-    <button onclick="testLogin()">Test Login</button>
-    <button onclick="testGetProducts()">Test Get Products</button>
-    
-    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; min-height: 100px;"></div>
-    
+
+    <!-- Quick View Modal -->
+    <div class="modal-overlay" id="quickViewModal">
+        <div class="order-modal quick-view-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Product Details</h3>
+                <button class="close-modal" id="closeQuickViewModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="quick-view-content" id="quickViewContent">
+                <!-- Quick view content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="submit-order-btn" id="orderFromQuickView">
+                    <i class="fas fa-shopping-cart"></i>
+                    Order This Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>House of Glamour</h3>
+                    <p>Elevating everyday living through exquisite design and quality craftsmanship.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="showNotification('Coming soon!', 'info')">Order History</a></li>
+                        <li><a href="#" onclick="showNotification('Coming soon!', 'info')">Inventory</a></li>
+                        <li><a href="#" onclick="showNotification('Coming soon!', 'info')">Sales Reports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="mailto:b2cdsog1@gmail.com">Email Support</a></li>
+                        <li><a href="#" onclick="showNotification('Feature coming soon!', 'info')">Help Center</a></li>
+                        <li><a href="#" onclick="showNotification('Feature coming soon!', 'info')">Franchisee Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2024 House of Glamour. All rights reserved. | Franchisee Ordering System v1.0
+            </div>
+        </div>
+    </footer>
+
     <script>
-        function testConnection() {
-            const apiUrl = document.getElementById('apiUrl').value;
-            fetch(apiUrl + '?action=testConnection')
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('result').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                })
-                .catch(e => {
-                    document.getElementById('result').innerHTML = `Error: ${e}`;
-                });
+        // Configuration
+        const CONFIG = {
+            APP_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby-iIbv89AN4tXwB1bxdw3GC4CPHDSFkkwrS9apdMH0LYBaY4aKYESnAZGUqGNmEmorA/exec',
+            FRANCHISEE_ID: 'FR-HOG-001', // This would come from authentication in production
+            CURRENCY: 'KSh'
+        };
+
+        // State management
+        const appState = {
+            currentFranchisee: null,
+            allProducts: [],
+            filteredProducts: [],
+            currentCollection: 'all',
+            collections: ['main', 'epitome'],
+            newArrivals: [],
+            updates: [],
+            currentOrder: null,
+            isScrolling: true,
+            scrollAnimation: null
+        };
+
+        // DOM Elements
+        const elements = {
+            franchiseeName: document.getElementById('franchiseeName'),
+            franchiseeId: document.getElementById('franchiseeId'),
+            greetingMessage: document.getElementById('greetingMessage'),
+            currentDate: document.getElementById('currentDate'),
+            todayOrders: document.getElementById('todayOrders'),
+            pendingOrders: document.getElementById('pendingOrders'),
+            totalRevenue: document.getElementById('totalRevenue'),
+            updatesContainer: document.getElementById('updatesContainer'),
+            scrollTrack: document.getElementById('scrollTrack'),
+            collectionTabs: document.getElementById('collectionTabs'),
+            productsContainer: document.getElementById('productsContainer'),
+            productsLoading: document.getElementById('productsLoading'),
+            orderModal: document.getElementById('orderModal'),
+            closeOrderModal: document.getElementById('closeOrderModal'),
+            quickViewModal: document.getElementById('quickViewModal'),
+            closeQuickViewModal: document.getElementById('closeQuickViewModal'),
+            orderPreview: document.getElementById('orderPreview'),
+            colorSelect: document.getElementById('colorSelect'),
+            materialSelect: document.getElementById('materialSelect'),
+            sizeSelect: document.getElementById('sizeSelect'),
+            decreaseQty: document.getElementById('decreaseQty'),
+            increaseQty: document.getElementById('increaseQty'),
+            quantityDisplay: document.getElementById('quantityDisplay'),
+            orderTotal: document.getElementById('orderTotal'),
+            submitOrderBtn: document.getElementById('submitOrderBtn'),
+            orderForm: document.getElementById('orderForm'),
+            quickViewContent: document.getElementById('quickViewContent'),
+            orderFromQuickView: document.getElementById('orderFromQuickView'),
+            pauseScroll: document.getElementById('pauseScroll'),
+            playScroll: document.getElementById('playScroll'),
+            refreshUpdates: document.getElementById('refreshUpdates')
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏠 House of Glamour Franchisee App v1.0');
+            
+            initApp();
+            setupEventListeners();
+            loadInitialData();
+            startAutoScroll();
+        });
+
+        function initApp() {
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            elements.currentDate.textContent = now.toLocaleDateString('en-US', options);
+            
+            // Set greeting based on time of day
+            const hour = now.getHours();
+            let greeting = 'Good ';
+            if (hour < 12) greeting += 'Morning';
+            else if (hour < 18) greeting += 'Afternoon';
+            else greeting += 'Evening';
+            greeting += '!';
+            elements.greetingMessage.textContent = greeting;
+            
+            // Set franchisee info
+            elements.franchiseeId.textContent = `ID: ${CONFIG.FRANCHISEE_ID}`;
+            
+            // Show initial loading state
+            showLoading();
         }
-        
-        function testLogin() {
-            const apiUrl = document.getElementById('apiUrl').value;
-            fetch(apiUrl + '?action=loginFranchisee&phone=254727211191&pin=1234')
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('result').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                })
-                .catch(e => {
-                    document.getElementById('result').innerHTML = `Error: ${e}`;
-                });
+
+        function setupEventListeners() {
+            // Modal close buttons
+            elements.closeOrderModal.addEventListener('click', closeOrderModal);
+            elements.closeQuickViewModal.addEventListener('click', closeQuickViewModal);
+            
+            // Order modal overlay close
+            elements.orderModal.addEventListener('click', function(e) {
+                if (e.target === this) closeOrderModal();
+            });
+            
+            // Quick view modal overlay close
+            elements.quickViewModal.addEventListener('click', function(e) {
+                if (e.target === this) closeQuickViewModal();
+            });
+            
+            // Quantity controls
+            elements.decreaseQty.addEventListener('click', () => updateQuantity(-1));
+            elements.increaseQty.addEventListener('click', () => updateQuantity(1));
+            
+            // Order form submission
+            elements.orderForm.addEventListener('submit', submitOrder);
+            
+            // Order from quick view
+            elements.orderFromQuickView.addEventListener('click', function() {
+                closeQuickViewModal();
+                if (appState.currentOrder) {
+                    setTimeout(() => openOrderModal(appState.currentOrder), 300);
+                }
+            });
+            
+            // Scroll controls
+            elements.pauseScroll.addEventListener('click', pauseAutoScroll);
+            elements.playScroll.addEventListener('click', resumeAutoScroll);
+            
+            // Refresh updates
+            elements.refreshUpdates.addEventListener('click', loadUpdates);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeOrderModal();
+                    closeQuickViewModal();
+                }
+            });
         }
-        
-        function testGetProducts() {
-            const apiUrl = document.getElementById('apiUrl').value;
-            fetch(apiUrl + '?action=getProducts')
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('result').innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                })
-                .catch(e => {
-                    document.getElementById('result').innerHTML = `Error: ${e}`;
-                });
+
+        function showLoading() {
+            elements.productsLoading.style.display = 'block';
+            elements.productsContainer.style.opacity = '0.5';
         }
+
+        function hideLoading() {
+            elements.productsLoading.style.display = 'none';
+            elements.productsContainer.style.opacity = '1';
+        }
+
+        async function loadInitialData() {
+            try {
+                // Load products
+                await loadProducts();
+                
+                // Load updates
+                await loadUpdates();
+                
+                // Load new arrivals
+                await loadNewArrivals();
+                
+                // Load franchisee stats
+                await loadFranchiseeStats();
+                
+                // Initialize collection tabs
+                initCollectionTabs();
+                
+                // Display initial products
+                filterProductsByCollection('all');
+                
+                // Initialize auto-scroll
+                initializeAutoScroll();
+                
+                hideLoading();
+                
+                showNotification('App loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+                showNotification('Failed to load app data. Please refresh.', 'error');
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${CONFIG.APP_SCRIPT_URL}?action=getProducts`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    appState.allProducts = result.data.map(product => ({
+                        ...product,
+                        collection: product.collection || 'main'
+                    }));
+                    
+                    console.log(`✅ Loaded ${appState.allProducts.length} products`);
+                } else {
+                    // Fallback to sample data if API fails
+                    loadSampleProducts();
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                // Fallback to sample data
+                loadSampleProducts();
+            }
+        }
+
+        function loadSampleProducts() {
+            console.log('📦 Loading sample products...');
+            
+            appState.allProducts = [
+                {
+                    id: 'HG-CL001',
+                    name: 'Luxury Cashmere Sweater',
+                    category: 'clothing',
+                    basePrice: 89.99,
+                    quantity: 25,
+                    description: 'Premium cashmere sweater with elegant ribbed detailing.',
+                    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    availableColors: 'Black,White,Charcoal,Cream',
+                    availableMaterials: 'Cashmere,Merino Wool',
+                    availableSizes: 'XS,S,M,L,XL',
+                    collection: 'main',
+                    createdDate: new Date()
+                },
+                {
+                    id: 'HG-CL002',
+                    name: 'Silk Evening Robe',
+                    category: 'clothing',
+                    basePrice: 125.50,
+                    quantity: 15,
+                    description: 'Luxurious silk robe with satin trim.',
+                    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    availableColors: 'Black,White,Burgundy,Navy',
+                    availableMaterials: 'Silk,Satin',
+                    availableSizes: 'S,M,L,XL',
+                    collection: 'main',
+                    createdDate: new Date()
+                },
+                {
+                    id: 'HG-ART001',
+                    name: 'Abstract Canvas Art',
+                    category: 'art',
+                    basePrice: 245.75,
+                    quantity: 10,
+                    description: 'Large abstract painting on canvas.',
+                    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    availableColors: 'Black & White,Monochrome,Gold Accent',
+                    availableMaterials: 'Canvas,Acrylic',
+                    availableSizes: '24x36,36x48,48x60',
+                    collection: 'main',
+                    createdDate: new Date()
+                },
+                {
+                    id: 'EP-CL001',
+                    name: 'EPITOME Signature Blazer',
+                    category: 'clothing',
+                    basePrice: 199.99,
+                    quantity: 15,
+                    description: 'Exclusive EPITOME collection signature blazer with custom tailoring.',
+                    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    availableColors: 'Navy,Black,Charcoal,Burgundy',
+                    availableMaterials: 'Italian Wool,Silk Blend',
+                    availableSizes: 'XS,S,M,L,XL',
+                    collection: 'epitome',
+                    createdDate: new Date()
+                },
+                {
+                    id: 'EP-ART001',
+                    name: 'EPITOME Limited Edition Print',
+                    category: 'art',
+                    basePrice: 399.99,
+                    quantity: 5,
+                    description: 'Limited edition art print exclusively for EPITOME collection.',
+                    image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    availableColors: 'Gold Accent,Silver Accent',
+                    availableMaterials: 'Archival Paper,Gold Leaf',
+                    availableSizes: '24x36,36x48',
+                    collection: 'epitome',
+                    createdDate: new Date()
+                }
+            ];
+            
+            console.log(`✅ Loaded ${appState.allProducts.length} sample products`);
+        }
+
+        async function loadUpdates() {
+            try {
+                // Simulate API call for updates
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                appState.updates = [
+                    {
+                        id: 1,
+                        type: 'info',
+                        title: 'New Collection Launch',
+                        content: 'The EPITOME collection is now available for ordering. Exclusive premium items for your discerning clients.',
+                        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+                    },
+                    {
+                        id: 2,
+                        type: 'warning',
+                        title: 'Inventory Alert',
+                        content: 'Limited stock on Luxury Cashmere Sweaters. Reorder suggested.',
+                        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+                    },
+                    {
+                        id: 3,
+                        type: 'success',
+                        title: 'Order Processing Time Improved',
+                        content: 'We have reduced order processing time by 30%. Orders now ship within 24 hours.',
+                        date: new Date()
+                    },
+                    {
+                        id: 4,
+                        type: 'info',
+                        title: 'New Payment Option',
+                        content: 'M-Pesa integration is now live. Process payments faster and more securely.',
+                        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+                    }
+                ];
+                
+                displayUpdates();
+                showNotification('Updates refreshed!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading updates:', error);
+                showNotification('Failed to load updates', 'error');
+            }
+        }
+
+        function displayUpdates() {
+            elements.updatesContainer.innerHTML = '';
+            
+            appState.updates.forEach(update => {
+                const updateCard = document.createElement('div');
+                updateCard.className = 'update-card';
+                
+                const dateStr = update.date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                updateCard.innerHTML = `
+                    <div class="update-header">
+                        <span class="update-date">${dateStr}</span>
+                        <span class="update-type ${update.type}">${update.type.toUpperCase()}</span>
+                    </div>
+                    <div class="update-body">
+                        <h3 class="update-title">${update.title}</h3>
+                        <p class="update-content">${update.content}</p>
+                    </div>
+                `;
+                
+                elements.updatesContainer.appendChild(updateCard);
+            });
+        }
+
+        async function loadNewArrivals() {
+            try {
+                // Get products added in the last 30 days
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                appState.newArrivals = appState.allProducts
+                    .filter(product => new Date(product.createdDate) > thirtyDaysAgo)
+                    .slice(0, 10); // Limit to 10 newest
+                
+                if (appState.newArrivals.length === 0) {
+                    // Fallback to some products if none are new
+                    appState.newArrivals = appState.allProducts.slice(0, 5);
+                }
+                
+            } catch (error) {
+                console.error('Error loading new arrivals:', error);
+                appState.newArrivals = appState.allProducts.slice(0, 5);
+            }
+        }
+
+        async function loadFranchiseeStats() {
+            try {
+                // Simulate API call for franchisee stats
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Mock data - in production, this would come from the backend
+                elements.todayOrders.textContent = Math.floor(Math.random() * 20) + 5;
+                elements.pendingOrders.textContent = Math.floor(Math.random() * 15) + 3;
+                elements.totalRevenue.textContent = (Math.random() * 5000 + 1000).toFixed(0);
+                
+            } catch (error) {
+                console.error('Error loading franchisee stats:', error);
+            }
+        }
+
+        function initCollectionTabs() {
+            elements.collectionTabs.innerHTML = '';
+            
+            // Add "All" tab
+            const allTab = document.createElement('button');
+            allTab.className = 'collection-tab active';
+            allTab.textContent = 'All Products';
+            allTab.dataset.collection = 'all';
+            allTab.addEventListener('click', () => filterProductsByCollection('all'));
+            elements.collectionTabs.appendChild(allTab);
+            
+            // Add collection tabs
+            appState.collections.forEach(collection => {
+                const tab = document.createElement('button');
+                tab.className = 'collection-tab';
+                tab.textContent = collection === 'epitome' ? 'EPITOME Collection' : 'Main Collection';
+                tab.dataset.collection = collection;
+                tab.addEventListener('click', () => filterProductsByCollection(collection));
+                elements.collectionTabs.appendChild(tab);
+            });
+        }
+
+        function filterProductsByCollection(collection) {
+            appState.currentCollection = collection;
+            
+            // Update active tab
+            document.querySelectorAll('.collection-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.collection === collection);
+            });
+            
+            if (collection === 'all') {
+                appState.filteredProducts = [...appState.allProducts];
+            } else {
+                appState.filteredProducts = appState.allProducts.filter(
+                    product => product.collection === collection
+                );
+            }
+            
+            displayProducts();
+        }
+
+        function displayProducts() {
+            elements.productsContainer.innerHTML = '';
+            
+            if (appState.filteredProducts.length === 0) {
+                elements.productsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>No Products Found</h3>
+                        <p>Try selecting a different collection or check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            appState.filteredProducts.forEach(product => {
+                const productCard = createProductCard(product);
+                elements.productsContainer.appendChild(productCard);
+            });
+            
+            elements.productsContainer.classList.add('loaded');
+        }
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.productId = product.id;
+            
+            const colors = product.availableColors ? product.availableColors.split(',') : ['Standard'];
+            const materials = product.availableMaterials ? product.availableMaterials.split(',') : ['Standard'];
+            const sizes = product.availableSizes ? product.availableSizes.split(',') : ['One Size'];
+            
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+                <div class="product-info">
+                    <div class="product-header">
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">${CONFIG.CURRENCY} ${product.basePrice}</div>
+                    </div>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Collection:</span>
+                            <span class="spec-value">${product.collection === 'epitome' ? 'EPITOME' : 'Main'}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Available Colors:</span>
+                            <span class="spec-value">${colors.length}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Stock:</span>
+                            <span class="spec-value">${product.quantity} units</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="action-btn quick-view-btn" data-action="quick-view">
+                            <i class="fas fa-eye"></i>
+                            Quick View
+                        </button>
+                        <button class="action-btn order-btn" data-action="order">
+                            <i class="fas fa-shopping-cart"></i>
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to buttons
+            const quickViewBtn = card.querySelector('[data-action="quick-view"]');
+            const orderBtn = card.querySelector('[data-action="order"]');
+            
+            quickViewBtn.addEventListener('click', () => openQuickViewModal(product));
+            orderBtn.addEventListener('click', () => openOrderModal(product));
+            
+            return card;
+        }
+
+        function openOrderModal(product) {
+            appState.currentOrder = product;
+            
+            // Clear previous options
+            elements.colorSelect.innerHTML = '<option value="">Select Color</option>';
+            elements.materialSelect.innerHTML = '<option value="">Select Material</option>';
+            elements.sizeSelect.innerHTML = '<option value="">Select Size</option>';
+            
+            // Populate preview
+            elements.orderPreview.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="preview-image">
+                <div class="preview-info">
+                    <h3 class="preview-name">${product.name}</h3>
+                    <div class="preview-price">${CONFIG.CURRENCY} ${product.basePrice}</div>
+                    <span class="preview-collection">${product.collection === 'epitome' ? 'EPITOME' : 'Main'} Collection</span>
+                </div>
+            `;
+            
+            // Populate color options
+            if (product.availableColors) {
+                product.availableColors.split(',').forEach(color => {
+                    const option = document.createElement('option');
+                    option.value = color.trim();
+                    option.textContent = color.trim();
+                    elements.colorSelect.appendChild(option);
+                });
+            }
+            
+            // Populate material options
+            if (product.availableMaterials) {
+                product.availableMaterials.split(',').forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.trim();
+                    option.textContent = material.trim();
+                    elements.materialSelect.appendChild(option);
+                });
+            }
+            
+            // Populate size options
+            if (product.availableSizes) {
+                product.availableSizes.split(',').forEach(size => {
+                    const option = document.createElement('option');
+                    option.value = size.trim();
+                    option.textContent = size.trim();
+                    elements.sizeSelect.appendChild(option);
+                });
+            }
+            
+            // Reset quantity and total
+            elements.quantityDisplay.value = 1;
+            updateOrderTotal();
+            
+            // Show modal
+            elements.orderModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOrderModal() {
+            elements.orderModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            appState.currentOrder = null;
+        }
+
+        function openQuickViewModal(product) {
+            appState.currentOrder = product;
+            
+            elements.quickViewContent.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="quick-view-image">
+                <div class="quick-view-details">
+                    <h3 class="quick-view-name">${product.name}</h3>
+                    <div class="quick-view-price">${CONFIG.CURRENCY} ${product.basePrice}</div>
+                    <p class="quick-view-description">${product.description}</p>
+                    <div class="product-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Collection:</span>
+                            <span class="spec-value">${product.collection === 'epitome' ? 'EPITOME' : 'Main'}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Available Colors:</span>
+                            <span class="spec-value">${product.availableColors || 'Standard'}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Materials:</span>
+                            <span class="spec-value">${product.availableMaterials || 'Standard'}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Sizes:</span>
+                            <span class="spec-value">${product.availableSizes || 'One Size'}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Stock Available:</span>
+                            <span class="spec-value">${product.quantity} units</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            elements.quickViewModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeQuickViewModal() {
+            elements.quickViewModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateQuantity(change) {
+            let currentQty = parseInt(elements.quantityDisplay.value);
+            let newQty = currentQty + change;
+            
+            if (newQty < 1) newQty = 1;
+            if (newQty > 99) newQty = 99;
+            
+            elements.quantityDisplay.value = newQty;
+            updateOrderTotal();
+        }
+
+        function updateOrderTotal() {
+            if (!appState.currentOrder) return;
+            
+            const quantity = parseInt(elements.quantityDisplay.value);
+            const total = appState.currentOrder.basePrice * quantity;
+            elements.orderTotal.textContent = total.toFixed(2);
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            
+            if (!appState.currentOrder) {
+                showNotification('No product selected', 'error');
+                return;
+            }
+            
+            const color = elements.colorSelect.value;
+            const material = elements.materialSelect.value;
+            const size = elements.sizeSelect.value;
+            const quantity = parseInt(elements.quantityDisplay.value);
+            
+            if (!color || !material || !size) {
+                showNotification('Please select all options', 'error');
+                return;
+            }
+            
+            if (quantity > appState.currentOrder.quantity) {
+                showNotification(`Only ${appState.currentOrder.quantity} units available`, 'error');
+                return;
+            }
+            
+            // Disable submit button during processing
+            elements.submitOrderBtn.disabled = true;
+            elements.submitOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // In production, this would be the actual API call:
+                /*
+                const orderData = {
+                    action: 'submitOrder',
+                    customerName: elements.franchiseeName.textContent,
+                    email: 'franchisee@hog.com', // This would come from authentication
+                    phone: '+254700000000', // Franchisee phone
+                    deliveryAddress: 'Franchise Location',
+                    items: [{
+                        id: appState.currentOrder.id,
+                        name: appState.currentOrder.name,
+                        selectedColor: color,
+                        selectedMaterial: material,
+                        selectedSize: size,
+                        quantity: quantity,
+                        basePrice: appState.currentOrder.basePrice
+                    }],
+                    specialInstructions: `Franchisee Order - ${CONFIG.FRANCHISEE_ID}`
+                };
+                
+                const response = await fetch(CONFIG.APP_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                */
+                
+                // Mock successful response
+                const mockResponse = {
+                    success: true,
+                    message: 'Order submitted successfully',
+                    orderId: `HOG-${Date.now().toString().slice(-6)}`
+                };
+                
+                if (mockResponse.success) {
+                    showNotification(`Order #${mockResponse.orderId} placed successfully!`, 'success');
+                    
+                    // Update product quantity locally
+                    const productIndex = appState.allProducts.findIndex(p => p.id === appState.currentOrder.id);
+                    if (productIndex > -1) {
+                        appState.allProducts[productIndex].quantity -= quantity;
+                    }
+                    
+                    // Update UI
+                    filterProductsByCollection(appState.currentCollection);
+                    
+                    // Close modal and reset
+                    closeOrderModal();
+                    
+                    // Update stats
+                    const todayOrders = parseInt(elements.todayOrders.textContent);
+                    elements.todayOrders.textContent = todayOrders + 1;
+                    
+                    const total = appState.currentOrder.basePrice * quantity;
+                    const currentRevenue = parseInt(elements.totalRevenue.textContent);
+                    elements.totalRevenue.textContent = (currentRevenue + total).toFixed(0);
+                    
+                } else {
+                    throw new Error(mockResponse.message || 'Order failed');
+                }
+                
+            } catch (error) {
+                console.error('Error submitting order:', error);
+                showNotification(`Order failed: ${error.message}`, 'error');
+            } finally {
+                // Re-enable submit button
+                elements.submitOrderBtn.disabled = false;
+                elements.submitOrderBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+            }
+        }
+
+        function initializeAutoScroll() {
+            elements.scrollTrack.innerHTML = '';
+            
+            if (appState.newArrivals.length === 0) {
+                elements.scrollTrack.innerHTML = `
+                    <div style="min-width: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                        <div style="text-align: center;">
+                            <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>No new arrivals</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Duplicate items for seamless scrolling
+            const itemsToShow = [...appState.newArrivals, ...appState.newArrivals];
+            
+            itemsToShow.forEach(product => {
+                const arrivalCard = createArrivalCard(product);
+                elements.scrollTrack.appendChild(arrivalCard);
+            });
+        }
+
+        function createArrivalCard(product) {
+            const card = document.createElement('div');
+            card.className = 'arrival-card';
+            
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" class="arrival-image">
+                <div class="arrival-info">
+                    <h3 class="arrival-name">${product.name}</h3>
+                    <div class="arrival-price">${CONFIG.CURRENCY} ${product.basePrice}</div>
+                    <span class="arrival-badge">NEW ARRIVAL</span>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => openQuickViewModal(product));
+            
+            return card;
+        }
+
+        function startAutoScroll() {
+            if (appState.scrollAnimation) {
+                appState.scrollAnimation.play();
+            }
+            
+            appState.isScrolling = true;
+            elements.scrollTrack.style.animationPlayState = 'running';
+        }
+
+        function pauseAutoScroll() {
+            if (appState.scrollAnimation) {
+                appState.scrollAnimation.pause();
+            }
+            
+            appState.isScrolling = false;
+            elements.scrollTrack.style.animationPlayState = 'paused';
+            showNotification('Auto-scroll paused', 'info');
+        }
+
+        function resumeAutoScroll() {
+            startAutoScroll();
+            showNotification('Auto-scroll resumed', 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'
+                    }"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Expose some functions to global scope for demo purposes
+        window.showNotification = showNotification;
+        window.openOrderModal = openOrderModal;
+        window.openQuickViewModal = openQuickViewModal;
     </script>
 </body>
 </html>
