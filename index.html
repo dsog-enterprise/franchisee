@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- App Version -->
+    <meta name="app-version" content="4.0.0">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#B22222">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DSOG Franchise Hub">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="DSOG Franchise Hub">
+    <meta name="msapplication-TileColor" content="#B22222">
+    <meta name="msapplication-starturl" content="/?v=4.0.0">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="DSOG Enterprise | Franchise Management Platform">
+    <meta property="og:description" content="Manage your franchise, place orders, access marketing materials, and get updates.">
+    <meta property="og:image" content="https://i.postimg.cc/CxNLzQgt/Untitled-design-3.webp">
+    <meta property="og:url" content="https://franchise.dsogenterprise.com">
+    <meta property="og:type" content="website">
+    
+    <title>DSOG Enterprise | Franchise Management Platform</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DSOG Theme Colors -->
+    <style>
+        :root {
+            --primary-red: #B22222;
+            --primary-black: #222222;
+            --primary-gold: #D4AF37;
+            --secondary-red: #8B0000;
+            --secondary-black: #333333;
+            --light-red: #FF6B6B;
+            --dark-red: #8B0000;
+            --light: #F8F9FA;
+            --gray: #666666;
+            --white: #FFFFFF;
+            --text-primary: #222222;
+            --text-secondary: #555555;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --border-color: #e8e8e8;
+            --shadow-color: rgba(178, 34, 34, 0.08);
+            --card-bg: #ffffff;
+            --success: #25D366;
+            --whatsapp-green: #25D366;
+            --whatsapp-dark: #128C7E;
+            --share-blue: #4285F4;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(178, 34, 34, 0.1);
+            --shadow-lg: 0 10px 25px rgba(178, 34, 34, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: var(--white);
+            padding: 1.2rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border-bottom: 3px solid var(--primary-red);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 35px;
+            filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3));
+        }
+        
+        .franchise-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .franchise-badge {
+            background: var(--primary-red);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 2px solid var(--primary-gold);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-red);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--primary-gold);
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 80px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--white);
+            padding: 2rem 0;
+            border-right: 1px solid var(--border-color);
+            height: 100%;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .nav-section h3 {
+            color: var(--primary-red);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover {
+            background: rgba(178, 34, 34, 0.1);
+            color: var(--primary-red);
+            transform: translateX(5px);
+        }
+        
+        .nav-links a.active {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+        
+        .nav-links a i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-badge {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-red), var(--secondary-red));
+            color: var(--white);
+            padding: 2.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+        }
+        
+        .welcome-section h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .welcome-section p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-red);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(178, 34, 34, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-red);
+        }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+        
+        .stat-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Section Styling */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-red);
+        }
+        
+        /* Suppliers Grid */
+        .suppliers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .supplier-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        
+        .supplier-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-red);
+        }
+        
+        .supplier-header {
+            background: var(--primary-red);
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .supplier-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .supplier-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--primary-gold);
+            overflow: hidden;
+        }
+        
+        .supplier-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .supplier-body {
+            padding: 1.5rem;
+        }
+        
+        .supplier-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 0.8rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .stat-item h4 {
+            font-size: 1.2rem;
+            color: var(--primary-red);
+            margin-bottom: 0.2rem;
+        }
+        
+        .stat-item p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .supplier-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(178, 34, 34, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-red);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-red);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-category {
+            background: rgba(178, 34, 34, 0.1);
+            color: var(--primary-red);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+        
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+        }
+        
+        /* Marketing Materials */
+        .marketing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .marketing-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        
+        .marketing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-red);
+        }
+        
+        .marketing-icon {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 1.5rem;
+        }
+        
+        .marketing-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .marketing-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        /* Updates Feed */
+        .updates-feed {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .update-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-red);
+            transition: var(--transition);
+        }
+        
+        .update-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .update-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .update-badge {
+            background: var(--primary-red);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .update-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .update-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+        
+        .update-content {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Order Form Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--white);
+            border-radius: 15px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            background: var(--primary-red);
+            color: var(--white);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 3rem;
+        }
+        
+        .orders-table th,
+        .orders-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .orders-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: #FFF3CD;
+            color: #856404;
+        }
+        
+        .status-processing {
+            background: #D1ECF1;
+            color: #0C5460;
+        }
+        
+        .status-delivered {
+            background: #D4EDDA;
+            color: #155724;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--secondary-black);
+            color: var(--white);
+            padding: 2rem 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                color: var(--primary-red);
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+            
+            .mobile-sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--white);
+                z-index: 1001;
+                transition: var(--transition);
+                overflow-y: auto;
+                padding: 2rem 0;
+            }
+            
+            .mobile-sidebar.active {
+                left: 0;
+            }
+            
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+            }
+            
+            .mobile-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .franchise-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .suppliers-grid,
+            .products-grid,
+            .marketing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .welcome-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .supplier-actions {
+                flex-direction: column;
+            }
+            
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Enterprise" class="logo">
+            
+            <div class="franchise-info">
+                <div class="franchise-badge">
+                    <i class="fas fa-store"></i> Franchise ID: DSOG-001
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="user-name" style="font-weight: 600;">Franchise Owner</div>
+                        <div class="user-email" style="font-size: 0.85rem; color: var(--gray);">franchise@dsog.com</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <!-- Same navigation as desktop sidebar will be populated by JS -->
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Desktop Sidebar -->
+        <aside class="sidebar" id="desktopSidebar">
+            <div class="nav-section">
+                <h3>Main Menu</h3>
+                <ul class="nav-links">
+                    <li><a href="#dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#orders"><i class="fas fa-shopping-cart"></i> My Orders <span class="nav-badge">3</span></a></li>
+                    <li><a href="#suppliers"><i class="fas fa-boxes"></i> Suppliers</a></li>
+                    <li><a href="#products"><i class="fas fa-tshirt"></i> Products</a></li>
+                    <li><a href="#marketing"><i class="fas fa-bullhorn"></i> Marketing</a></li>
+                    <li><a href="#updates"><i class="fas fa-bell"></i> Updates <span class="nav-badge">5</span></a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3>Account</h3>
+                <ul class="nav-links">
+                    <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#support"><i class="fas fa-headset"></i> Support</a></li>
+                    <li><a href="#logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3>Quick Links</h3>
+                <ul class="nav-links">
+                    <li><a href="https://wa.me/254733737983" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Support</a></li>
+                    <li><a href="mailto:office.dsog@gmail.com"><i class="fas fa-envelope"></i> Email Support</a></li>
+                    <li><a href="#help"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <h1>Welcome back, DSOG Franchise!</h1>
+                <p>Manage your online store, place orders, access marketing materials, and stay updated with supplier news.</p>
+            </section>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Pending Orders</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>12</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>5</h3>
+                        <p>New Updates</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>KES 45,800</h3>
+                        <p>This Month Sales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suppliers Section -->
+            <section id="suppliers">
+                <div class="section-header">
+                    <h2>Order from Suppliers</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="openSupplierGuide()">
+                            <i class="fas fa-question-circle"></i> Ordering Guide
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="suppliers-grid">
+                    <!-- HOG Store Supplier Card -->
+                    <div class="supplier-card animate-card">
+                        <div class="supplier-header">
+                            <div class="supplier-badge">Primary</div>
+                            <div class="supplier-logo">
+                                <img src="https://i.postimg.cc/c4zFGFxn/COLLECTIONS-removebg-preview.png" alt="HOG Store">
+                            </div>
+                            <h3>HOG Store</h3>
+                            <p>Primary Supplier - Multiple Brands</p>
+                        </div>
+                        
+                        <div class="supplier-body">
+                            <div class="supplier-stats">
+                                <div class="stat-item">
+                                    <h4>3</h4>
+                                    <p>Brands</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h4>50+</h4>
+                                    <p>Products</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h4>24h</h4>
+                                    <p>Response</p>
+                                </div>
+                            </div>
+                            
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                <strong>Brands Available:</strong> Visha Apparel (Clothing), Fitare Sports (Sportswear), Home Decor (Household)
+                            </p>
+                            
+                            <div class="supplier-actions">
+                                <button class="btn btn-primary" onclick="openOrderModal('HOG Store')">
+                                    <i class="fas fa-clipboard-list"></i> Place Order
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewSupplierProducts('HOG Store')">
+                                    <i class="fas fa-eye"></i> View Products
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Placeholder for Future Suppliers -->
+                    <div class="supplier-card animate-card" style="opacity: 0.7;">
+                        <div class="supplier-header">
+                            <div class="supplier-badge">Coming Soon</div>
+                            <div class="supplier-logo">
+                                <i class="fas fa-store" style="font-size: 2rem;"></i>
+                            </div>
+                            <h3>New Supplier</h3>
+                            <p>Additional Brands</p>
+                        </div>
+                        
+                        <div class="supplier-body">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                                <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem; color: var(--gray);"></i><br>
+                                More suppliers coming soon
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Products Section -->
+            <section id="products">
+                <div class="section-header">
+                    <h2>Featured Products</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="viewAllProducts()">
+                            <i class="fas fa-list"></i> View All Products
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="products-grid">
+                    <!-- Visha Apparel Products -->
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Men's Hoodie" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Visha Apparel</span>
+                            <h3 class="product-title">Premium Hoodie</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                High-quality cotton hoodie with premium finish
+                            </p>
+                            <div class="product-price">KES 2,499</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Premium Hoodie', 'Visha Apparel')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Women's T-Shirt" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Visha Apparel</span>
+                            <h3 class="product-title">Designer T-Shirt</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                Cotton designer t-shirt with unique patterns
+                            </p>
+                            <div class="product-price">KES 1,899</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Designer T-Shirt', 'Visha Apparel')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Fitare Sports Products -->
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Sports Jersey" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Fitare Sports</span>
+                            <h3 class="product-title">Sports Jersey</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                Performance sports jersey for athletic activities
+                            </p>
+                            <div class="product-price">KES 3,299</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Sports Jersey', 'Fitare Sports')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Running Shorts" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Fitare Sports</span>
+                            <h3 class="product-title">Running Shorts</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                Lightweight running shorts with moisture-wicking fabric
+                            </p>
+                            <div class="product-price">KES 1,799</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Running Shorts', 'Fitare Sports')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Home Decor Products -->
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Kitchen Set" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Home Decor</span>
+                            <h3 class="product-title">Kitchen Set</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                5-piece premium kitchen utensil set
+                            </p>
+                            <div class="product-price">KES 4,999</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Kitchen Set', 'Home Decor')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card animate-card">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Decorative Pillow" class="product-image">
+                        <div class="product-info">
+                            <span class="product-category">Home Decor</span>
+                            <h3 class="product-title">Decorative Pillow</h3>
+                            <p class="product-description" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                                Premium decorative pillow for living spaces
+                            </p>
+                            <div class="product-price">KES 1,499</div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="quickOrder('Decorative Pillow', 'Home Decor')">
+                                <i class="fas fa-cart-plus"></i> Quick Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marketing Materials Section -->
+            <section id="marketing">
+                <div class="section-header">
+                    <h2>Marketing Materials</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="downloadAllMarketing()">
+                            <i class="fas fa-download"></i> Download All
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="marketing-grid">
+                    <div class="marketing-card animate-card">
+                        <div class="marketing-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <h3>Product Images</h3>
+                        <p>High-resolution product photos for all items. Perfect for website and social media.</p>
+                        <button class="btn btn-primary" onclick="downloadMarketing('images')">
+                            <i class="fas fa-download"></i> Download (50MB)
+                        </button>
+                    </div>
+                    
+                    <div class="marketing-card animate-card">
+                        <div class="marketing-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3>Brand Guidelines</h3>
+                        <p>Complete brand guidelines including logos, colors, fonts, and usage rules.</p>
+                        <button class="btn btn-primary" onclick="downloadMarketing('guidelines')">
+                            <i class="fas fa-download"></i> Download (15MB)
+                        </button>
+                    </div>
+                    
+                    <div class="marketing-card animate-card">
+                        <div class="marketing-icon">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <h3>Social Media Templates</h3>
+                        <p>Ready-to-use templates for Facebook, Instagram, and Twitter posts.</p>
+                        <button class="btn btn-primary" onclick="downloadMarketing('templates')">
+                            <i class="fas fa-download"></i> Download (30MB)
+                        </button>
+                    </div>
+                    
+                    <div class="marketing-card animate-card">
+                        <div class="marketing-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Promotional Videos</h3>
+                        <p>Short promotional videos for social media and website banners.</p>
+                        <button class="btn btn-primary" onclick="downloadMarketing('videos')">
+                            <i class="fas fa-download"></i> Download (120MB)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Updates Section -->
+            <section id="updates">
+                <div class="section-header">
+                    <h2>Latest Updates</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="markAllAsRead()">
+                            <i class="fas fa-check-double"></i> Mark All as Read
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="updates-feed">
+                    <!-- HOG Store Updates -->
+                    <div class="update-card animate-card">
+                        <div class="update-header">
+                            <span class="update-badge">HOG Store</span>
+                            <span class="update-date">Today, 10:30 AM</span>
+                        </div>
+                        <h3 class="update-title">New Visha Apparel Collection Available</h3>
+                        <div class="update-content">
+                            <p>New summer collection from Visha Apparel is now available for ordering. Includes 15 new designs across all categories.</p>
+                            <p><strong>Action Required:</strong> Update your product catalog with new items.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="viewUpdateDetails('hog1')">
+                            <i class="fas fa-external-link-alt"></i> View Details
+                        </button>
+                    </div>
+                    
+                    <div class="update-card animate-card">
+                        <div class="update-header">
+                            <span class="update-badge">HOG Store</span>
+                            <span class="update-date">Yesterday, 2:15 PM</span>
+                        </div>
+                        <h3 class="update-title">Fitare Sports Price Update</h3>
+                        <div class="update-content">
+                            <p>Special pricing available on Fitare Sports items for bulk orders. Contact for special quotes on orders above 50 pieces.</p>
+                            <p><strong>Discount:</strong> 15% off on orders above KES 50,000</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="viewUpdateDetails('hog2')">
+                            <i class="fas fa-external-link-alt"></i> View Details
+                        </button>
+                    </div>
+                    
+                    <div class="update-card animate-card">
+                        <div class="update-header">
+                            <span class="update-badge">HOG Store</span>
+                            <span class="update-date">2 days ago, 9:00 AM</span>
+                        </div>
+                        <h3 class="update-title">Home Decor New Arrivals</h3>
+                        <div class="update-content">
+                            <p>10 new Home Decor items added to catalog. Includes kitchenware and living room accessories.</p>
+                            <p><strong>Featured:</strong> Premium ceramic dinner sets and decorative lamps</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="viewUpdateDetails('hog3')">
+                            <i class="fas fa-external-link-alt"></i> View Details
+                        </button>
+                    </div>
+                    
+                    <!-- System Updates -->
+                    <div class="update-card animate-card">
+                        <div class="update-header">
+                            <span class="update-badge">System</span>
+                            <span class="update-date">3 days ago, 4:30 PM</span>
+                        </div>
+                        <h3 class="update-title">Platform Maintenance Complete</h3>
+                        <div class="update-content">
+                            <p>Platform maintenance completed. New features added including order tracking and report generation.</p>
+                            <p><strong>New Features:</strong> Export orders to Excel, Enhanced tracking system</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="viewUpdateDetails('system1')">
+                            <i class="fas fa-external-link-alt"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                <div class="footer-content">
+                    <p>DSOG Enterprise Franchise Management Platform v4.0</p>
+                    <p>For support: WhatsApp 0733 737 983 | Email: office.dsog@gmail.com</p>
+                    <div class="copyright">
+                        &copy; <span id="currentYear"></span> DSOG Enterprise. All rights reserved.
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Order Form Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Place Order - <span id="modalSupplierName"></span></h2>
+                <button class="modal-close" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <h3 style="margin-bottom: 0.5rem; color: var(--primary-red);">
+                        <i class="fas fa-info-circle"></i> Order Instructions
+                    </h3>
+                    <p style="margin-bottom: 0.5rem;">
+                        Orders are placed through Google Forms. Fill the form below and submit. You'll receive confirmation via WhatsApp/Email.
+                    </p>
+                    <p><strong>Response Time:</strong> 24 hours maximum</p>
+                </div>
+                
+                <div style="text-align: center; padding: 3rem 1rem;">
+                    <i class="fas fa-clipboard-list" style="font-size: 4rem; color: var(--primary-red); margin-bottom: 1.5rem;"></i>
+                    <h3 style="margin-bottom: 1rem;">Order Form</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Click the button below to open the Google Form for <span id="formSupplierName"></span>
+                    </p>
+                    <a href="#" id="googleFormLink" target="_blank" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                        <i class="fas fa-external-link-alt"></i> Open Order Form
+                    </a>
+                    <p style="margin-top: 1.5rem; color: var(--gray); font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-circle"></i> Remember to include your Franchise ID in the form
+                    </p>
+                </div>
+                
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="margin-bottom: 1rem;">Need Help?</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="https://wa.me/254733737983" target="_blank" class="btn btn-secondary">
+                            <i class="fab fa-whatsapp"></i> WhatsApp Support
+                        </a>
+                        <a href="mailto:office.dsog@gmail.com" class="btn btn-secondary">
+                            <i class="fas fa-envelope"></i> Email Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Guide Modal -->
+    <div class="modal-overlay" id="guideModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Supplier Ordering Guide</h2>
+                <button class="modal-close" onclick="closeGuideModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary-red); margin-bottom: 1rem;">
+                        <i class="fas fa-book"></i> How to Place Orders
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 2rem; color: var(--primary-red); margin-bottom: 1rem;">1</div>
+                            <h4 style="margin-bottom: 0.5rem;">Select Supplier</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Choose from available suppliers (currently HOG Store only)</p>
+                        </div>
+                        
+                        <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 2rem; color: var(--primary-red); margin-bottom: 1rem;">2</div>
+                            <h4 style="margin-bottom: 0.5rem;">Open Form</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Click "Place Order" to open Google Form for that supplier</p>
+                        </div>
+                        
+                        <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 2rem; color: var(--primary-red); margin-bottom: 1rem;">3</div>
+                            <h4 style="margin-bottom: 0.5rem;">Fill Details</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Include product details, quantities, and your franchise information</p>
+                        </div>
+                        
+                        <div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 2rem; color: var(--primary-red); margin-bottom: 1rem;">4</div>
+                            <h4 style="margin-bottom: 0.5rem;">Submit & Wait</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Submit form and await confirmation via WhatsApp/Email</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, var(--primary-red), var(--secondary-red)); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: white;">
+                        <i class="fas fa-lightbulb"></i> Important Notes
+                    </h3>
+                    <ul style="padding-left: 1.5rem; margin-bottom: 0;">
+                        <li>Always include your Franchise ID: <strong>DSOG-001</strong></li>
+                        <li>Check stock availability before placing large orders</li>
+                        <li>Response time: Maximum 24 hours</li>
+                        <li>Minimum order value: KES 5,000</li>
+                        <li>Payment terms: 50% advance, 50% on delivery</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="closeGuideModal(); openOrderModal('HOG Store');">
+                        <i class="fas fa-clipboard-list"></i> Start Ordering Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Set current year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // Google Forms links for suppliers
+        const supplierForms = {
+            'HOG Store': 'https://forms.google.com/your-hog-form-link-here',
+            'New Supplier': '#'
+        };
+        
+        // Initialize the platform
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DSOG Franchise Management Platform v4.0');
+            
+            // Initialize mobile menu
+            initMobileMenu();
+            
+            // Initialize animations
+            initAnimations();
+            
+            // Initialize navigation
+            initNavigation();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Welcome to DSOG Franchise Management Platform!');
+            }, 1000);
+        });
+        
+        // Mobile menu functionality
+        function initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const desktopSidebar = document.getElementById('desktopSidebar');
+            
+            // Clone desktop sidebar to mobile
+            if (desktopSidebar) {
+                mobileSidebar.innerHTML = desktopSidebar.innerHTML;
+            }
+            
+            // Add close button to mobile sidebar
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: none;
+                border: none;
+                color: var(--primary-red);
+                font-size: 1.5rem;
+                cursor: pointer;
+            `;
+            closeBtn.addEventListener('click', closeMobileMenu);
+            mobileSidebar.insertBefore(closeBtn, mobileSidebar.firstChild);
+            
+            // Toggle mobile menu
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileSidebar.classList.add('active');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Close on overlay click
+            mobileOverlay.addEventListener('click', closeMobileMenu);
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeMobileMenu();
+                }
+            });
+            
+            function closeMobileMenu() {
+                mobileSidebar.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Navigation functionality
+        function initNavigation() {
+            // Handle sidebar navigation
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            // Update active state
+                            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            // Scroll to section
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            
+                            // Close mobile menu if open
+                            closeMobileMenu();
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Card animations
+        function initAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.animate-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+        
+        // Order modal functions
+        function openOrderModal(supplierName) {
+            const modal = document.getElementById('orderModal');
+            const supplierNameEl = document.getElementById('modalSupplierName');
+            const formSupplierNameEl = document.getElementById('formSupplierName');
+            const formLink = document.getElementById('googleFormLink');
+            
+            supplierNameEl.textContent = supplierName;
+            formSupplierNameEl.textContent = supplierName;
+            
+            // Set Google Form link
+            formLink.href = supplierForms[supplierName] || '#';
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeOrderModal() {
+            const modal = document.getElementById('orderModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Guide modal functions
+        function openSupplierGuide() {
+            const modal = document.getElementById('guideModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeGuideModal() {
+            const modal = document.getElementById('guideModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Quick order function
+        function quickOrder(productName, supplierName) {
+            openOrderModal(supplierName);
+            
+            // Show product name in notification
+            setTimeout(() => {
+                showNotification(`Ready to order: ${productName} from ${supplierName}`);
+            }, 500);
+        }
+        
+        // View supplier products
+        function viewSupplierProducts(supplierName) {
+            const productsSection = document.getElementById('products');
+            
+            // Scroll to products section
+            productsSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            // Highlight relevant products (in a real app, this would filter)
+            showNotification(`Showing products from ${supplierName}`);
+        }
+        
+        // View all products
+        function viewAllProducts() {
+            const productsSection = document.getElementById('products');
+            productsSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+        
+        // Marketing download functions
+        function downloadMarketing(type) {
+            showNotification(`Downloading ${type}... This may take a moment.`);
+            
+            // In a real app, this would trigger actual download
+            setTimeout(() => {
+                showNotification('Download complete! Check your downloads folder.');
+            }, 1500);
+        }
+        
+        function downloadAllMarketing() {
+            showNotification('Preparing all marketing materials for download...');
+            
+            setTimeout(() => {
+                showNotification('All marketing materials downloaded successfully!');
+            }, 2000);
+        }
+        
+        // Update functions
+        function viewUpdateDetails(updateId) {
+            showNotification(`Opening update details...`);
+            
+            // In a real app, this would open detailed view
+            setTimeout(() => {
+                openGuideModal(); // Using guide modal as example
+            }, 500);
+        }
+        
+        function markAllAsRead() {
+            const badges = document.querySelectorAll('.nav-badge');
+            badges.forEach(badge => {
+                badge.style.opacity = '0.5';
+                badge.textContent = '0';
+            });
+            
+            showNotification('All updates marked as read.');
+        }
+        
+        // Notification system
+        function showNotification(message) {
+            // Remove existing notification
+            const existingNotification = document.querySelector('.notification-toast');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="background: var(--primary-red); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">${message}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Style the notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+                z-index: 3000;
+                max-width: 350px;
+                border-left: 4px solid var(--primary-red);
+                animation: slideIn 0.3s ease;
+                font-size: 0.9rem;
+            `;
+            
+            // Add animation keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // Click to dismiss
+            notification.addEventListener('click', () => {
+                notification.remove();
+            });
+        }
+        
+        // Close modals on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeOrderModal();
+                closeGuideModal();
+            }
+        });
+        
+        // Close mobile menu function (used by other functions)
+        function closeMobileMenu() {
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            if (mobileSidebar) mobileSidebar.classList.remove('active');
+            if (mobileOverlay) mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    </script>
+</body>
+</html>
