@@ -1,488 +1,364 @@
-// DSOG Franchise Platform - Frontend Application
-
-class DSOGFrontend {
-    constructor() {
-        this.currentUser = null;
-        this.googleInitialized = false;
-        this.init();
-    }
+// DSOG Franchise Platform Configuration
+const CONFIG = {
+    // Google Apps Script Web App URL (Update this after deployment)
+    BACKEND_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
     
-    init() {
-        // Configuration for Google OAuth
-        this.config = {
-            GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com',
-            ALLOWED_EMAILS: [
-                'admin@dsog.com',
-                'franchise@dsog.com',
-                'partner@dsog.com'
-                // Add more allowed emails here
-            ],
-            ALLOWED_DOMAINS: [
-                'dsog.com',
-                'dsogfranchise.com'
-                // Add allowed domains here
-            ],
-            GOOGLE_BACKEND_VERIFY_URL: 'https://your-backend.com/api/verify-google-token'
-        };
+    // Application Settings
+    APP_NAME: 'DSOG Franchise Platform',
+    VERSION: '3.0.0',
+    COMPANY_NAME: 'DSOG (Divine Sense of Grace)',
+    SUPPORT_EMAIL: 'office.dsog@gmail.com',
+    SUPPORT_PHONE: '0733 737 983',
+    
+    // Google OAuth Configuration
+    GOOGLE_OAUTH: {
+        // REPLACE with your actual Google Client ID from Google Cloud Console
+        CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
         
-        // Check for existing session
-        this.checkSession();
+        // Allowed email addresses for Google Sign-In
+        ALLOWED_EMAILS: [
+            'admin@dsog.com',
+            'office.dsog@gmail.com',
+            // Add specific franchise partner emails here
+            // 'franchise1@example.com',
+            // 'franchise2@example.com',
+        ],
         
-        // Initialize event listeners
-        this.initEventListeners();
+        // Allowed domains for Google Sign-In
+        ALLOWED_DOMAINS: [
+            'dsog.com',
+            'gmail.com',
+            // Add allowed domains here
+            // 'yourdomain.com',
+        ],
         
-        // Initialize Google OAuth
-        this.initGoogleAuth();
+        // Google OAuth Scopes
+        SCOPES: [
+            'email',
+            'profile'
+        ]
+    },
+    
+    // API Endpoints
+    ENDPOINTS: {
+        // Authentication
+        LOGIN: '?action=login',
+        GOOGLE_LOGIN: '?action=google_login',
+        REGISTER_USER: '?action=register_user',
+        VERIFY_TOKEN: '?action=verify_token',
+        LOGOUT: '?action=logout',
+        RESET_PASSWORD: '?action=reset_password',
         
-        // Check backend connection
-        this.checkBackend();
-    }
-    
-    initGoogleAuth() {
-        // Load Google Identity Services if not already loaded
-        if (!window.google) {
-            const script = document.createElement('script');
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.defer = true;
-            script.onload = () => this.setupGoogleAuth();
-            document.head.appendChild(script);
-        } else {
-            this.setupGoogleAuth();
-        }
-    }
-    
-    setupGoogleAuth() {
-        try {
-            window.google.accounts.id.initialize({
-                client_id: this.config.GOOGLE_CLIENT_ID,
-                callback: (response) => this.handleGoogleResponse(response),
-                auto_select: false,
-                cancel_on_tap_outside: true,
-                context: 'signin',
-                ux_mode: 'popup',
-                itp_support: true
-            });
-            
-            // Render Google button
-            window.google.accounts.id.renderButton(
-                document.getElementById('googleSignInBtn'),
-                {
-                    type: 'standard',
-                    theme: 'outline',
-                    size: 'large',
-                    text: 'signin_with',
-                    shape: 'rectangular',
-                    logo_alignment: 'left',
-                    width: '100%'
-                }
-            );
-            
-            this.googleInitialized = true;
-            console.log('✅ Google OAuth initialized');
-        } catch (error) {
-            console.error('❌ Failed to initialize Google OAuth:', error);
-        }
-    }
-    
-    async handleGoogleResponse(response) {
-        console.log('Google response received');
+        // Products
+        GET_PRODUCTS: '?action=get_products',
+        GET_PRODUCT_CATEGORIES: '?action=get_product_categories',
+        GET_PRODUCT_SUPPLIERS: '?action=get_product_suppliers',
+        SEARCH_PRODUCTS: '?action=search_products',
+        GET_PRODUCT_DETAILS: '?action=get_product_details',
         
-        try {
-            // Show loading state
-            this.showMessage('Verifying Google account...', 'warning');
-            
-            // Verify the Google token
-            const result = await this.verifyGoogleToken(response.credential);
-            
-            if (result.success) {
-                // Save user session
-                localStorage.setItem('dsog_user', JSON.stringify(result.user));
-                localStorage.setItem('dsog_token', result.token);
-                localStorage.setItem('auth_method', 'google');
-                
-                // Check if this is a new user
-                if (result.isNewUser) {
-                    this.showMessage('Welcome! Please complete your franchise profile.', 'success');
-                    // Redirect to profile setup
-                    setTimeout(() => {
-                        window.location.href = 'profile-setup.html';
-                    }, 2000);
-                } else {
-                    this.showMessage('Login successful! Redirecting...', 'success');
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                }
-            } else {
-                this.showMessage(result.message || 'Google authentication failed', 'error');
-            }
-        } catch (error) {
-            console.error('Google login error:', error);
-            this.showMessage('An error occurred during Google authentication.', 'error');
-        }
-    }
+        // Orders
+        GET_ORDERS: '?action=get_orders',
+        PLACE_ORDER: '?action=place_order',
+        GET_ORDER_HISTORY: '?action=get_order_history',
+        CANCEL_ORDER: '?action=cancel_order',
+        GET_ORDER_STATUS: '?action=get_order_status',
+        
+        // Marketing Materials
+        GET_MATERIALS: '?action=get_marketing_materials',
+        GET_MATERIAL_CATEGORIES: '?action=get_material_categories',
+        DOWNLOAD_MATERIAL: '?action=download_material',
+        
+        // Operational Updates
+        GET_UPDATES: '?action=get_operational_updates',
+        GET_ANNOUNCEMENTS: '?action=get_announcements',
+        GET_NOTIFICATIONS: '?action=get_notifications',
+        
+        // Franchise Management
+        GET_STATS: '?action=get_franchise_stats',
+        GET_PROFILE: '?action=get_franchise_profile',
+        UPDATE_PROFILE: '?action=update_franchise_profile',
+        GET_PERFORMANCE: '?action=get_franchise_performance',
+        GET_COMMISSIONS: '?action=get_commissions',
+        
+        // System
+        CHECK_STATUS: '?action=status',
+        GET_CONFIG: '?action=get_config',
+        LOG_ACTIVITY: '?action=log_activity'
+    },
     
-    async verifyGoogleToken(credential) {
-        try {
-            // Parse JWT to get basic info
-            const payload = this.parseJwt(credential);
-            
-            // Extract email and domain
-            const email = payload.email;
-            const domain = payload.hd; // Hosted domain for G Suite/Workspace
-            
-            // Validate email against whitelist
-            const emailAllowed = this.isEmailAllowed(email, domain);
-            
-            if (!emailAllowed) {
-                return {
-                    success: false,
-                    message: 'Your email is not authorized to access the DSOG Franchise Portal. Please contact support at office.dsog@gmail.com'
-                };
-            }
-            
-            // OPTION 1: Send to backend for verification (RECOMMENDED)
-            try {
-                const backendResponse = await fetch(this.config.GOOGLE_BACKEND_VERIFY_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        token: credential,
-                        clientId: this.config.GOOGLE_CLIENT_ID
-                    })
-                });
-                
-                if (backendResponse.ok) {
-                    const backendData = await backendResponse.json();
-                    return backendData;
-                }
-            } catch (backendError) {
-                console.warn('Backend verification failed, using frontend validation:', backendError);
-            }
-            
-            // OPTION 2: Frontend validation (fallback)
-            // Check if user exists in your system
-            const userExists = await this.checkUserExists(email);
-            
-            return {
-                success: true,
-                user: {
-                    email: email,
-                    name: payload.name || email.split('@')[0],
-                    picture: payload.picture,
-                    domain: domain,
-                    auth_method: 'google'
-                },
-                token: credential,
-                isNewUser: !userExists
-            };
-            
-        } catch (error) {
-            console.error('Token verification error:', error);
-            return {
-                success: false,
-                message: 'Token verification failed'
-            };
-        }
-    }
+    // Application Defaults
+    DEFAULTS: {
+        DEFAULT_SUPPLIER: 'HOG Creations',
+        DEFAULT_CURRENCY: 'KES',
+        DEFAULT_LANGUAGE: 'en',
+        DEFAULT_TIMEZONE: 'Africa/Nairobi',
+        ITEMS_PER_PAGE: 12,
+        AUTO_LOGOUT_MINUTES: 30,
+        SESSION_TIMEOUT_MINUTES: 60
+    },
     
-    parseJwt(token) {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            return JSON.parse(jsonPayload);
-        } catch (error) {
-            console.error('Error parsing JWT:', error);
-            return {};
-        }
-    }
+    // UI Configuration
+    UI: {
+        THEME: 'light', // 'light' or 'dark'
+        PRIMARY_COLOR: '#2c3e50',
+        SECONDARY_COLOR: '#3498db',
+        SUCCESS_COLOR: '#27ae60',
+        WARNING_COLOR: '#f39c12',
+        ERROR_COLOR: '#e74c3c',
+        INFO_COLOR: '#3498db',
+        BORDER_RADIUS: '8px',
+        BOX_SHADOW: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        TRANSITION_SPEED: '0.3s'
+    },
     
-    isEmailAllowed(email, domain) {
-        if (!email) return false;
+    // Feature Flags
+    FEATURES: {
+        ENABLE_GOOGLE_LOGIN: true,
+        ENABLE_EMAIL_LOGIN: true,
+        ENABLE_REGISTRATION: false, // Manual registration by admin only
+        ENABLE_PASSWORD_RESET: true,
+        ENABLE_ORDER_TRACKING: true,
+        ENABLE_REAL_TIME_UPDATES: false,
+        ENABLE_MULTI_LANGUAGE: false,
+        ENABLE_DARK_MODE: true,
+        ENABLE_OFFLINE_MODE: false
+    },
+    
+    // Local Storage Keys
+    STORAGE_KEYS: {
+        USER: 'dsog_user',
+        TOKEN: 'dsog_token',
+        AUTH_METHOD: 'auth_method',
+        SETTINGS: 'dsog_settings',
+        CART: 'dsog_cart',
+        FAVORITES: 'dsog_favorites',
+        LAST_VISIT: 'dsog_last_visit'
+    },
+    
+    // Validation Rules
+    VALIDATION: {
+        EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        PASSWORD_MIN_LENGTH: 8,
+        PHONE_REGEX: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
+        NAME_REGEX: /^[a-zA-Z\s]{2,50}$/
+    },
+    
+    // Error Messages
+    MESSAGES: {
+        LOGIN_FAILED: 'Invalid email or password. Please try again.',
+        GOOGLE_LOGIN_FAILED: 'Google authentication failed. Please try again.',
+        UNAUTHORIZED_EMAIL: 'Your email is not authorized to access the DSOG Franchise Portal. Please contact support.',
+        NETWORK_ERROR: 'Network error. Please check your internet connection and try again.',
+        SERVER_ERROR: 'Server error. Please try again later.',
+        SESSION_EXPIRED: 'Your session has expired. Please login again.',
+        INVALID_TOKEN: 'Invalid authentication token. Please login again.',
+        EMAIL_REQUIRED: 'Email address is required.',
+        PASSWORD_REQUIRED: 'Password is required.',
+        EMAIL_INVALID: 'Please enter a valid email address.',
+        PASSWORD_TOO_SHORT: 'Password must be at least 8 characters long.',
+        ORDER_SUCCESS: 'Order placed successfully!',
+        ORDER_FAILED: 'Failed to place order. Please try again.',
+        UPDATE_SUCCESS: 'Update successful!',
+        UPDATE_FAILED: 'Update failed. Please try again.'
+    },
+    
+    // URLs
+    URLS: {
+        DASHBOARD: 'dashboard.html',
+        LOGIN: 'index.html',
+        PRODUCTS: 'products.html',
+        ORDERS: 'orders.html',
+        MARKETING: 'marketing.html',
+        UPDATES: 'updates.html',
+        PROFILE: 'profile.html',
+        SETTINGS: 'settings.html',
+        HELP: 'help.html',
+        TERMS: 'terms.html',
+        PRIVACY: 'privacy.html',
+        CONTACT: 'contact.html'
+    },
+    
+    // Initialize function
+    init: function() {
+        console.log(`🚀 ${this.APP_NAME} v${this.VERSION} initialized`);
+        console.log(`🏢 ${this.COMPANY_NAME}`);
+        console.log(`🔗 Backend URL: ${this.BACKEND_URL}`);
+        console.log(`📧 Support: ${this.SUPPORT_EMAIL}`);
+        console.log(`📞 Phone: ${this.SUPPORT_PHONE}`);
+        
+        // Set theme from localStorage or default
+        const savedTheme = localStorage.getItem('dsog_theme') || this.UI.THEME;
+        this.setTheme(savedTheme);
+        
+        // Check for Google OAuth configuration
+        if (this.FEATURES.ENABLE_GOOGLE_LOGIN && 
+            this.GOOGLE_OAUTH.CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com') {
+            console.warn('⚠️ Google OAuth Client ID not configured! Google Sign-In will not work.');
+            console.info('ℹ️ Get your Client ID from: https://console.cloud.google.com/');
+        }
+        
+        return this;
+    },
+    
+    // Helper function to set theme
+    setTheme: function(theme) {
+        this.UI.THEME = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('dsog_theme', theme);
+        
+        // Update theme color meta tag
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.content = theme === 'dark' ? '#1a1a1a' : this.UI.PRIMARY_COLOR;
+        }
+        
+        console.log(`🎨 Theme set to: ${theme}`);
+    },
+    
+    // Toggle theme
+    toggleTheme: function() {
+        const newTheme = this.UI.THEME === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
+    },
+    
+    // Check if email is allowed for Google Sign-In
+    isEmailAllowed: function(email) {
+        if (!email || !this.VALIDATION.EMAIL_REGEX.test(email)) {
+            return false;
+        }
         
         const lowerEmail = email.toLowerCase();
+        const domain = lowerEmail.split('@')[1];
         
         // Check specific emails
-        if (this.config.ALLOWED_EMAILS.some(allowed => 
+        if (this.GOOGLE_OAUTH.ALLOWED_EMAILS.some(allowed => 
             allowed.toLowerCase() === lowerEmail)) {
             return true;
         }
         
         // Check domains
-        if (domain && this.config.ALLOWED_DOMAINS.some(allowed => 
-            domain.toLowerCase() === allowed.toLowerCase())) {
-            return true;
-        }
-        
-        // Check email domain from email string
-        const emailDomain = lowerEmail.split('@')[1];
-        if (emailDomain && this.config.ALLOWED_DOMAINS.some(allowed => 
-            emailDomain === allowed.toLowerCase())) {
+        if (domain && this.GOOGLE_OAUTH.ALLOWED_DOMAINS.some(allowed => 
+            domain === allowed.toLowerCase())) {
             return true;
         }
         
         return false;
-    }
+    },
     
-    async checkUserExists(email) {
-        try {
-            // Call your backend to check if user exists
-            const response = await fetch(getApiUrl('CHECK_USER', { email }));
-            const data = await response.json();
-            return data.exists || false;
-        } catch (error) {
-            console.error('Error checking user:', error);
-            return false;
-        }
-    }
-    
-    async checkBackend() {
-        try {
-            const response = await fetch(getApiUrl('status'));
-            const data = await response.json();
-            
-            if (data.success) {
-                console.log('✅ Backend connected:', data.message);
-            } else {
-                console.warn('⚠️ Backend issue:', data.message);
-            }
-        } catch (error) {
-            console.error('❌ Cannot connect to backend:', error);
-            this.showMessage('Cannot connect to server. Please check your internet connection.', 'error');
-        }
-    }
-    
-    async login() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+    // Get user's default dashboard URL based on role
+    getDashboardUrl: function(userRole = 'franchise') {
+        const roleUrls = {
+            'admin': 'admin-dashboard.html',
+            'supervisor': 'supervisor-dashboard.html',
+            'franchise': 'dashboard.html',
+            'supplier': 'supplier-dashboard.html'
+        };
         
-        if (!email || !password) {
-            this.showMessage('Please enter both email and password', 'error');
-            return;
-        }
-        
-        const btn = document.getElementById('loginBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-        btn.disabled = true;
-        
-        try {
-            const response = await fetch(getApiUrl('LOGIN', { email, password }));
-            const data = await response.json();
-            
-            if (data.success) {
-                // Save user session
-                localStorage.setItem('dsog_user', JSON.stringify(data.user));
-                localStorage.setItem('dsog_token', data.token);
-                localStorage.setItem('auth_method', 'email');
-                
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            } else {
-                this.showMessage(data.message || 'Login failed', 'error');
-            }
-        } catch (error) {
-            this.showMessage('Network error. Please try again.', 'error');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
+        return roleUrls[userRole] || this.URLS.DASHBOARD;
+    },
     
-    checkSession() {
-        const user = localStorage.getItem('dsog_user');
-        const token = localStorage.getItem('dsog_token');
-        
-        if (user && token) {
-            this.currentUser = JSON.parse(user);
-            
-            // If on login page but logged in, redirect to dashboard
-            if (window.location.pathname.endsWith('index.html') || 
-                window.location.pathname.endsWith('/')) {
-                window.location.href = 'dashboard.html';
-            }
-        } else {
-            // If not on login page but not logged in, redirect to login
-            if (!window.location.pathname.endsWith('index.html') && 
-                !window.location.pathname.endsWith('/')) {
-                window.location.href = 'index.html';
-            }
-        }
-    }
-    
-    logout() {
-        // If user logged in with Google, also sign out from Google
-        const authMethod = localStorage.getItem('auth_method');
-        if (authMethod === 'google' && window.google && this.googleInitialized) {
-            window.google.accounts.id.disableAutoSelect();
-            window.google.accounts.id.revoke(localStorage.getItem('dsog_token'), done => {
-                console.log('Google session revoked');
-            });
-        }
-        
-        // Clear local storage
-        localStorage.removeItem('dsog_user');
-        localStorage.removeItem('dsog_token');
-        localStorage.removeItem('auth_method');
-        
-        // Redirect to login
-        window.location.href = 'index.html';
-    }
-    
-    async getProducts(category = null, supplier = null) {
-        try {
-            const params = {};
-            if (category) params.category = category;
-            if (supplier) params.supplier = supplier;
-            
-            const response = await fetch(getApiUrl('GET_PRODUCTS', params));
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    async searchProducts(query) {
-        try {
-            const response = await fetch(getApiUrl('SEARCH_PRODUCTS', { query }));
-            return await response.json();
-        } catch (error) {
-            console.error('Error searching products:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    async placeOrder(orderData) {
-        try {
-            const response = await fetch(getApiUrl('PLACE_ORDER', orderData));
-            return await response.json();
-        } catch (error) {
-            console.error('Error placing order:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    async getMarketingMaterials(category = null) {
-        try {
-            const params = {};
-            if (category) params.category = category;
-            
-            const response = await fetch(getApiUrl('GET_MATERIALS', params));
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching materials:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    async getOperationalUpdates() {
-        try {
-            const response = await fetch(getApiUrl('GET_UPDATES'));
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching updates:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    async getFranchiseStats(franchiseId) {
-        try {
-            const response = await fetch(getApiUrl('GET_STATS', { franchise_id: franchiseId }));
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-            return { success: false, message: 'Network error' };
-        }
-    }
-    
-    showMessage(message, type = 'info') {
-        const messageDiv = document.getElementById('loginMessage') || 
-                          document.getElementById('message') || 
-                          document.createElement('div');
-        
-        messageDiv.className = `message message-${type}`;
-        messageDiv.innerHTML = `
-            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 
-                              type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-            ${message}
-        `;
-        messageDiv.style.display = 'block';
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 5000);
-    }
-    
-    initEventListeners() {
-        // Global keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + K for search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-            
-            // Escape to close modals
-            if (e.key === 'Escape') {
-                const modals = document.querySelectorAll('.modal.show');
-                modals.forEach(modal => {
-                    modal.classList.remove('show');
-                });
-            }
+    // Format currency
+    formatCurrency: function(amount, currency = this.DEFAULTS.DEFAULT_CURRENCY) {
+        const formatter = new Intl.NumberFormat('en-KE', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
         });
         
-        // Listen for Enter key in login form
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && 
-                (document.getElementById('email') || 
-                 document.getElementById('password'))) {
-                const activeElement = document.activeElement;
-                if (activeElement.id === 'email' || activeElement.id === 'password') {
-                    this.login();
-                }
+        return formatter.format(amount);
+    },
+    
+    // Format date
+    formatDate: function(date, format = 'medium') {
+        const dateObj = date instanceof Date ? date : new Date(date);
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        
+        return dateObj.toLocaleDateString('en-KE', options);
+    },
+    
+    // Get API URL with parameters
+    getApiUrl: function(action, params = {}) {
+        // Check if endpoint exists
+        if (!this.ENDPOINTS[action]) {
+            console.error(`Endpoint "${action}" not found in CONFIG.ENDPOINTS`);
+            return `${this.BACKEND_URL}?action=${action}`;
+        }
+        
+        let url = `${this.BACKEND_URL}${this.ENDPOINTS[action]}`;
+        
+        // Add parameters
+        const paramString = Object.keys(params)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+            .join('&');
+        
+        if (paramString) {
+            url += (url.includes('?') ? '&' : '?') + paramString;
+        }
+        
+        return url;
+    },
+    
+    // Get authentication headers
+    getAuthHeaders: function() {
+        const token = localStorage.getItem(this.STORAGE_KEYS.TOKEN);
+        
+        if (!token) {
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+        
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    },
+    
+    // Validate form data
+    validateForm: function(formData, rules) {
+        const errors = {};
+        
+        for (const [field, value] of Object.entries(formData)) {
+            if (rules[field] && rules[field].required && !value) {
+                errors[field] = `${field} is required`;
             }
-        });
+            
+            if (field === 'email' && value && !this.VALIDATION.EMAIL_REGEX.test(value)) {
+                errors[field] = 'Please enter a valid email address';
+            }
+            
+            if (field === 'password' && value && value.length < this.VALIDATION.PASSWORD_MIN_LENGTH) {
+                errors[field] = `Password must be at least ${this.VALIDATION.PASSWORD_MIN_LENGTH} characters`;
+            }
+            
+            if (field === 'phone' && value && !this.VALIDATION.PHONE_REGEX.test(value)) {
+                errors[field] = 'Please enter a valid phone number';
+            }
+        }
+        
+        return {
+            isValid: Object.keys(errors).length === 0,
+            errors: errors
+        };
     }
+};
+
+// Initialize configuration
+const Config = CONFIG.init();
+
+// Global helper function for backward compatibility
+function getApiUrl(action, params = {}) {
+    return Config.getApiUrl(action, params);
 }
 
-// Initialize frontend application
-const app = new DSOGFrontend();
-
-// Global functions for HTML onclick handlers
-function login() {
-    app.login();
-}
-
-function logout() {
-    app.logout();
-}
-
-function showRegister() {
-    app.showMessage('Contact DSOG at 0733 737 983 to apply for a franchise', 'info');
-}
-
-function showForgotPassword() {
-    app.showMessage('Contact support at office.dsog@gmail.com for password reset', 'info');
-}
-
-// Google OAuth function
-function signInWithGoogle() {
-    if (window.google && app.googleInitialized) {
-        window.google.accounts.id.prompt();
-    } else {
-        app.showMessage('Google Sign-In is not available. Please try the email login.', 'error');
-    }
+// Export for module usage (if using ES6 modules)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Config;
 }
