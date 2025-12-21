@@ -1,7 +1,7 @@
 // DSOG Franchise Platform Configuration
 const CONFIG = {
     // Google Apps Script Web App URL (Update this after deployment)
-    BACKEND_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+    BACKEND_URL: 'https://script.google.com/macros/s/AKfycbw3SPyamG2Spa3SK9mGYaLOWcMFZOxyDJt-NYEFZNSDxbxLQF3BD_caZbK6kY4Sly-P/exec',
     
     // Application Settings
     APP_NAME: 'DSOG Franchise Platform',
@@ -13,7 +13,7 @@ const CONFIG = {
     // Google OAuth Configuration
     GOOGLE_OAUTH: {
         // REPLACE with your actual Google Client ID from Google Cloud Console
-        CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+        CLIENT_ID: '369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com',
         
         // Allowed email addresses for Google Sign-In
         ALLOWED_EMAILS: [
