@@ -8,23 +8,6 @@ class DSOGFrontend {
     }
     
     init() {
-        // Configuration for Google OAuth
-        this.config = {
-            GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com',
-            ALLOWED_EMAILS: [
-                'admin@dsog.com',
-                'franchise@dsog.com',
-                'partner@dsog.com'
-                // Add more allowed emails here
-            ],
-            ALLOWED_DOMAINS: [
-                'dsog.com',
-                'dsogfranchise.com'
-                // Add allowed domains here
-            ],
-            GOOGLE_BACKEND_VERIFY_URL: 'https://your-backend.com/api/verify-google-token'
-        };
-        
         // Check for existing session
         this.checkSession();
         
@@ -39,44 +22,67 @@ class DSOGFrontend {
     }
     
     initGoogleAuth() {
-        // Load Google Identity Services if not already loaded
-        if (!window.google) {
-            const script = document.createElement('script');
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.defer = true;
-            script.onload = () => this.setupGoogleAuth();
-            document.head.appendChild(script);
-        } else {
-            this.setupGoogleAuth();
+        // Only initialize Google OAuth on login page
+        if (window.location.pathname.endsWith('index.html') || 
+            window.location.pathname.endsWith('/')) {
+            
+            // Configuration for Google OAuth
+            this.googleConfig = {
+                GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                ALLOWED_EMAILS: [
+                    'admin@dsog.com',
+                    'franchise@dsog.com',
+                    'partner@dsog.com',
+                    'office.dsog@gmail.com'
+                    // Add more allowed emails here
+                ],
+                ALLOWED_DOMAINS: [
+                    'dsog.com',
+                    'gmail.com'  // Add your allowed domains
+                ]
+            };
+            
+            // Load Google Identity Services if not already loaded
+            if (!window.google) {
+                const script = document.createElement('script');
+                script.src = 'https://accounts.google.com/gsi/client';
+                script.async = true;
+                script.defer = true;
+                script.onload = () => this.setupGoogleAuth();
+                document.head.appendChild(script);
+            } else {
+                this.setupGoogleAuth();
+            }
         }
     }
     
     setupGoogleAuth() {
         try {
             window.google.accounts.id.initialize({
-                client_id: this.config.GOOGLE_CLIENT_ID,
+                client_id: this.googleConfig.GOOGLE_CLIENT_ID,
                 callback: (response) => this.handleGoogleResponse(response),
                 auto_select: false,
                 cancel_on_tap_outside: true,
                 context: 'signin',
-                ux_mode: 'popup',
-                itp_support: true
+                ux_mode: 'popup'
             });
             
-            // Render Google button
-            window.google.accounts.id.renderButton(
-                document.getElementById('googleSignInBtn'),
-                {
-                    type: 'standard',
-                    theme: 'outline',
-                    size: 'large',
-                    text: 'signin_with',
-                    shape: 'rectangular',
-                    logo_alignment: 'left',
-                    width: '100%'
-                }
-            );
+            // Render Google button if container exists
+            const googleButtonContainer = document.getElementById('googleSignInBtn');
+            if (googleButtonContainer) {
+                window.google.accounts.id.renderButton(
+                    googleButtonContainer,
+                    {
+                        type: 'standard',
+                        theme: 'outline',
+                        size: 'large',
+                        text: 'signin_with',
+                        shape: 'rectangular',
+                        logo_alignment: 'left',
+                        width: '100%'
+                    }
+                );
+            }
             
             this.googleInitialized = true;
             console.log('✅ Google OAuth initialized');
@@ -92,101 +98,43 @@ class DSOGFrontend {
             // Show loading state
             this.showMessage('Verifying Google account...', 'warning');
             
-            // Verify the Google token
-            const result = await this.verifyGoogleToken(response.credential);
+            // Parse the JWT token
+            const payload = this.parseJwt(response.credential);
+            const email = payload.email;
+            const domain = payload.hd || email.split('@')[1];
+            
+            // Validate email against whitelist
+            if (!this.isEmailAllowed(email, domain)) {
+                this.showMessage(
+                    'Your email is not authorized to access the DSOG Franchise Portal. ' +
+                    'Please contact support at office.dsog@gmail.com or use email/password login if you have credentials.',
+                    'error'
+                );
+                return;
+            }
+            
+            // Send to your backend for authentication
+            const result = await this.authenticateWithGoogle(response.credential, email);
             
             if (result.success) {
                 // Save user session
                 localStorage.setItem('dsog_user', JSON.stringify(result.user));
-                localStorage.setItem('dsog_token', result.token);
+                localStorage.setItem('dsog_token', result.token || response.credential);
                 localStorage.setItem('auth_method', 'google');
                 
-                // Check if this is a new user
-                if (result.isNewUser) {
-                    this.showMessage('Welcome! Please complete your franchise profile.', 'success');
-                    // Redirect to profile setup
-                    setTimeout(() => {
-                        window.location.href = 'profile-setup.html';
-                    }, 2000);
-                } else {
-                    this.showMessage('Login successful! Redirecting...', 'success');
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                }
+                this.showMessage('Login successful! Redirecting...', 'success');
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
             } else {
-                this.showMessage(result.message || 'Google authentication failed', 'error');
+                this.showMessage(result.message || 'Authentication failed', 'error');
             }
+            
         } catch (error) {
             console.error('Google login error:', error);
             this.showMessage('An error occurred during Google authentication.', 'error');
-        }
-    }
-    
-    async verifyGoogleToken(credential) {
-        try {
-            // Parse JWT to get basic info
-            const payload = this.parseJwt(credential);
-            
-            // Extract email and domain
-            const email = payload.email;
-            const domain = payload.hd; // Hosted domain for G Suite/Workspace
-            
-            // Validate email against whitelist
-            const emailAllowed = this.isEmailAllowed(email, domain);
-            
-            if (!emailAllowed) {
-                return {
-                    success: false,
-                    message: 'Your email is not authorized to access the DSOG Franchise Portal. Please contact support at office.dsog@gmail.com'
-                };
-            }
-            
-            // OPTION 1: Send to backend for verification (RECOMMENDED)
-            try {
-                const backendResponse = await fetch(this.config.GOOGLE_BACKEND_VERIFY_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        token: credential,
-                        clientId: this.config.GOOGLE_CLIENT_ID
-                    })
-                });
-                
-                if (backendResponse.ok) {
-                    const backendData = await backendResponse.json();
-                    return backendData;
-                }
-            } catch (backendError) {
-                console.warn('Backend verification failed, using frontend validation:', backendError);
-            }
-            
-            // OPTION 2: Frontend validation (fallback)
-            // Check if user exists in your system
-            const userExists = await this.checkUserExists(email);
-            
-            return {
-                success: true,
-                user: {
-                    email: email,
-                    name: payload.name || email.split('@')[0],
-                    picture: payload.picture,
-                    domain: domain,
-                    auth_method: 'google'
-                },
-                token: credential,
-                isNewUser: !userExists
-            };
-            
-        } catch (error) {
-            console.error('Token verification error:', error);
-            return {
-                success: false,
-                message: 'Token verification failed'
-            };
         }
     }
     
@@ -211,20 +159,20 @@ class DSOGFrontend {
         const lowerEmail = email.toLowerCase();
         
         // Check specific emails
-        if (this.config.ALLOWED_EMAILS.some(allowed => 
+        if (this.googleConfig.ALLOWED_EMAILS.some(allowed => 
             allowed.toLowerCase() === lowerEmail)) {
             return true;
         }
         
         // Check domains
-        if (domain && this.config.ALLOWED_DOMAINS.some(allowed => 
+        if (domain && this.googleConfig.ALLOWED_DOMAINS.some(allowed => 
             domain.toLowerCase() === allowed.toLowerCase())) {
             return true;
         }
         
         // Check email domain from email string
         const emailDomain = lowerEmail.split('@')[1];
-        if (emailDomain && this.config.ALLOWED_DOMAINS.some(allowed => 
+        if (emailDomain && this.googleConfig.ALLOWED_DOMAINS.some(allowed => 
             emailDomain === allowed.toLowerCase())) {
             return true;
         }
@@ -232,15 +180,77 @@ class DSOGFrontend {
         return false;
     }
     
-    async checkUserExists(email) {
+    async authenticateWithGoogle(token, email) {
         try {
-            // Call your backend to check if user exists
-            const response = await fetch(getApiUrl('CHECK_USER', { email }));
+            // Call your Google Apps Script backend
+            const response = await fetch(getApiUrl('GOOGLE_LOGIN', { 
+                token: token,
+                email: email 
+            }));
+            
             const data = await response.json();
-            return data.exists || false;
+            
+            if (data.success) {
+                return {
+                    success: true,
+                    user: data.user,
+                    token: data.token
+                };
+            } else {
+                // If user doesn't exist in backend, check if we should create account
+                if (data.message && data.message.includes('not found')) {
+                    return await this.registerGoogleUser(email, token);
+                }
+                return data;
+            }
+            
         } catch (error) {
-            console.error('Error checking user:', error);
-            return false;
+            console.error('Backend authentication error:', error);
+            
+            // Fallback: create minimal user session
+            return {
+                success: true,
+                user: {
+                    email: email,
+                    name: email.split('@')[0],
+                    auth_method: 'google'
+                }
+            };
+        }
+    }
+    
+    async registerGoogleUser(email, token) {
+        try {
+            // Call backend to register user
+            const response = await fetch(getApiUrl('REGISTER_USER', {
+                email: email,
+                name: email.split('@')[0],
+                auth_method: 'google',
+                token: token
+            }));
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showMessage('New account created. Welcome to DSOG Franchise Portal!', 'success');
+                return {
+                    success: true,
+                    user: data.user,
+                    token: data.token
+                };
+            } else {
+                return {
+                    success: false,
+                    message: 'Failed to create account. Please contact support.'
+                };
+            }
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            return {
+                success: false,
+                message: 'Registration failed. Please try again later.'
+            };
         }
     }
     
@@ -442,15 +452,15 @@ class DSOGFrontend {
                     modal.classList.remove('show');
                 });
             }
-        });
-        
-        // Listen for Enter key in login form
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && 
-                (document.getElementById('email') || 
-                 document.getElementById('password'))) {
-                const activeElement = document.activeElement;
-                if (activeElement.id === 'email' || activeElement.id === 'password') {
+            
+            // Enter key in login form
+            if (e.key === 'Enter') {
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+                
+                if (emailInput && document.activeElement === emailInput) {
+                    passwordInput.focus();
+                } else if (passwordInput && document.activeElement === passwordInput) {
                     this.login();
                 }
             }
