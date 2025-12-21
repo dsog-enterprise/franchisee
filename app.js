@@ -28,9 +28,9 @@ class DSOGFrontend {
             
             // Configuration for Google OAuth
             this.googleConfig = {
-                GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                GOOGLE_CLIENT_ID: '369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com',
                 ALLOWED_EMAILS: [
-                    'admin@dsog.com',
+                    'office.dsog@gmail.com',
                     'franchise@dsog.com',
                     'partner@dsog.com',
                     'office.dsog@gmail.com'
