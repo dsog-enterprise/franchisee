@@ -3,697 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSOG Franchise Dashboard</title>
+    <title>DSOG Franchise Portal - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png">
+    <!-- Load Google Identity Services library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-left">
-            <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Logo" height="35">
-            <span class="brand-name">DSOG Franchise Portal</span>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Logo" class="logo">
+            <h1>DSOG Franchise Portal</h1>
+            <p>Access your online fashion franchise dashboard</p>
         </div>
         
-        <div class="user-info">
-            <div class="user-avatar" id="userAvatar">JD</div>
-            <div class="user-details">
-                <div class="user-name" id="userName">John Doe</div>
-                <div class="user-role" id="userRole">Franchise Owner</div>
+        <div class="login-form">
+            <div id="loginMessage" class="message"></div>
+            
+            <!-- Google Sign-in Only Section -->
+            <div class="google-only-section">
+                <h3>Sign in to Continue</h3>
+                <p>Please use your authorized Google account to access the franchise portal</p>
+                
+                <!-- Google Sign-in Button Container -->
+                <div id="g_id_onload"
+                     data-client_id="369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleResponse"
+                     data-auto_prompt="false"
+                     data-auto_select="true">
+                </div>
+
+                <div class="google-login-section">
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left"
+                         data-width="300">
+                    </div>
+                </div>
+                
+                <div class="login-info">
+                    <p><i class="fas fa-info-circle"></i> Only authorized DSOG franchise partner accounts can access this portal.</p>
+                    <p><i class="fas fa-envelope"></i> For access issues, contact: <strong>office.dsog@gmail.com</strong></p>
+                    <p><i class="fas fa-phone"></i> Call support: <strong>0733 737 983</strong></p>
+                </div>
             </div>
-            <button class="btn btn-outline" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
         </div>
-    </header>
-
-    <!-- Main Layout -->
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="sidebar-nav">
-                <ul>
-                    <li>
-                        <a href="#" class="active" onclick="showSection('dashboard')">
-                            <i class="fas fa-home"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('products')">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Product Ordering</span>
-                            <span class="badge" id="productsBadge">12</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('orders')">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>My Orders</span>
-                            <span class="badge badge-warning" id="pendingOrdersBadge">3</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('inventory')">
-                            <i class="fas fa-boxes"></i>
-                            <span>Inventory</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('resources')">
-                            <i class="fas fa-file-alt"></i>
-                            <span>Marketing Materials</span>
-                            <span class="badge" id="materialsBadge">8</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('updates')">
-                            <i class="fas fa-bullhorn"></i>
-                            <span>Operational Updates</span>
-                            <span class="badge badge-danger" id="updatesBadge">2</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('delivery')">
-                            <i class="fas fa-truck"></i>
-                            <span>Delivery Partners</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="showSection('support')">
-                            <i class="fas fa-headset"></i>
-                            <span>Support</span>
-                        </a>
-                    </li>
-                </ul>
-                
-                <div class="sidebar-footer">
-                    <div class="franchise-info">
-                        <div class="franchise-code" id="franchiseCode">FR-001</div>
-                        <small>Your Franchise Code</small>
-                    </div>
-                    <div class="help-section">
-                        <a href="tel:0733737983" class="help-link">
-                            <i class="fas fa-phone"></i> 0733 737 983
-                        </a>
-                        <a href="mailto:office.dsog@gmail.com" class="help-link">
-                            <i class="fas fa-envelope"></i> Email Support
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Welcome Section -->
-            <div class="card welcome-card">
-                <div class="welcome-content">
-                    <h1>Welcome back, <span id="welcomeName">John</span>!</h1>
-                    <p>Your DSOG online fashion franchise dashboard. Manage orders, access marketing materials, and grow your business.</p>
-                    <div class="quick-stats">
-                        <div class="quick-stat">
-                            <i class="fas fa-shopping-cart"></i>
-                            <div>
-                                <div class="stat-number" id="todayOrders">0</div>
-                                <div class="stat-label">Today's Orders</div>
-                            </div>
-                        </div>
-                        <div class="quick-stat">
-                            <i class="fas fa-chart-line"></i>
-                            <div>
-                                <div class="stat-number" id="monthRevenue">KES 0</div>
-                                <div class="stat-label">This Month</div>
-                            </div>
-                        </div>
-                        <div class="quick-stat">
-                            <i class="fas fa-box"></i>
-                            <div>
-                                <div class="stat-number" id="availableProducts">0</div>
-                                <div class="stat-label">Available Products</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="welcome-image">
-                    <img src="https://i.postimg.cc/c4zFGFxn/COLLECTIONS-removebg-preview.png" alt="HOG Creations">
-                </div>
-            </div>
-
-            <!-- Dashboard Section -->
-            <div id="dashboardSection" class="content-section active">
-                <div class="section-header">
-                    <h2><i class="fas fa-tachometer-alt"></i> Performance Dashboard</h2>
-                    <div class="date-range">
-                        <select id="periodSelect" onchange="loadDashboardData()">
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month" selected>This Month</option>
-                            <option value="quarter">This Quarter</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="stat-value" id="totalOrders">0</div>
-                        <div class="stat-label">Total Orders</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <div class="stat-value" id="totalRevenue">KES 0</div>
-                        <div class="stat-label">Total Revenue</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-value" id="totalCustomers">0</div>
-                        <div class="stat-label">Customers</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <div class="stat-value" id="conversionRate">0%</div>
-                        <div class="stat-label">Conversion Rate</div>
-                    </div>
-                </div>
-
-                <!-- Recent Orders -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-history"></i> Recent Orders</h3>
-                        <button class="btn btn-sm" onclick="showSection('orders')">
-                            View All <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table" id="recentOrdersTable">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <tr>
-                                    <td colspan="5" class="text-center">
-                                        <div class="spinner"></div>
-                                        <p>Loading orders...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Top Products -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-star"></i> Popular Products</h3>
-                        <button class="btn btn-sm" onclick="showSection('products')">
-                            Browse All <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                    <div class="products-grid" id="topProductsGrid">
-                        <div class="text-center" style="grid-column: 1 / -1; padding: 2rem;">
-                            <div class="spinner"></div>
-                            <p>Loading products...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Products Section -->
-            <div id="productsSection" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-shopping-cart"></i> Product Ordering</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="productSearch" placeholder="Search HOG Creations products..." onkeypress="if(event.key=='Enter') searchProducts()">
-                        <button class="btn btn-sm" onclick="searchProducts()">Search</button>
-                    </div>
-                </div>
-                
-                <div class="products-filters">
-                    <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
-                    <button class="filter-btn" onclick="filterProducts('Clothing')">Clothing</button>
-                    <button class="filter-btn" onclick="filterProducts('Accessories')">Accessories</button>
-                    <button class="filter-btn" onclick="filterProducts('Footwear')">Footwear</button>
-                    <div class="sort-dropdown">
-                        <select id="sortProducts" onchange="sortProducts()">
-                            <option value="name">Sort by Name</option>
-                            <option value="price_low">Price: Low to High</option>
-                            <option value="price_high">Price: High to Low</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="products-grid" id="productsGrid">
-                    <!-- Products loaded here -->
-                </div>
-                
-                <!-- Order Modal -->
-                <div id="orderModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close-modal" onclick="closeModal()">&times;</span>
-                        <h3>Place New Order</h3>
-                        <form id="orderForm" onsubmit="placeOrder(event)">
-                            <div class="form-group">
-                                <label>Customer Name *</label>
-                                <input type="text" id="customerName" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone Number *</label>
-                                <input type="tel" id="customerPhone" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Delivery Address *</label>
-                                <textarea id="deliveryAddress" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Payment Method</label>
-                                <select id="paymentMethod">
-                                    <option value="cash">Cash on Delivery</option>
-                                    <option value="mpesa">M-Pesa</option>
-                                </select>
-                            </div>
-                            <div id="orderItems">
-                                <h4>Order Items</h4>
-                                <!-- Items added here -->
-                            </div>
-                            <div class="order-summary">
-                                <h4>Total: <span id="orderTotal">KES 0</span></h4>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Place Order</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Orders Section -->
-            <div id="ordersSection" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-clipboard-list"></i> Order Management</h2>
-                    <button class="btn" onclick="showNewOrderForm()">
-                        <i class="fas fa-plus"></i> New Order
-                    </button>
-                </div>
-                
-                <div class="orders-filters">
-                    <button class="filter-btn active" onclick="filterOrders('all')">All Orders</button>
-                    <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
-                    <button class="filter-btn" onclick="filterOrders('processing')">Processing</button>
-                    <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
-                </div>
-                
-                <div class="orders-list" id="ordersList">
-                    <!-- Orders loaded here -->
-                </div>
-            </div>
-
-            <!-- Resources Section -->
-            <div id="resourcesSection" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-file-alt"></i> Marketing Materials</h2>
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search materials...">
-                    </div>
-                </div>
-                
-                <div class="resources-grid" id="materialsGrid">
-                    <!-- Materials loaded here -->
-                </div>
-            </div>
-
-            <!-- Updates Section -->
-            <div id="updatesSection" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-bullhorn"></i> Operational Updates</h2>
-                </div>
-                
-                <div class="updates-list" id="updatesList">
-                    <!-- Updates loaded here -->
-                </div>
-            </div>
-
-            <!-- Support Section -->
-            <div id="supportSection" class="content-section">
-                <div class="card">
-                    <h2><i class="fas fa-headset"></i> DSOG Support Center</h2>
-                    <div class="support-grid">
-                        <div class="support-card">
-                            <i class="fas fa-phone"></i>
-                            <h3>Phone Support</h3>
-                            <p>Call us for immediate assistance</p>
-                            <a href="tel:0733737983" class="btn btn-primary">Call: 0733 737 983</a>
-                        </div>
-                        <div class="support-card">
-                            <i class="fab fa-whatsapp"></i>
-                            <h3>WhatsApp Business</h3>
-                            <p>Chat with our support team</p>
-                            <a href="https://wa.me/254733737983" target="_blank" class="btn btn-success">
-                                <i class="fab fa-whatsapp"></i> WhatsApp
-                            </a>
-                        </div>
-                        <div class="support-card">
-                            <i class="fas fa-envelope"></i>
-                            <h3>Email Support</h3>
-                            <p>Send detailed inquiries</p>
-                            <a href="mailto:office.dsog@gmail.com" class="btn btn-outline">Email Us</a>
-                        </div>
-                        <div class="support-card">
-                            <i class="fas fa-clock"></i>
-                            <h3>Business Hours</h3>
-                            <p>Monday - Saturday</p>
-                            <p>8:00 AM - 7:00 PM</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 
+    <!-- Add config file -->
     <script src="config.js"></script>
+    <!-- Add main app with Google OAuth logic -->
     <script src="app.js"></script>
     <script>
-        // Dashboard functionality
-        let currentProducts = [];
-        let currentCategory = 'all';
+        // Handle Google OAuth response
+        async function handleGoogleResponse(response) {
+            const messageDiv = document.getElementById('loginMessage');
+            try {
+                // Decode JWT token
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
+                const userData = JSON.parse(jsonPayload);
+                
+                // Show success message
+                messageDiv.className = 'message message-success';
+                messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> Welcome ${userData.name}! Redirecting to dashboard...`;
+                messageDiv.style.display = 'block';
+                
+                // Store user data
+                localStorage.setItem('dsog_user', JSON.stringify({
+                    name: userData.name,
+                    email: userData.email,
+                    picture: userData.picture,
+                    franchise_code: 'FR-' + userData.sub.slice(0, 8).toUpperCase(),
+                    role: 'franchise_owner'
+                }));
+                
+                localStorage.setItem('dsog_token', response.credential);
+                localStorage.setItem('auth_method', 'google');
+                
+                // Redirect to dashboard after 1 second
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Google auth error:', error);
+                messageDiv.className = 'message message-error';
+                messageDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Authentication failed. Please try again.`;
+                messageDiv.style.display = 'block';
+            }
+        }
         
+        // Auto-redirect if already logged in
         document.addEventListener('DOMContentLoaded', function() {
-            loadUserInfo();
-            loadDashboardData();
-            loadProducts();
+            const user = localStorage.getItem('dsog_user');
+            const token = localStorage.getItem('dsog_token');
             
-            // Check for messages in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const message = urlParams.get('message');
-            if (message) {
-                showMessage(decodeURIComponent(message), 'success');
+            if (user && token) {
+                // Already logged in, redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
             }
         });
-        
-        function loadUserInfo() {
-            const user = JSON.parse(localStorage.getItem('dsog_user') || '{}');
-            if (user.name) {
-                document.getElementById('userName').textContent = user.name;
-                document.getElementById('userRole').textContent = user.role || 'Franchise Owner';
-                document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
-                document.getElementById('franchiseCode').textContent = user.franchise_code || 'FR-001';
-                
-                // Set avatar initials
-                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                document.getElementById('userAvatar').textContent = initials;
-            }
-        }
-        
-        async function loadDashboardData() {
-            const user = JSON.parse(localStorage.getItem('dsog_user') || '{}');
-            if (!user.franchise_code) return;
-            
-            try {
-                const stats = await app.getFranchiseStats(user.franchise_code);
-                if (stats.success) {
-                    updateStats(stats.stats);
-                }
-            } catch (error) {
-                console.error('Error loading stats:', error);
-            }
-        }
-        
-        function updateStats(stats) {
-            document.getElementById('totalOrders').textContent = stats.total_orders || 0;
-            document.getElementById('totalRevenue').textContent = 'KES ' + (stats.total_revenue || 0).toLocaleString();
-            document.getElementById('todayOrders').textContent = stats.pending_orders || 0;
-            document.getElementById('monthRevenue').textContent = 'KES ' + (stats.total_revenue || 0).toLocaleString();
-            
-            // Update pending orders badge
-            const badge = document.getElementById('pendingOrdersBadge');
-            if (badge && stats.pending_orders > 0) {
-                badge.textContent = stats.pending_orders;
-            }
-        }
-        
-        async function loadProducts() {
-            showLoading('productsGrid');
-            
-            try {
-                const result = await app.getProducts();
-                if (result.success) {
-                    currentProducts = result.products;
-                    displayProducts(currentProducts);
-                    document.getElementById('availableProducts').textContent = result.products.length;
-                    document.getElementById('productsBadge').textContent = result.products.length;
-                }
-            } catch (error) {
-                console.error('Error loading products:', error);
-                document.getElementById('productsGrid').innerHTML = '<div class="error">Failed to load products</div>';
-            }
-        }
-        
-        function displayProducts(products) {
-            const grid = document.getElementById('productsGrid');
-            if (!grid) return;
-            
-            if (products.length === 0) {
-                grid.innerHTML = '<div class="empty-state">No products found</div>';
-                return;
-            }
-            
-            grid.innerHTML = products.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.image_url ? 
-                            `<img src="${product.image_url}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=HOG+Product'">` : 
-                            `<div class="product-icon"><i class="fas fa-tshirt"></i></div>`
-                        }
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${product.name}</h3>
-                        <div class="product-category">${product.category}</div>
-                        <div class="product-price">KES ${product.price.toLocaleString()}</div>
-                        <div class="product-supplier">${product.supplier || 'HOG Creations'}</div>
-                        <div class="product-stock ${product.stock > 10 ? 'in-stock' : 'low-stock'}">
-                            ${product.stock > 10 ? '✓ In Stock' : `${product.stock} left`}
-                        </div>
-                        <button class="btn btn-sm" onclick="addToOrder('${product.product_id}')">
-                            <i class="fas fa-cart-plus"></i> Add to Order
-                        </button>
-                        <button class="btn btn-sm btn-outline" onclick="viewProductDetails('${product.product_id}')">
-                            <i class="fas fa-info-circle"></i> Details
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        function showLoading(elementId) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
-            }
-        }
-        
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remove active from all nav links
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Show selected section
-            const section = document.getElementById(sectionName + 'Section');
-            if (section) {
-                section.classList.add('active');
-            }
-            
-            // Set active nav link
-            const navLink = document.querySelector(`a[onclick*="${sectionName}"]`);
-            if (navLink) {
-                navLink.classList.add('active');
-            }
-            
-            // Load section data
-            switch(sectionName) {
-                case 'products':
-                    loadProducts();
-                    break;
-                case 'orders':
-                    loadUserOrders();
-                    break;
-                case 'resources':
-                    loadMarketingMaterials();
-                    break;
-                case 'updates':
-                    loadOperationalUpdates();
-                    break;
-            }
-        }
-        
-        function filterProducts(category) {
-            currentCategory = category;
-            
-            // Update filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            let filtered = currentProducts;
-            if (category !== 'all') {
-                filtered = currentProducts.filter(p => p.category === category);
-            }
-            
-            displayProducts(filtered);
-        }
-        
-        function searchProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            if (!searchTerm.trim()) {
-                filterProducts(currentCategory);
-                return;
-            }
-            
-            const filtered = currentProducts.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm) ||
-                product.category.toLowerCase().includes(searchTerm)
-            );
-            
-            displayProducts(filtered);
-        }
-        
-        function sortProducts() {
-            const sortBy = document.getElementById('sortProducts').value;
-            let sorted = [...currentProducts];
-            
-            switch(sortBy) {
-                case 'price_low':
-                    sorted.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price_high':
-                    sorted.sort((a, b) => b.price - a.price);
-                    break;
-                case 'name':
-                    sorted.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-            }
-            
-            displayProducts(sorted);
-        }
-        
-        function addToOrder(productId) {
-            const product = currentProducts.find(p => p.product_id === productId);
-            if (!product) return;
-            
-            showMessage(`Added ${product.name} to order`, 'success');
-            // You would implement order cart functionality here
-        }
-        
-        function viewProductDetails(productId) {
-            const product = currentProducts.find(p => p.product_id === productId);
-            if (!product) return;
-            
-            const modal = document.getElementById('orderModal');
-            const content = modal.querySelector('.modal-content');
-            content.innerHTML = `
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-                <h3>${product.name}</h3>
-                <div class="product-details">
-                    <div class="detail-row">
-                        <strong>Category:</strong> ${product.category}
-                    </div>
-                    <div class="detail-row">
-                        <strong>Price:</strong> KES ${product.price.toLocaleString()}
-                    </div>
-                    <div class="detail-row">
-                        <strong>Supplier:</strong> ${product.supplier}
-                    </div>
-                    <div class="detail-row">
-                        <strong>Stock:</strong> ${product.stock} units
-                    </div>
-                    <div class="detail-row">
-                        <strong>Description:</strong> ${product.description}
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="addToOrder('${productId}')">
-                    <i class="fas fa-cart-plus"></i> Add to Order
-                </button>
-            `;
-            modal.style.display = 'block';
-        }
-        
-        function showNewOrderForm() {
-            const modal = document.getElementById('orderModal');
-            modal.style.display = 'block';
-            showSection('products');
-        }
-        
-        function closeModal() {
-            document.getElementById('orderModal').style.display = 'none';
-        }
-        
-        async function placeOrder(event) {
-            event.preventDefault();
-            // Order placement logic would go here
-        }
-        
-        function showMessage(text, type) {
-            // Create message element
-            const message = document.createElement('div');
-            message.className = `message message-${type}`;
-            message.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-                ${text}
-                <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer">×</button>
-            `;
-            
-            // Add to top of main content
-            const mainContent = document.querySelector('.main-content');
-            mainContent.insertBefore(message, mainContent.firstChild);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (message.parentElement) {
-                    message.remove();
-                }
-            }, 5000);
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('orderModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        };
-        
-        // Logout function
-        function logout() {
-            localStorage.removeItem('dsog_user');
-            localStorage.removeItem('dsog_token');
-            window.location.href = 'index.html';
-        }
     </script>
 </body>
 </html>
