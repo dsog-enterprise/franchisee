@@ -9,6 +9,143 @@
     <link rel="icon" href="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png">
     <!-- Load Google Identity Services library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        /* Login page specific styles */
+        .login-container {
+            max-width: 420px;
+            margin: 60px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .login-header .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            object-fit: contain;
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .login-form {
+            width: 100%;
+        }
+        
+        .google-only-section {
+            text-align: center;
+        }
+        
+        .google-only-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .google-only-section > p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .google-login-section {
+            margin: 30px 0;
+        }
+        
+        .login-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .login-info p {
+            margin: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #5a6268;
+        }
+        
+        .login-info i {
+            color: #3498db;
+            margin-top: 2px;
+        }
+        
+        .login-info strong {
+            color: #2c3e50;
+        }
+        
+        /* Message styles */
+        .message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .message-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .message-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .message-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .message i {
+            margin-right: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .login-header .logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .login-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -21,60 +158,162 @@
         <div class="login-form">
             <div id="loginMessage" class="message"></div>
             
-            <!-- Google Sign-in Button Container -->
-            <div id="g_id_onload"
-                 data-client_id="369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com"
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleGoogleResponse"
-                 data-auto_prompt="false">
-            </div>
+            <!-- Google Sign-in Only Section -->
+            <div class="google-only-section">
+                <h3>Sign in to Continue</h3>
+                <p>Please use your authorized Google account to access the franchise portal</p>
+                
+                <!-- Google Sign-in Button Container -->
+                <div id="g_id_onload"
+                     data-client_id="369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleResponse"
+                     data-auto_prompt="false"
+                     data-auto_select="true">
+                </div>
 
-            <div class="google-login-section">
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-size="large"
-                     data-theme="outline"
-                     data-text="signin_with"
-                     data-shape="rectangular"
-                     data-logo_alignment="left">
+                <div class="google-login-section">
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left"
+                         data-width="360">
+                    </div>
                 </div>
                 
-                <div class="separator">
-                    <span>or continue with email</span>
+                <div class="login-info">
+                    <p><i class="fas fa-info-circle"></i> Only authorized DSOG franchise partner accounts can access this portal.</p>
+                    <p><i class="fas fa-envelope"></i> For access issues, contact: <strong>office.dsog@gmail.com</strong></p>
+                    <p><i class="fas fa-phone"></i> Call support: <strong>0733 737 983</strong></p>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <div class="input-with-icon">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="your@email.com" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-with-icon">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-            </div>
-            
-            <button id="loginBtn" class="btn btn-primary btn-block" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Login to Dashboard
-            </button>
-            
-            <div class="login-footer">
-                <p>New franchise partner? <a href="#" onclick="showRegister()">Apply for franchise</a></p>
-                <p><a href="#" onclick="showForgotPassword()"><i class="fas fa-key"></i> Forgot password?</a></p>
             </div>
         </div>
     </div>
 
-    <!-- Add config file -->
-    <script src="config.js"></script>
-    <!-- Add main app with Google OAuth logic -->
-    <script src="app.js"></script>
+    <script>
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('dsog_user');
+            const token = localStorage.getItem('dsog_token');
+            
+            if (user && token) {
+                // Already logged in, redirect to dashboard
+                showMessage('You are already logged in. Redirecting to dashboard...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            }
+        });
+        
+        // Handle Google OAuth response
+        function handleGoogleResponse(response) {
+            const messageDiv = document.getElementById('loginMessage');
+            messageDiv.style.display = 'none'; // Hide any previous messages
+            
+            try {
+                // Decode JWT token to get user info
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
+                const userData = JSON.parse(jsonPayload);
+                
+                // Show success message
+                showMessage(`Welcome ${userData.name}! Authenticating...`, 'success');
+                
+                // Check if email is allowed
+                const email = userData.email.toLowerCase();
+                const allowedEmails = [
+                    'office.dsog@gmail.com',
+                    'admin@dsog.com',
+                    'franchise@dsog.com'
+                ];
+                
+                const allowedDomains = [
+                    'gmail.com',
+                    'dsog.com'
+                ];
+                
+                const emailDomain = email.split('@')[1];
+                const isAllowedEmail = allowedEmails.includes(email);
+                const isAllowedDomain = allowedDomains.includes(emailDomain);
+                
+                if (!isAllowedEmail && !isAllowedDomain) {
+                    showMessage(
+                        'Your email is not authorized to access the DSOG Franchise Portal. ' +
+                        'Please contact support at office.dsog@gmail.com for access.',
+                        'error'
+                    );
+                    return;
+                }
+                
+                // Store user data (in production, this should be verified with your backend)
+                const franchiseCode = 'FR-' + userData.sub.slice(0, 8).toUpperCase();
+                const userInfo = {
+                    name: userData.name,
+                    email: userData.email,
+                    picture: userData.picture,
+                    franchise_code: franchiseCode,
+                    role: 'franchise_owner',
+                    user_id: userData.sub
+                };
+                
+                localStorage.setItem('dsog_user', JSON.stringify(userInfo));
+                localStorage.setItem('dsog_token', response.credential);
+                localStorage.setItem('auth_method', 'google');
+                
+                // Redirect to dashboard after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Google auth error:', error);
+                showMessage('Authentication failed. Please try again.', 'error');
+            }
+        }
+        
+        // Show message function
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('loginMessage');
+            messageDiv.className = `message message-${type}`;
+            messageDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                  type === 'error' ? 'exclamation-triangle' : 
+                                  'info-circle'}"></i>
+                ${text}
+            `;
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Auto-select Google account if only one is available
+        function autoSelectGoogleAccount() {
+            if (window.google && window.google.accounts) {
+                window.google.accounts.id.prompt(notification => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        // Auto-select not possible
+                    }
+                });
+            }
+        }
+        
+        // Call auto-select after page loads
+        window.onload = function() {
+            setTimeout(autoSelectGoogleAccount, 1000);
+        };
+    </script>
 </body>
 </html>
