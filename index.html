@@ -2350,6 +2350,7 @@
     <!-- JavaScript -->
     <script>
         // Configuration
+        // Configuration
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
         const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycbzmBoCu_jXpp8oKpNAnX7Ly-bqvfdfhgiHge74ZW0oYae0wUlZERDERJYB-ZC76J9kQYQ/exec'; // Your Google Apps Script URL for delivery
         
@@ -2483,7 +2484,8 @@
         function initDeliverySection() {
             initDeliveryFilters();
             initDeliveryModal();
-            loadDeliveryAssistants();
+            // Initialize backend first, then load assistants
+            initializeDeliveryBackend();
         }
         
         // Initialize Delivery Filters
@@ -2560,6 +2562,52 @@
                     closeCartModal();
                 }
             });
+        }
+        
+        // Initialize Delivery Backend
+        async function initializeDeliveryBackend() {
+            try {
+                console.log('🚀 Initializing delivery backend...');
+                showDeliveryLoading();
+                
+                // First check if backend is ready
+                const testResponse = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
+                
+                if (testResponse.ok) {
+                    const result = await testResponse.json();
+                    
+                    if (result.success) {
+                        console.log('✅ Backend is ready, loading assistants...');
+                        loadDeliveryAssistants();
+                    } else if (result.message && result.message.includes('not initialized')) {
+                        // Initialize the backend
+                        console.log('⚠️ Backend not initialized, initializing now...');
+                        const initResponse = await fetch(`${deliveryScriptUrl}?action=initialize`);
+                        const initResult = await initResponse.json();
+                        
+                        if (initResult.success) {
+                            console.log('✅ Backend initialized successfully!');
+                            showNotification('Delivery system initialized! Loading assistants...');
+                            
+                            // Wait a moment then load assistants
+                            setTimeout(() => {
+                                loadDeliveryAssistants();
+                            }, 1500);
+                        } else {
+                            throw new Error('Failed to initialize backend');
+                        }
+                    } else {
+                        throw new Error('Backend error: ' + result.message);
+                    }
+                } else {
+                    throw new Error('Cannot connect to backend');
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize delivery backend:', error);
+                showDeliveryError();
+                showNotification('Could not connect to delivery system. Please refresh the page.', 'error');
+            }
         }
         
         // Cart Management Functions
@@ -2845,7 +2893,7 @@
             selectedAssistant = null;
         }
         
-        function sendDeliveryRequest() {
+        async function sendDeliveryRequest() {
             const orderDetails = document.getElementById('orderDetails').value.trim();
             
             if (!orderDetails) {
@@ -2858,36 +2906,97 @@
                 return;
             }
             
-            // Build WhatsApp message
-            let whatsappMessage = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
-            whatsappMessage += `*Request ID:* DLV-${Date.now()}%0A`;
-            whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
-            whatsappMessage += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
+            try {
+                // Get franchisee info from the order form
+                const franchiseeName = document.getElementById('franchiseeName').value.trim() || 'Franchisee';
+                const franchiseePhone = document.getElementById('franchiseePhone').value.trim() || '+254700000000';
+                const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
+                
+                // Send to backend
+                const response = await fetch(deliveryScriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'createPickupRequest',
+                        assistantId: selectedAssistant.id,
+                        assistantName: selectedAssistant.name,
+                        franchiseeName: franchiseeName,
+                        franchiseePhone: franchiseePhone,
+                        location: franchiseeLocation,
+                        orderDetails: orderDetails,
+                        changedBy: franchiseeName
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update assistant status locally
+                    updateAssistantStatusLocally(selectedAssistant.id, 'busy');
+                    
+                    // Build WhatsApp message from backend response
+                    const whatsappMessage = result.whatsappMessage || generateWhatsAppMessage(selectedAssistant, franchiseeName, franchiseePhone, franchiseeLocation, orderDetails, result.requestId);
+                    const whatsappUrl = `https://wa.me/${selectedAssistant.phone.replace(/\D/g, '')}?text=${whatsappMessage}`;
+                    
+                    // Open WhatsApp
+                    window.open(whatsappUrl, '_blank');
+                    
+                    // Also send a copy to main support
+                    const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
+                    const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
+                    window.open(supportWhatsappUrl, '_blank');
+                    
+                    showNotification('Pickup request sent to delivery assistant!');
+                    closeDeliveryModal();
+                    
+                    // Refresh the assistants list
+                    setTimeout(() => {
+                        loadDeliveryAssistants();
+                    }, 2000);
+                    
+                } else {
+                    throw new Error(result.message || 'Failed to create pickup request');
+                }
+                
+            } catch (error) {
+                console.error('Error sending delivery request:', error);
+                showNotification('Failed to send pickup request. Please try again.', 'error');
+            }
+        }
+        
+        function updateAssistantStatusLocally(assistantId, newStatus) {
+            const assistant = deliveryAssistants.find(a => a.id === assistantId);
+            if (assistant) {
+                assistant.status = newStatus;
+                displayDeliveryAssistants(deliveryAssistants);
+            }
+        }
+        
+        function generateWhatsAppMessage(assistant, franchiseeName, franchiseePhone, location, orderDetails, requestId) {
+            let message = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
+            message += `*Request ID:* ${requestId || 'REQ-' + Date.now().toString().slice(-8)}%0A`;
+            message += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+            message += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
             
-            whatsappMessage += `*DELIVERY ASSISTANT DETAILS*%0A`;
-            whatsappMessage += `Name: ${selectedAssistant.name}%0A`;
-            whatsappMessage += `ID: ${selectedAssistant.id}%0A`;
-            whatsappMessage += `Phone: ${selectedAssistant.phone}%0A`;
-            whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A`;
-            whatsappMessage += `Status: ${selectedAssistant.status}%0A%0A`;
+            message += `*FRANCHISEE INFORMATION*%0A`;
+            message += `Name: ${franchiseeName}%0A`;
+            message += `Phone: ${franchiseePhone}%0A`;
+            message += `Location: ${location || 'Not specified'}%0A%0A`;
             
-            whatsappMessage += `*ORDER DETAILS*%0A`;
-            whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
+            message += `*ASSIGNED DELIVERY ASSISTANT*%0A`;
+            message += `Name: ${assistant.name}%0A`;
+            message += `ID: ${assistant.id}%0A`;
+            message += `Vehicle: ${assistant.vehicle}%0A%0A`;
             
-            whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
-            whatsappMessage += `_Please acknowledge receipt and provide ETA_`;
+            message += `*ORDER DETAILS*%0A`;
+            message += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
             
-            // Send to WhatsApp
-            const whatsappUrl = `https://wa.me/${selectedAssistant.phone.replace(/\D/g, '')}?text=${whatsappMessage}`;
-            window.open(whatsappUrl, '_blank');
+            message += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
+            message += `_Please acknowledge receipt and provide ETA_`;
             
-            // Also send a copy to main support
-            const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
-            const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
-            window.open(supportWhatsappUrl, '_blank');
-            
-            showNotification('Pickup request sent to delivery assistant!');
-            closeDeliveryModal();
+            return message;
         }
         
         // Product Loading Functions
@@ -3231,106 +3340,56 @@
             showDeliveryLoading();
             
             try {
-                console.log('🚚 Loading delivery assistants...');
+                console.log('🚚 Loading delivery assistants from backend...');
                 
-                // Try to load from your Google Sheets backend
-                // Replace with your actual Google Apps Script URL
-                // const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
+                const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
                 
-                // For now, using sample data
-                // Uncomment the above and remove the sample data when you have your backend ready
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
-                // Sample delivery assistants data
-                deliveryAssistants = [
-                    {
-                        id: 'DA-001',
-                        name: 'James Kamau',
-                        phone: '+254712345678',
-                        vehicle: 'Toyota Probox',
-                        status: 'available',
-                        currentCapacity: 2,
-                        maxCapacity: 10,
-                        rating: 4.8,
-                        completedDeliveries: 145,
-                        location: 'Nairobi CBD'
-                    },
-                    {
-                        id: 'DA-002',
-                        name: 'Sarah Wanjiku',
-                        phone: '+254723456789',
-                        vehicle: 'Suzuki Every',
-                        status: 'available',
-                        currentCapacity: 5,
-                        maxCapacity: 8,
-                        rating: 4.9,
-                        completedDeliveries: 89,
-                        location: 'Westlands'
-                    },
-                    {
-                        id: 'DA-003',
-                        name: 'Peter Omondi',
-                        phone: '+254734567890',
-                        vehicle: 'Toyota Hiace',
-                        status: 'busy',
-                        currentCapacity: 8,
-                        maxCapacity: 15,
-                        rating: 4.7,
-                        completedDeliveries: 210,
-                        location: 'Industrial Area'
-                    },
-                    {
-                        id: 'DA-004',
-                        name: 'Grace Akinyi',
-                        phone: '+254745678901',
-                        vehicle: 'Nissan Vanette',
-                        status: 'available',
-                        currentCapacity: 3,
-                        maxCapacity: 6,
-                        rating: 4.6,
-                        completedDeliveries: 67,
-                        location: 'Kileleshwa'
-                    },
-                    {
-                        id: 'DA-005',
-                        name: 'David Mwangi',
-                        phone: '+254756789012',
-                        vehicle: 'Toyota Rush',
-                        status: 'busy',
-                        currentCapacity: 4,
-                        maxCapacity: 6,
-                        rating: 4.5,
-                        completedDeliveries: 92,
-                        location: 'South B'
-                    },
-                    {
-                        id: 'DA-006',
-                        name: 'Mercy Chepkoech',
-                        phone: '+254767890123',
-                        vehicle: 'Mitsubishi L200',
-                        status: 'available',
-                        currentCapacity: 1,
-                        maxCapacity: 12,
-                        rating: 4.9,
-                        completedDeliveries: 178,
-                        location: 'Thika Road'
-                    }
-                ];
+                const result = await response.json();
+                console.log('Backend response:', result);
                 
-                console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants`);
-                
-                // Display delivery assistants
-                displayDeliveryAssistants(deliveryAssistants);
-                
-                // Hide loading indicator
-                setTimeout(() => {
-                    hideDeliveryLoading();
-                    const container = document.getElementById('deliveryContainer');
-                    container.classList.add('loaded');
-                }, 500);
+                if (result.success && Array.isArray(result.data)) {
+                    deliveryAssistants = result.data.map(assistant => ({
+                        id: assistant.id || `DA-${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+                        name: assistant.name || 'Unknown Assistant',
+                        phone: assistant.phone || '+254700000000',
+                        vehicle: assistant.vehicle || 'Vehicle not specified',
+                        status: assistant.status || 'available',
+                        currentCapacity: parseInt(assistant.currentCapacity) || 0,
+                        maxCapacity: parseInt(assistant.maxCapacity) || 10,
+                        rating: parseFloat(assistant.rating) || 4.5,
+                        completedDeliveries: parseInt(assistant.completedDeliveries) || 0,
+                        location: assistant.location || 'Location not specified',
+                        zones: Array.isArray(assistant.zones) ? assistant.zones : 
+                               (assistant.zones ? assistant.zones.split(',') : []),
+                        lastUpdated: assistant.lastUpdated || new Date().toISOString(),
+                        isActive: assistant.isActive !== false,
+                        notes: assistant.notes || ''
+                    }));
+                    
+                    console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants from backend`);
+                    
+                    // Display delivery assistants
+                    displayDeliveryAssistants(deliveryAssistants);
+                    
+                    // Hide loading indicator
+                    setTimeout(() => {
+                        hideDeliveryLoading();
+                        const container = document.getElementById('deliveryContainer');
+                        container.classList.add('loaded');
+                    }, 500);
+                    
+                } else {
+                    throw new Error(result.message || 'Invalid response from backend');
+                }
                 
             } catch (error) {
                 console.error('❌ Error loading delivery assistants:', error);
                 showDeliveryError();
+                showNotification('Could not load delivery assistants. Please refresh the page.', 'error');
             } finally {
                 isLoadingDelivery = false;
             }
