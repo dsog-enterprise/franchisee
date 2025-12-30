@@ -1422,6 +1422,446 @@
             color: var(--primary-red);
         }
         
+        /* DELIVERY SECTION STYLES */
+        .delivery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+        
+        .delivery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .delivery-grid.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Delivery Assistant Card */
+        .delivery-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .delivery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-red);
+        }
+        
+        .delivery-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            color: var(--white);
+            position: relative;
+        }
+        
+        .delivery-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+        }
+        
+        .delivery-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-available {
+            background: var(--success);
+            color: var(--white);
+        }
+        
+        .status-busy {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+        }
+        
+        .status-offline {
+            background: var(--gray);
+            color: var(--white);
+        }
+        
+        .delivery-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+        
+        .delivery-id {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .delivery-vehicle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .delivery-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--primary-gold);
+            font-size: 0.9rem;
+        }
+        
+        .delivery-card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .delivery-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .delivery-capacity {
+            background: var(--bg-secondary);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-red);
+        }
+        
+        .capacity-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+        
+        .capacity-bar {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.3rem;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .capacity-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+        
+        /* Delivery Buttons */
+        .delivery-buttons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        
+        .pickup-btn {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-red), var(--secondary-red));
+            color: var(--white);
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        
+        .pickup-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .pickup-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .whatsapp-btn {
+            width: 45px;
+            height: 45px;
+            background: var(--whatsapp-green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+        
+        .whatsapp-btn:hover {
+            background: var(--whatsapp-dark);
+            transform: scale(1.1);
+        }
+        
+        /* Delivery Loading States */
+        .delivery-loading {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+            display: none;
+        }
+        
+        .delivery-loading.visible {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        .delivery-error {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+            display: none;
+        }
+        
+        .delivery-error.visible {
+            display: block;
+        }
+        
+        /* Delivery Request Modal */
+        .delivery-request-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2002;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 1rem;
+        }
+        
+        .delivery-request-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .delivery-modal-content {
+            background: var(--white);
+            border-radius: 0;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            border: 2px solid var(--primary-red);
+        }
+        
+        .delivery-modal-header {
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-red);
+        }
+        
+        .delivery-modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .delivery-modal-close {
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .delivery-modal-close:hover {
+            background: var(--secondary-red);
+            transform: rotate(90deg);
+        }
+        
+        .delivery-modal-body {
+            padding: 2rem;
+        }
+        
+        .assistant-summary {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .assistant-summary h3 {
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .assistant-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .order-details-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+        
+        .order-details-textarea:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+        }
+        
+        .textarea-helper {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        .send-delivery-request-btn {
+            width: 100%;
+            background: var(--whatsapp-green);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem;
+            border-radius: 0;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .send-delivery-request-btn:hover {
+            background: var(--whatsapp-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        .send-delivery-request-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
@@ -1533,6 +1973,25 @@
                 height: 18px;
                 font-size: 0.6rem;
             }
+            
+            /* Delivery Responsive */
+            .delivery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .delivery-card-header {
+                padding: 1rem;
+            }
+            
+            .delivery-card-body {
+                padding: 1rem;
+            }
+            
+            .assistant-details {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1579,6 +2038,21 @@
             
             .nav-label {
                 font-size: 0.6rem;
+            }
+            
+            /* Delivery Mobile */
+            .delivery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .delivery-buttons {
+                flex-direction: column;
+            }
+            
+            .whatsapp-btn {
+                width: 100%;
+                height: auto;
+                padding: 0.8rem;
             }
         }
     </style>
@@ -1751,6 +2225,51 @@
                 </button>
             </div>
         </section>
+        
+        <!-- Delivery Assistant Section -->
+        <section class="products" id="delivery">
+            <div class="section-title">
+                <h2>Delivery Assistants Hub</h2>
+                <p>Request delivery assistance for your franchise orders</p>
+            </div>
+            
+            <!-- Delivery Filters -->
+            <div class="delivery-filters" id="deliveryFilters">
+                <button class="filter-btn active" data-filter="all">All Assistants</button>
+                <button class="filter-btn" data-filter="available">Available Now</button>
+                <button class="filter-btn" data-filter="busy">On Delivery</button>
+            </div>
+            
+            <!-- Delivery Assistants Grid -->
+            <div class="delivery-grid" id="deliveryContainer">
+                <!-- Loading State -->
+                <div class="delivery-loading" id="deliveryLoading">
+                    <div class="loading-spinner-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-logo">DSOG</div>
+                    </div>
+                    <div class="loading-message">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading Delivery Assistants...
+                    </div>
+                </div>
+                
+                <!-- Error State -->
+                <div class="delivery-error" id="deliveryError">
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Unable to Load Delivery Assistants</h3>
+                        <p>There was an error loading delivery assistants. Please check your connection and try again.</p>
+                        <button class="retry-btn" onclick="retryLoadingDeliveryAssistants()">
+                            <i class="fas fa-redo"></i>
+                            Retry
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Delivery assistants will be loaded here -->
+            </div>
+        </section>
     </main>
 
     <!-- Product Modal -->
@@ -1781,6 +2300,21 @@
                 <button class="checkout-btn" id="checkoutBtn" onclick="openOrderSummary()">
                     <i class="fas fa-credit-card"></i> Proceed to Order Summary
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Request Modal -->
+    <div class="delivery-request-modal" id="deliveryRequestModal">
+        <div class="delivery-modal-content">
+            <div class="delivery-modal-header">
+                <h2><i class="fas fa-truck"></i> Request Delivery Assistant</h2>
+                <button class="delivery-modal-close" id="deliveryModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="delivery-modal-body" id="deliveryModalBody">
+                <!-- Delivery modal content will be populated by JavaScript -->
             </div>
         </div>
     </div>
@@ -1817,12 +2351,19 @@
     <script>
         // Configuration
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
+        const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycby...'; // Your Google Apps Script URL for delivery
         
         // State management
         let cart = JSON.parse(localStorage.getItem('dsog_franchise_cart')) || [];
         let allProducts = [];
         let currentFilter = 'all';
         let isLoadingProducts = false;
+        
+        // Delivery State Management
+        let deliveryAssistants = [];
+        let currentDeliveryFilter = 'all';
+        let selectedAssistant = null;
+        let isLoadingDelivery = false;
         
         // PWA variables
         let deferredPrompt = null;
@@ -1838,6 +2379,7 @@
             initProductFilters();
             initModal();
             initCartModal();
+            initDeliverySection();
             initPWA();
             
             // Load products
@@ -1924,7 +2466,7 @@
         
         // Initialize Product Filters
         function initProductFilters() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
+            const filterButtons = document.querySelectorAll('#productFilters .filter-btn');
             
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -1934,6 +2476,48 @@
                     currentFilter = this.dataset.filter;
                     filterProducts();
                 });
+            });
+        }
+        
+        // Initialize Delivery Section
+        function initDeliverySection() {
+            initDeliveryFilters();
+            initDeliveryModal();
+            loadDeliveryAssistants();
+        }
+        
+        // Initialize Delivery Filters
+        function initDeliveryFilters() {
+            const filterButtons = document.querySelectorAll('#deliveryFilters .filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentDeliveryFilter = this.dataset.filter;
+                    filterDeliveryAssistants();
+                });
+            });
+        }
+        
+        // Initialize Delivery Modal
+        function initDeliveryModal() {
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            const deliveryModalClose = document.getElementById('deliveryModalClose');
+            
+            deliveryModalClose.addEventListener('click', closeDeliveryModal);
+            
+            deliveryModal.addEventListener('click', function(e) {
+                if (e.target === deliveryModal) {
+                    closeDeliveryModal();
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && deliveryModal.classList.contains('active')) {
+                    closeDeliveryModal();
+                }
             });
         }
         
@@ -2194,6 +2778,116 @@
             const productModal = document.getElementById('productModal');
             productModal.classList.remove('active');
             document.body.style.overflow = 'auto';
+        }
+        
+        // Delivery Modal Functions
+        function openDeliveryModal(assistant) {
+            selectedAssistant = assistant;
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            const deliveryModalBody = document.getElementById('deliveryModalBody');
+            
+            deliveryModalBody.innerHTML = `
+                <div class="assistant-summary">
+                    <h3>Delivery Assistant Details</h3>
+                    <div class="assistant-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Assistant Name:</span>
+                            <span class="detail-value">${assistant.name}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Assistant ID:</span>
+                            <span class="detail-value">${assistant.id}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone:</span>
+                            <span class="detail-value">${assistant.phone}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Vehicle:</span>
+                            <span class="detail-value">${assistant.vehicle}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value"><span class="delivery-status status-${assistant.status}">${assistant.status}</span></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Current Capacity:</span>
+                            <span class="detail-value">${assistant.currentCapacity}/${assistant.maxCapacity}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orderDetails">Paste Your Order Details *</label>
+                    <textarea 
+                        id="orderDetails" 
+                        class="order-details-textarea" 
+                        placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
+                        required></textarea>
+                    <p class="textarea-helper">
+                        <i class="fas fa-info-circle"></i> Please include all necessary details for the delivery assistant to process your request efficiently.
+                    </p>
+                </div>
+                
+                <button class="send-delivery-request-btn" onclick="sendDeliveryRequest()">
+                    <i class="fab fa-whatsapp"></i> Send Pickup Request via WhatsApp
+                </button>
+            `;
+            
+            deliveryModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeDeliveryModal() {
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            deliveryModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            selectedAssistant = null;
+        }
+        
+        function sendDeliveryRequest() {
+            const orderDetails = document.getElementById('orderDetails').value.trim();
+            
+            if (!orderDetails) {
+                showNotification('Please paste your order details', 'error');
+                return;
+            }
+            
+            if (!selectedAssistant) {
+                showNotification('No delivery assistant selected', 'error');
+                return;
+            }
+            
+            // Build WhatsApp message
+            let whatsappMessage = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
+            whatsappMessage += `*Request ID:* DLV-${Date.now()}%0A`;
+            whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+            whatsappMessage += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
+            
+            whatsappMessage += `*DELIVERY ASSISTANT DETAILS*%0A`;
+            whatsappMessage += `Name: ${selectedAssistant.name}%0A`;
+            whatsappMessage += `ID: ${selectedAssistant.id}%0A`;
+            whatsappMessage += `Phone: ${selectedAssistant.phone}%0A`;
+            whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A`;
+            whatsappMessage += `Status: ${selectedAssistant.status}%0A%0A`;
+            
+            whatsappMessage += `*ORDER DETAILS*%0A`;
+            whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
+            
+            whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
+            whatsappMessage += `_Please acknowledge receipt and provide ETA_`;
+            
+            // Send to WhatsApp
+            const whatsappUrl = `https://wa.me/${selectedAssistant.phone.replace(/\D/g, '')}?text=${whatsappMessage}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Also send a copy to main support
+            const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
+            const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
+            window.open(supportWhatsappUrl, '_blank');
+            
+            showNotification('Pickup request sent to delivery assistant!');
+            closeDeliveryModal();
         }
         
         // Product Loading Functions
@@ -2492,6 +3186,243 @@
         
         function filterProducts() {
             displayProducts(allProducts);
+        }
+        
+        // Delivery Assistant Functions
+        function showDeliveryLoading() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            const errorElement = document.getElementById('deliveryError');
+            
+            if (loadingElement) {
+                loadingElement.classList.add('visible');
+            }
+            if (errorElement) {
+                errorElement.classList.remove('visible');
+            }
+        }
+        
+        function hideDeliveryLoading() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            if (loadingElement) {
+                loadingElement.classList.remove('visible');
+            }
+        }
+        
+        function showDeliveryError() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            const errorElement = document.getElementById('deliveryError');
+            
+            hideDeliveryLoading();
+            
+            if (errorElement) {
+                errorElement.classList.add('visible');
+            }
+        }
+        
+        function retryLoadingDeliveryAssistants() {
+            showDeliveryLoading();
+            loadDeliveryAssistants();
+        }
+        
+        async function loadDeliveryAssistants() {
+            if (isLoadingDelivery) return;
+            
+            isLoadingDelivery = true;
+            showDeliveryLoading();
+            
+            try {
+                console.log('🚚 Loading delivery assistants...');
+                
+                // Try to load from your Google Sheets backend
+                // Replace with your actual Google Apps Script URL
+                // const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
+                
+                // For now, using sample data
+                // Uncomment the above and remove the sample data when you have your backend ready
+                
+                // Sample delivery assistants data
+                deliveryAssistants = [
+                    {
+                        id: 'DA-001',
+                        name: 'James Kamau',
+                        phone: '+254712345678',
+                        vehicle: 'Toyota Probox',
+                        status: 'available',
+                        currentCapacity: 2,
+                        maxCapacity: 10,
+                        rating: 4.8,
+                        completedDeliveries: 145,
+                        location: 'Nairobi CBD'
+                    },
+                    {
+                        id: 'DA-002',
+                        name: 'Sarah Wanjiku',
+                        phone: '+254723456789',
+                        vehicle: 'Suzuki Every',
+                        status: 'available',
+                        currentCapacity: 5,
+                        maxCapacity: 8,
+                        rating: 4.9,
+                        completedDeliveries: 89,
+                        location: 'Westlands'
+                    },
+                    {
+                        id: 'DA-003',
+                        name: 'Peter Omondi',
+                        phone: '+254734567890',
+                        vehicle: 'Toyota Hiace',
+                        status: 'busy',
+                        currentCapacity: 8,
+                        maxCapacity: 15,
+                        rating: 4.7,
+                        completedDeliveries: 210,
+                        location: 'Industrial Area'
+                    },
+                    {
+                        id: 'DA-004',
+                        name: 'Grace Akinyi',
+                        phone: '+254745678901',
+                        vehicle: 'Nissan Vanette',
+                        status: 'available',
+                        currentCapacity: 3,
+                        maxCapacity: 6,
+                        rating: 4.6,
+                        completedDeliveries: 67,
+                        location: 'Kileleshwa'
+                    },
+                    {
+                        id: 'DA-005',
+                        name: 'David Mwangi',
+                        phone: '+254756789012',
+                        vehicle: 'Toyota Rush',
+                        status: 'busy',
+                        currentCapacity: 4,
+                        maxCapacity: 6,
+                        rating: 4.5,
+                        completedDeliveries: 92,
+                        location: 'South B'
+                    },
+                    {
+                        id: 'DA-006',
+                        name: 'Mercy Chepkoech',
+                        phone: '+254767890123',
+                        vehicle: 'Mitsubishi L200',
+                        status: 'available',
+                        currentCapacity: 1,
+                        maxCapacity: 12,
+                        rating: 4.9,
+                        completedDeliveries: 178,
+                        location: 'Thika Road'
+                    }
+                ];
+                
+                console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants`);
+                
+                // Display delivery assistants
+                displayDeliveryAssistants(deliveryAssistants);
+                
+                // Hide loading indicator
+                setTimeout(() => {
+                    hideDeliveryLoading();
+                    const container = document.getElementById('deliveryContainer');
+                    container.classList.add('loaded');
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ Error loading delivery assistants:', error);
+                showDeliveryError();
+            } finally {
+                isLoadingDelivery = false;
+            }
+        }
+        
+        function displayDeliveryAssistants(assistants) {
+            const container = document.getElementById('deliveryContainer');
+            
+            // Clear existing assistants except loading/error states
+            Array.from(container.children).forEach(child => {
+                if (child.id !== 'deliveryLoading' && child.id !== 'deliveryError') {
+                    container.removeChild(child);
+                }
+            });
+            
+            // Filter assistants
+            let filteredAssistants = assistants;
+            if (currentDeliveryFilter !== 'all') {
+                filteredAssistants = assistants.filter(assistant => 
+                    assistant.status === currentDeliveryFilter
+                );
+            }
+            
+            // Display assistants with staggered animation
+            filteredAssistants.forEach((assistant, index) => {
+                setTimeout(() => {
+                    const deliveryCard = createDeliveryCard(assistant);
+                    container.appendChild(deliveryCard);
+                }, index * 100);
+            });
+        }
+        
+        function createDeliveryCard(assistant) {
+            const card = document.createElement('div');
+            card.className = 'delivery-card';
+            
+            const capacityPercentage = (assistant.currentCapacity / assistant.maxCapacity) * 100;
+            const capacityColor = capacityPercentage > 80 ? 'var(--light-red)' : 
+                                 capacityPercentage > 60 ? 'var(--primary-gold)' : 
+                                 'var(--success)';
+            
+            card.innerHTML = `
+                <div class="delivery-card-header">
+                    <span class="delivery-status status-${assistant.status}">${assistant.status}</span>
+                    <h3 class="delivery-name">${assistant.name}</h3>
+                    <p class="delivery-id">ID: ${assistant.id}</p>
+                    <div class="delivery-vehicle">
+                        <i class="fas fa-car"></i>
+                        <span>${assistant.vehicle}</span>
+                    </div>
+                    <div class="delivery-rating">
+                        <i class="fas fa-star"></i>
+                        <span>${assistant.rating} (${assistant.completedDeliveries} deliveries)</span>
+                    </div>
+                </div>
+                <div class="delivery-card-body">
+                    <div class="delivery-info">
+                        <div class="info-row">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value">${assistant.phone}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value">${assistant.location}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="delivery-capacity">
+                        <div class="capacity-label">Current Capacity</div>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: ${capacityPercentage}%; background: ${capacityColor};"></div>
+                        </div>
+                        <div class="capacity-text">${assistant.currentCapacity}/${assistant.maxCapacity} items</div>
+                    </div>
+                    
+                    <div class="delivery-buttons">
+                        <button class="pickup-btn" onclick="openDeliveryModal(${JSON.stringify(assistant).replace(/"/g, '&quot;')})" ${assistant.status === 'busy' ? 'disabled' : ''}>
+                            <i class="fas fa-truck-loading"></i>
+                            ${assistant.status === 'busy' ? 'Currently Busy' : 'Request Pickup'}
+                        </button>
+                        <button class="whatsapp-btn" onclick="window.open('https://wa.me/${assistant.phone.replace(/\D/g, '')}', '_blank')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function filterDeliveryAssistants() {
+            displayDeliveryAssistants(deliveryAssistants);
         }
         
         // Franchise Order Submission
