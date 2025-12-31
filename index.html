@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=1.0, user-scalable=no">
     
     <!-- App Version -->
-    <meta name="app-version" content="2.5.0">
+    <meta name="app-version" content="2.6.0">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#B22222">
@@ -37,8 +37,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Sign-in -->
-    <meta name="google-signin-client_id" content="369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com">
+    <!-- Google Sign-in SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- FIRST PAGE'S THEME AND STYLES -->
     <style>
@@ -121,6 +121,7 @@
             gap: 0.8rem;
             margin-left: auto;
             margin-right: 1rem;
+            cursor: pointer;
         }
         
         .user-avatar {
@@ -135,13 +136,15 @@
             font-weight: bold;
             font-size: 0.9rem;
             border: 2px solid var(--primary-gold);
-            cursor: pointer;
-            transition: var(--transition);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
         }
         
-        .user-avatar:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-md);
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .user-name {
@@ -155,6 +158,13 @@
             .user-name {
                 display: block;
             }
+        }
+        
+        /* Google Sign-in Container */
+        .gsi-container {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
         }
         
         /* Hamburger Menu */
@@ -342,8 +352,8 @@
             transform: translateY(-2px);
         }
         
-        /* USER ONBOARDING MODAL */
-        .user-onboarding-modal {
+        /* GOOGLE SIGN-IN MODAL */
+        .google-signin-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -353,19 +363,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2003;
+            z-index: 2005;
             opacity: 0;
             visibility: hidden;
             transition: var(--transition);
             padding: 1rem;
         }
         
-        .user-onboarding-modal.active {
+        .google-signin-modal.active {
             opacity: 1;
             visibility: visible;
         }
         
-        .onboarding-content {
+        .google-signin-content {
             background: var(--white);
             border-radius: 15px;
             max-width: 500px;
@@ -378,7 +388,7 @@
             box-shadow: var(--shadow-lg);
         }
         
-        .onboarding-header {
+        .google-signin-header {
             background: var(--primary-black);
             color: var(--white);
             padding: 1.5rem;
@@ -387,7 +397,7 @@
             border-bottom: 3px solid var(--primary-red);
         }
         
-        .onboarding-header h2 {
+        .google-signin-header h2 {
             color: var(--primary-gold);
             font-size: 1.5rem;
             display: flex;
@@ -396,245 +406,80 @@
             gap: 0.5rem;
         }
         
-        .onboarding-body {
+        .google-signin-body {
             padding: 2rem;
-        }
-        
-        .onboarding-step {
-            display: none;
-        }
-        
-        .onboarding-step.active {
-            display: block;
-        }
-        
-        .onboarding-title {
-            font-size: 1.3rem;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
             text-align: center;
         }
         
-        .onboarding-description {
+        .google-signin-icon {
+            font-size: 4rem;
+            color: var(--google-blue);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .google-signin-title {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .google-signin-description {
             color: var(--text-secondary);
             margin-bottom: 2rem;
-            text-align: center;
             line-height: 1.6;
+            font-size: 1.1rem;
         }
         
-        .onboarding-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-red);
-            box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
-        }
-        
-        .onboarding-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .onboarding-btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-        }
-        
-        .onboarding-btn-primary {
-            background: var(--primary-red);
-            color: var(--white);
-        }
-        
-        .onboarding-btn-primary:hover {
-            background: var(--secondary-red);
-            transform: translateY(-2px);
-        }
-        
-        .onboarding-btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-        
-        .onboarding-btn-secondary:hover {
-            background: var(--border-color);
-        }
-        
-        .onboarding-btn-google {
-            background: var(--white);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .onboarding-btn-google:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-        }
-        
-        .google-icon {
-            width: 20px;
-            height: 20px;
-            background: conic-gradient(
-                from 0deg at 50% 50%,
-                var(--google-red) 0deg 90deg,
-                var(--google-yellow) 90deg 180deg,
-                var(--google-green) 180deg 270deg,
-                var(--google-blue) 270deg 360deg
-            );
-            border-radius: 2px;
-            position: relative;
-        }
-        
-        .google-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: var(--white);
-            border-radius: 1px;
-        }
-        
-        .google-icon::after {
-            content: 'G';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--google-blue);
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-        
-        .location-permission {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-        
-        .location-icon {
-            font-size: 3rem;
-            color: var(--primary-red);
-            margin-bottom: 1rem;
-        }
-        
-        .permission-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .skip-onboarding {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-        
-        .skip-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-        
-        .skip-btn:hover {
-            color: var(--primary-red);
-            text-decoration: underline;
-        }
-        
-        .welcome-step {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-        
-        .welcome-icon {
-            font-size: 4rem;
-            color: var(--primary-red);
-            margin-bottom: 1.5rem;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .welcome-title {
-            font-size: 2rem;
-            color: var(--primary-red);
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-        
-        .user-info-summary {
+        .google-signin-requirements {
             background: var(--bg-secondary);
             padding: 1.5rem;
             border-radius: 10px;
-            margin: 1.5rem 0;
+            margin-bottom: 2rem;
             text-align: left;
             border: 1px solid var(--border-color);
         }
         
-        .info-item {
-            display: flex;
-            justify-content: space-between;
+        .google-signin-requirements h3 {
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .requirements-list {
+            list-style-type: none;
+        }
+        
+        .requirements-list li {
             margin-bottom: 0.8rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .info-label {
-            font-weight: 600;
+            padding-left: 1.5rem;
+            position: relative;
             color: var(--text-secondary);
         }
         
-        .info-value {
-            font-weight: 500;
-            color: var(--text-primary);
+        .requirements-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .google-signin-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(66, 133, 244, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--google-blue);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: left;
         }
         
         /* User Profile Modal */
@@ -718,6 +563,15 @@
             font-weight: bold;
             margin: 0 auto 1rem;
             border: 3px solid var(--primary-gold);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .profile-body {
@@ -757,6 +611,16 @@
             transform: translateY(-2px);
         }
         
+        .profile-btn-google {
+            background: var(--google-blue);
+            color: var(--white);
+        }
+        
+        .profile-btn-google:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+        
         .profile-btn-secondary {
             background: var(--bg-secondary);
             color: var(--text-primary);
@@ -765,6 +629,16 @@
         
         .profile-btn-secondary:hover {
             background: var(--border-color);
+        }
+        
+        .sign-out-btn {
+            background: var(--google-red);
+            color: var(--white);
+        }
+        
+        .sign-out-btn:hover {
+            background: #d3342d;
+            transform: translateY(-2px);
         }
         
         /* PWA INSTALL PROMPT */
@@ -2404,6 +2278,35 @@
             letter-spacing: 0.5px;
         }
         
+        /* Main Content Overlay when not signed in */
+        .content-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .content-overlay h2 {
+            font-size: 2rem;
+            color: var(--primary-gold);
+            margin-bottom: 1rem;
+        }
+        
+        .content-overlay p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .hamburger {
@@ -2486,8 +2389,8 @@
                 gap: 0.8rem;
             }
             
-            .onboarding-buttons {
-                flex-direction: column;
+            .google-signin-title {
+                font-size: 1.5rem;
             }
         }
         
@@ -2555,131 +2458,40 @@
     </style>
 </head>
 <body>
-    <!-- User Onboarding Modal -->
-    <div class="user-onboarding-modal" id="userOnboardingModal">
-        <div class="onboarding-content">
-            <div class="onboarding-header">
-                <h2><i class="fas fa-user-plus"></i> Welcome to DSOG Franchise</h2>
+    <!-- Google Sign-in Modal -->
+    <div class="google-signin-modal" id="googleSigninModal">
+        <div class="google-signin-content">
+            <div class="google-signin-header">
+                <h2><i class="fab fa-google"></i> Sign In Required</h2>
             </div>
-            <div class="onboarding-body">
-                <!-- Step 1: Welcome -->
-                <div class="onboarding-step active" id="step1">
-                    <div class="welcome-step">
-                        <div class="welcome-icon">
-                            <i class="fas fa-store"></i>
-                        </div>
-                        <h2 class="welcome-title">Welcome Franchisee!</h2>
-                        <p class="onboarding-description">
-                            Let's set up your profile to make ordering seamless. 
-                            We'll collect your phone number and location for faster checkout.
-                        </p>
-                        <div class="onboarding-buttons">
-                            <button class="onboarding-btn onboarding-btn-primary" onclick="nextStep()">
-                                <i class="fas fa-arrow-right"></i> Get Started
-                            </button>
-                        </div>
-                    </div>
+            <div class="google-signin-body">
+                <div class="google-signin-icon">
+                    <i class="fab fa-google"></i>
+                </div>
+                <h2 class="google-signin-title">Welcome to DSOG Franchise Platform</h2>
+                <p class="google-signin-description">
+                    To access the franchise ordering system, you must sign in with your Google account. 
+                    This ensures secure access and personalized experience.
+                </p>
+                
+                <div class="google-signin-requirements">
+                    <h3>Why Google Sign-in?</h3>
+                    <ul class="requirements-list">
+                        <li>Secure authentication for franchise orders</li>
+                        <li>Automatic profile information retrieval</li>
+                        <li>Seamless form auto-filling</li>
+                        <li>Enhanced security for your orders</li>
+                        <li>Quick access across devices</li>
+                    </ul>
                 </div>
                 
-                <!-- Step 2: User Information -->
-                <div class="onboarding-step" id="step2">
-                    <h3 class="onboarding-title">Your Information</h3>
-                    <p class="onboarding-description">
-                        Enter your details to auto-fill future orders
-                    </p>
-                    <div class="onboarding-form">
-                        <div class="form-group">
-                            <label for="onboardingName">Full Name *</label>
-                            <input type="text" id="onboardingName" class="form-control" placeholder="Enter your full name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="onboardingPhone">Phone Number *</label>
-                            <input type="tel" id="onboardingPhone" class="form-control" placeholder="e.g., +254712345678" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="onboardingLocation">Franchise Location *</label>
-                            <textarea id="onboardingLocation" class="form-control" rows="2" placeholder="Enter your franchise location address" required></textarea>
-                        </div>
-                        <div class="onboarding-buttons">
-                            <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                            <button class="onboarding-btn onboarding-btn-primary" onclick="nextStep()">
-                                Continue <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Google Sign-in Button -->
+                <div id="googleSignInButton" class="gsi-container"></div>
                 
-                <!-- Step 3: Location Permission -->
-                <div class="onboarding-step" id="step3">
-                    <div class="location-permission">
-                        <div class="location-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <h3 class="onboarding-title">Enable Location Services</h3>
-                        <p class="onboarding-description">
-                            Allow location access for faster delivery requests and accurate pickup locations. 
-                            Your location data is stored locally on your device.
-                        </p>
-                        <div class="permission-buttons">
-                            <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                            <button class="onboarding-btn onboarding-btn-primary" onclick="requestLocationPermission()">
-                                <i class="fas fa-check-circle"></i> Allow Location
-                            </button>
-                        </div>
-                        <div class="skip-onboarding">
-                            <button class="skip-btn" onclick="skipLocationPermission()">
-                                Skip for now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Step 4: Google Sign-in (Optional) -->
-                <div class="onboarding-step" id="step4">
-                    <h3 class="onboarding-title">Connect Your Account (Optional)</h3>
-                    <p class="onboarding-description">
-                        Sign in with Google for enhanced security and backup of your profile data.
-                    </p>
-                    <div class="onboarding-buttons">
-                        <button class="onboarding-btn onboarding-btn-google" onclick="signInWithGoogle()">
-                            <span class="google-icon"></span>
-                            Sign in with Google
-                        </button>
-                        <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </button>
-                        <button class="onboarding-btn onboarding-btn-secondary" onclick="skipGoogleSignIn()">
-                            Skip
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Step 5: Complete -->
-                <div class="onboarding-step" id="step5">
-                    <div class="welcome-step">
-                        <div class="welcome-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h2 class="welcome-title">Setup Complete!</h2>
-                        <p class="onboarding-description">
-                            Your profile has been saved locally on this device. 
-                            Your information will auto-fill in future orders.
-                        </p>
-                        
-                        <div class="user-info-summary" id="userInfoSummary">
-                            <!-- User info will be populated here -->
-                        </div>
-                        
-                        <div class="onboarding-buttons">
-                            <button class="onboarding-btn onboarding-btn-primary" onclick="completeOnboarding()">
-                                <i class="fas fa-rocket"></i> Start Ordering
-                            </button>
-                        </div>
-                    </div>
+                <div class="google-signin-note">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Note:</strong> Only authorized franchisees with Google accounts can access this platform. 
+                    Your information is used solely for order processing and will not be shared with third parties.
                 </div>
             </div>
         </div>
@@ -2702,11 +2514,11 @@
                     <!-- Profile info will be populated -->
                 </div>
                 <div class="profile-actions">
-                    <button class="profile-btn profile-btn-primary" onclick="editProfile()">
-                        <i class="fas fa-edit"></i> Edit Profile
+                    <button class="profile-btn profile-btn-primary" onclick="editUserLocation()">
+                        <i class="fas fa-map-marker-alt"></i> Update Location
                     </button>
-                    <button class="profile-btn profile-btn-secondary" onclick="clearProfileData()">
-                        <i class="fas fa-trash"></i> Clear Local Data
+                    <button class="profile-btn sign-out-btn" onclick="signOut()">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
                     </button>
                     <button class="profile-btn profile-btn-secondary" onclick="closeProfileModal()">
                         <i class="fas fa-times"></i> Close
@@ -2740,13 +2552,22 @@
         </div>
     </div>
 
+    <!-- Content Overlay (shown when not signed in) -->
+    <div class="content-overlay" id="contentOverlay" style="display: none;">
+        <div>
+            <h2>Sign In Required</h2>
+            <p>Please sign in with Google to access the franchise platform</p>
+            <div id="overlayGoogleSignIn" class="gsi-container"></div>
+        </div>
+    </div>
+
     <!-- Enhanced Header -->
     <header>
         <div class="header-content">
             <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="logo">
             
             <!-- User Profile -->
-            <div class="user-profile-header" onclick="openProfileModal()">
+            <div class="user-profile-header" onclick="openProfileModal()" id="userProfileHeader" style="display: none;">
                 <div class="user-avatar" id="userAvatar">
                     <!-- Avatar will be populated -->
                 </div>
@@ -2797,7 +2618,7 @@
     <div class="menu-backdrop" id="menuBackdrop"></div>
 
     <!-- Main Content -->
-    <main>
+    <main id="mainContent" style="display: none;">
         <!-- Products Section -->
         <section class="products" id="products">
             <div class="section-title">
@@ -2992,13 +2813,13 @@
     </div>
 
     <!-- Floating Cart Button -->
-    <button class="floating-cart-btn" id="floatingCartBtn" onclick="openCartModal()">
+    <button class="floating-cart-btn" id="floatingCartBtn" onclick="openCartModal()" style="display: none;">
         <i class="fas fa-shopping-cart"></i>
         <span class="cart-badge" id="cartBadge">0</span>
     </button>
 
     <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
+    <nav class="bottom-nav" style="display: none;">
         <div class="bottom-nav-container">
             <button class="nav-item active" onclick="scrollToSection('products')">
                 <i class="fas fa-box nav-icon"></i>
@@ -3028,6 +2849,7 @@
     // Configuration
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
     const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycbzmBoCu_jXpp8oKpNAnX7Ly-bqvfdfhgiHge74ZW0oYae0wUlZERDERJYB-ZC76J9kQYQ/exec';
+    const GOOGLE_CLIENT_ID = '369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com';
     
     // State management
     let cart = JSON.parse(localStorage.getItem('dsog_franchise_cart')) || [];
@@ -3043,7 +2865,8 @@
     
     // User Profile State
     let userProfile = JSON.parse(localStorage.getItem('dsog_franchise_profile')) || null;
-    let currentOnboardingStep = 1;
+    let googleUser = null;
+    let googleToken = null;
     
     // PWA variables
     let deferredPrompt = null;
@@ -3052,7 +2875,7 @@
     
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DSOG Franchise Platform v2.5.0');
+        console.log('🚀 DSOG Franchise Platform v2.6.0');
         
         // Initialize components
         initMobileMenu();
@@ -3063,201 +2886,312 @@
         initPWA();
         initProfileModal();
         
-        // Check if user profile exists
-        if (!userProfile || !userProfile.name) {
-            // Show onboarding after a short delay
-            setTimeout(() => {
-                showOnboarding();
-            }, 1000);
-        } else {
-            // Update UI with user profile
-            updateUserProfileUI();
-            // Auto-fill order form
-            autoFillOrderForm();
-        }
+        // Check for existing Google Sign-in
+        checkGoogleSignIn();
         
-        // Load products
-        showProductLoading();
-        setTimeout(() => {
-            loadProducts();
-        }, 500);
-        
-        // Update cart badge
-        updateCartBadge();
-        
-        // Set up navigation
-        setupNavigation();
-        
-        // Load delivery assistants after products
-        setTimeout(() => {
-            loadDeliveryAssistants();
-        }, 1000);
+        // Initialize Google Sign-in
+        initializeGoogleSignIn();
     });
     
-    // User Profile Functions
-    function showOnboarding() {
-        const onboardingModal = document.getElementById('userOnboardingModal');
-        onboardingModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        currentOnboardingStep = 1;
-        showStep(currentOnboardingStep);
-    }
-    
-    function hideOnboarding() {
-        const onboardingModal = document.getElementById('userOnboardingModal');
-        onboardingModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-    
-    function showStep(stepNumber) {
-        // Hide all steps
-        for (let i = 1; i <= 5; i++) {
-            const step = document.getElementById(`step${i}`);
-            if (step) {
-                step.classList.remove('active');
-            }
+    // Google Sign-in Functions
+    function initializeGoogleSignIn() {
+        // Check if Google SDK is loaded
+        if (typeof google === 'undefined') {
+            console.error('Google Sign-in SDK not loaded');
+            setTimeout(initializeGoogleSignIn, 1000);
+            return;
         }
         
-        // Show current step
-        const currentStep = document.getElementById(`step${stepNumber}`);
-        if (currentStep) {
-            currentStep.classList.add('active');
-        }
-    }
-    
-    function nextStep() {
-        if (currentOnboardingStep === 2) {
-            // Validate step 2 (user info)
-            const name = document.getElementById('onboardingName').value.trim();
-            const phone = document.getElementById('onboardingPhone').value.trim();
-            const location = document.getElementById('onboardingLocation').value.trim();
-            
-            if (!name || !phone || !location) {
-                showNotification('Please fill in all required fields', 'error');
-                return;
-            }
-            
-            // Save temporarily
-            userProfile = {
-                name: name,
-                phone: phone,
-                location: location,
-                createdAt: new Date().toISOString()
-            };
-        }
+        // Initialize Google Sign-in
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleSignIn,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+            context: 'signin',
+            ux_mode: 'popup',
+            login_uri: window.location.origin,
+            prompt_parent_id: 'googleSignInButton'
+        });
         
-        if (currentOnboardingStep < 5) {
-            currentOnboardingStep++;
-            showStep(currentOnboardingStep);
-            
-            // Update user info summary on step 5
-            if (currentOnboardingStep === 5) {
-                updateUserInfoSummary();
+        // Also initialize for overlay button
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleSignIn,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+            context: 'signin',
+            ux_mode: 'popup'
+        });
+        
+        // Render the button
+        google.accounts.id.renderButton(
+            document.getElementById('googleSignInButton'),
+            {
+                type: 'standard',
+                theme: 'filled_blue',
+                size: 'large',
+                text: 'signin_with',
+                shape: 'rectangular',
+                logo_alignment: 'left',
+                width: 250
             }
+        );
+        
+        // Also render button for overlay
+        google.accounts.id.renderButton(
+            document.getElementById('overlayGoogleSignIn'),
+            {
+                type: 'standard',
+                theme: 'filled_blue',
+                size: 'large',
+                text: 'signin_with',
+                shape: 'rectangular',
+                logo_alignment: 'left',
+                width: 250
+            }
+        );
+        
+        // Show sign-in modal if user is not signed in
+        if (!userProfile || !userProfile.googleId) {
+            setTimeout(() => {
+                showGoogleSignInModal();
+            }, 1000);
         }
     }
     
-    function prevStep() {
-        if (currentOnboardingStep > 1) {
-            currentOnboardingStep--;
-            showStep(currentOnboardingStep);
-        }
-    }
-    
-    function requestLocationPermission() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Success
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    
-                    // Save location in profile
-                    if (userProfile) {
-                        userProfile.gpsLocation = {
-                            latitude: lat,
-                            longitude: lng
-                        };
-                    }
-                    
-                    showNotification('Location saved successfully!');
-                    nextStep();
-                },
-                function(error) {
-                    // Error
-                    console.error("Error getting location:", error);
-                    showNotification('Could not get location. You can skip for now.', 'warning');
-                    nextStep();
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
-            );
-        } else {
-            showNotification('Geolocation is not supported by your browser', 'warning');
-            nextStep();
-        }
-    }
-    
-    function skipLocationPermission() {
-        if (userProfile) {
-            userProfile.gpsLocation = null;
-        }
-        nextStep();
-    }
-    
-    function signInWithGoogle() {
-        // Google Sign-in implementation
-        showNotification('Google Sign-in will be implemented in the next version', 'warning');
-        skipGoogleSignIn();
-    }
-    
-    function skipGoogleSignIn() {
-        nextStep();
-    }
-    
-    function updateUserInfoSummary() {
-        const summaryElement = document.getElementById('userInfoSummary');
-        if (summaryElement && userProfile) {
-            summaryElement.innerHTML = `
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value">${userProfile.name}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Phone:</span>
-                    <span class="info-value">${userProfile.phone}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Location:</span>
-                    <span class="info-value">${userProfile.location}</span>
-                </div>
-                ${userProfile.gpsLocation ? `
-                <div class="info-item">
-                    <span class="info-label">GPS Location:</span>
-                    <span class="info-value">Saved</span>
-                </div>
-                ` : ''}
-            `;
-        }
-    }
-    
-    function completeOnboarding() {
-        // Save profile to localStorage
-        if (userProfile) {
-            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
-            showNotification('Profile saved successfully!');
+    function checkGoogleSignIn() {
+        // Check if user is already signed in via localStorage
+        if (userProfile && userProfile.googleId) {
+            // User is signed in, show content
+            showMainContent();
             
             // Update UI
             updateUserProfileUI();
             
             // Auto-fill order form
             autoFillOrderForm();
+            
+            // Load products
+            showProductLoading();
+            setTimeout(() => {
+                loadProducts();
+            }, 500);
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            // Set up navigation
+            setupNavigation();
+            
+            // Load delivery assistants after products
+            setTimeout(() => {
+                loadDeliveryAssistants();
+            }, 1000);
+            
+            return true;
         }
         
-        hideOnboarding();
+        return false;
+    }
+    
+    function handleGoogleSignIn(response) {
+        console.log('Google Sign-in response received');
+        
+        // Decode the JWT token
+        const responsePayload = decodeJWTResponse(response.credential);
+        
+        if (responsePayload) {
+            // Save user data
+            googleUser = responsePayload;
+            googleToken = response.credential;
+            
+            // Create or update user profile
+            userProfile = {
+                googleId: googleUser.sub,
+                email: googleUser.email,
+                name: googleUser.name,
+                givenName: googleUser.given_name,
+                familyName: googleUser.family_name,
+                picture: googleUser.picture,
+                emailVerified: googleUser.email_verified,
+                phone: '', // Google doesn't provide phone by default
+                location: '', // Will be asked separately
+                locationUpdated: false,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            
+            // Hide sign-in modal
+            hideGoogleSignInModal();
+            
+            // Show success notification
+            showNotification(`Welcome ${googleUser.name}!`);
+            
+            // Update UI
+            updateUserProfileUI();
+            
+            // Show main content
+            showMainContent();
+            
+            // Auto-fill order form
+            autoFillOrderForm();
+            
+            // Load products
+            showProductLoading();
+            setTimeout(() => {
+                loadProducts();
+            }, 500);
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            // Set up navigation
+            setupNavigation();
+            
+            // Load delivery assistants after products
+            setTimeout(() => {
+                loadDeliveryAssistants();
+            }, 1000);
+            
+            // Ask for location if not already set
+            if (!userProfile.location || !userProfile.locationUpdated) {
+                setTimeout(() => {
+                    askForLocation();
+                }, 2000);
+            }
+        } else {
+            console.error('Failed to decode Google Sign-in response');
+            showNotification('Failed to sign in with Google. Please try again.', 'error');
+        }
+    }
+    
+    function decodeJWTResponse(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error('Error decoding JWT:', error);
+            return null;
+        }
+    }
+    
+    function showGoogleSignInModal() {
+        const signinModal = document.getElementById('googleSigninModal');
+        const overlay = document.getElementById('contentOverlay');
+        
+        signinModal.classList.add('active');
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function hideGoogleSignInModal() {
+        const signinModal = document.getElementById('googleSigninModal');
+        const overlay = document.getElementById('contentOverlay');
+        const mainContent = document.getElementById('mainContent');
+        
+        signinModal.classList.remove('active');
+        overlay.style.display = 'none';
+        mainContent.style.display = 'block';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function showMainContent() {
+        const overlay = document.getElementById('contentOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const floatingCartBtn = document.getElementById('floatingCartBtn');
+        const bottomNav = document.querySelector('.bottom-nav');
+        const userProfileHeader = document.getElementById('userProfileHeader');
+        
+        overlay.style.display = 'none';
+        mainContent.style.display = 'block';
+        floatingCartBtn.style.display = 'flex';
+        bottomNav.style.display = 'block';
+        userProfileHeader.style.display = 'flex';
+    }
+    
+    function askForLocation() {
+        if (!userProfile || !userProfile.googleId) return;
+        
+        const location = prompt(
+            'Please enter your franchise location/address:\n\nThis will be used to auto-fill your orders and delivery requests.',
+            userProfile.location || ''
+        );
+        
+        if (location !== null) {
+            userProfile.location = location.trim();
+            userProfile.locationUpdated = true;
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            
+            // Update form
+            autoFillOrderForm();
+            
+            showNotification('Location saved successfully!');
+        }
+    }
+    
+    function editUserLocation() {
+        if (!userProfile || !userProfile.googleId) return;
+        
+        const location = prompt(
+            'Update your franchise location/address:',
+            userProfile.location || ''
+        );
+        
+        if (location !== null) {
+            userProfile.location = location.trim();
+            userProfile.locationUpdated = true;
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            
+            // Update form and UI
+            autoFillOrderForm();
+            updateUserProfileUI();
+            
+            showNotification('Location updated successfully!');
+        }
+        
+        closeProfileModal();
+    }
+    
+    function signOut() {
+        if (confirm('Are you sure you want to sign out?')) {
+            // Clear user data
+            userProfile = null;
+            googleUser = null;
+            googleToken = null;
+            localStorage.removeItem('dsog_franchise_profile');
+            
+            // Clear cart
+            cart = [];
+            localStorage.removeItem('dsog_franchise_cart');
+            
+            // Hide content
+            const mainContent = document.getElementById('mainContent');
+            const floatingCartBtn = document.getElementById('floatingCartBtn');
+            const bottomNav = document.querySelector('.bottom-nav');
+            const userProfileHeader = document.getElementById('userProfileHeader');
+            
+            mainContent.style.display = 'none';
+            floatingCartBtn.style.display = 'none';
+            bottomNav.style.display = 'none';
+            userProfileHeader.style.display = 'none';
+            
+            // Show sign-in modal
+            showGoogleSignInModal();
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            showNotification('Signed out successfully');
+        }
     }
     
     function updateUserProfileUI() {
@@ -3269,19 +3203,31 @@
             const profileName = document.getElementById('profileName');
             const profileInfo = document.getElementById('profileInfo');
             
-            // Get initials for avatar
-            const initials = userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            
-            if (userAvatar) {
-                userAvatar.textContent = initials;
+            // Set avatar image or initials
+            if (userProfile.picture) {
+                if (userAvatar) {
+                    userAvatar.innerHTML = `<img src="${userProfile.picture}" alt="${userProfile.name}">`;
+                }
+                if (profileAvatar) {
+                    profileAvatar.innerHTML = `<img src="${userProfile.picture}" alt="${userProfile.name}">`;
+                }
+            } else {
+                // Get initials for avatar
+                const initials = userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                if (userAvatar) {
+                    userAvatar.textContent = initials;
+                    userAvatar.style.background = 'linear-gradient(135deg, var(--primary-red), var(--primary-gold))';
+                }
+                
+                if (profileAvatar) {
+                    profileAvatar.textContent = initials;
+                    profileAvatar.style.background = 'linear-gradient(135deg, var(--primary-red), var(--primary-gold))';
+                }
             }
             
             if (userNameDisplay) {
-                userNameDisplay.textContent = userProfile.name.split(' ')[0];
-            }
-            
-            if (profileAvatar) {
-                profileAvatar.textContent = initials;
+                userNameDisplay.textContent = userProfile.givenName || userProfile.name.split(' ')[0];
             }
             
             if (profileName) {
@@ -3295,22 +3241,26 @@
                         <span class="info-value">${userProfile.name}</span>
                     </div>
                     <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">${userProfile.email}</span>
+                    </div>
+                    ${userProfile.phone ? `
+                    <div class="info-item">
                         <span class="info-label">Phone:</span>
                         <span class="info-value">${userProfile.phone}</span>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value">${userProfile.location}</span>
-                    </div>
-                    ${userProfile.gpsLocation ? `
-                    <div class="info-item">
-                        <span class="info-label">GPS Location:</span>
-                        <span class="info-value">Saved (Lat: ${userProfile.gpsLocation.latitude.toFixed(4)}, Lng: ${userProfile.gpsLocation.longitude.toFixed(4)})</span>
-                    </div>
                     ` : ''}
                     <div class="info-item">
-                        <span class="info-label">Profile Created:</span>
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">${userProfile.location || 'Not set'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Created:</span>
                         <span class="info-value">${new Date(userProfile.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Last Login:</span>
+                        <span class="info-value">${new Date(userProfile.lastLogin).toLocaleDateString()}</span>
                     </div>
                 `;
             }
@@ -3370,6 +3320,11 @@
     }
     
     function openProfileModal() {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         const profileModal = document.getElementById('userProfileModal');
         
         // Update profile info before showing
@@ -3383,53 +3338,6 @@
         const profileModal = document.getElementById('userProfileModal');
         profileModal.classList.remove('active');
         document.body.style.overflow = 'auto';
-    }
-    
-    function editProfile() {
-        closeProfileModal();
-        // Show onboarding starting at step 2
-        showOnboarding();
-        currentOnboardingStep = 2;
-        showStep(currentOnboardingStep);
-        
-        // Pre-fill existing data
-        if (userProfile) {
-            document.getElementById('onboardingName').value = userProfile.name || '';
-            document.getElementById('onboardingPhone').value = userProfile.phone || '';
-            document.getElementById('onboardingLocation').value = userProfile.location || '';
-        }
-    }
-    
-    function clearProfileData() {
-        if (confirm('Are you sure you want to clear all your profile data? This action cannot be undone.')) {
-            localStorage.removeItem('dsog_franchise_profile');
-            userProfile = null;
-            
-            // Clear form fields
-            document.getElementById('franchiseeName').value = '';
-            document.getElementById('franchiseePhone').value = '';
-            document.getElementById('franchiseeLocation').value = '';
-            
-            // Reset UI
-            const userAvatar = document.getElementById('userAvatar');
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            
-            if (userAvatar) {
-                userAvatar.textContent = '?';
-            }
-            
-            if (userNameDisplay) {
-                userNameDisplay.textContent = 'Guest';
-            }
-            
-            showNotification('Profile data cleared successfully');
-            closeProfileModal();
-            
-            // Show onboarding again
-            setTimeout(() => {
-                showOnboarding();
-            }, 1000);
-        }
     }
     
     // Initialize Mobile Menu
@@ -3785,6 +3693,11 @@
     }
     
     function openCartModal() {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         const cartModal = document.getElementById('cartModal');
         renderCart();
         cartModal.classList.add('active');
@@ -3818,6 +3731,11 @@
     
     // Delivery Modal Functions
     function openDeliveryModal(assistant) {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         selectedAssistant = assistant;
         const deliveryModal = document.getElementById('deliveryRequestModal');
         const deliveryModalBody = document.getElementById('deliveryModalBody');
@@ -3829,8 +3747,8 @@
         
         let orderDetails = `Order Details:\n\n`;
         orderDetails += `Franchisee: ${franchiseeName}\n`;
-        orderDetails += `Phone: ${franchiseePhone}\n`;
-        orderDetails += `Location: ${franchiseeLocation}\n\n`;
+        orderDetails += `Phone: ${franchiseePhone || 'Not provided'}\n`;
+        orderDetails += `Location: ${franchiseeLocation || 'Not set'}\n\n`;
         
         if (cart.length > 0) {
             orderDetails += `Items:\n`;
@@ -3902,6 +3820,11 @@
     }
     
     async function sendDeliveryRequest() {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         const orderDetails = document.getElementById('orderDetails').value.trim();
         
         if (!orderDetails) {
@@ -3915,10 +3838,10 @@
         }
         
         try {
-            // Get franchisee info from user profile or form
-            const franchiseeName = userProfile ? userProfile.name : document.getElementById('franchiseeName').value.trim() || 'Franchisee';
-            const franchiseePhone = userProfile ? userProfile.phone : document.getElementById('franchiseePhone').value.trim() || '+254700000000';
-            const franchiseeLocation = userProfile ? userProfile.location : document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
+            // Get franchisee info from user profile
+            const franchiseeName = userProfile.name;
+            const franchiseePhone = userProfile.phone || document.getElementById('franchiseePhone').value.trim();
+            const franchiseeLocation = userProfile.location || document.getElementById('franchiseeLocation').value.trim();
             
             // Generate order ID
             const orderId = 'FR-' + Date.now().toString().slice(-8);
@@ -4248,6 +4171,11 @@
     };
     
     function openProductModal(product) {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         const modal = document.getElementById('productModal');
         const modalBody = document.getElementById('modalBody');
         
@@ -4548,6 +4476,11 @@
     
     // Franchise Order Submission
     async function submitFranchiseOrder() {
+        if (!userProfile || !userProfile.googleId) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
         const franchiseeName = document.getElementById('franchiseeName').value.trim();
         const franchiseePhone = document.getElementById('franchiseePhone').value.trim();
         const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim();
@@ -4567,7 +4500,7 @@
         // Calculate totals
         const totals = calculateCartTotal();
         
-        // Build order data
+        // Build order data with Google user info
         const orderData = {
             action: 'submitFranchiseOrder',
             franchiseeName: franchiseeName,
@@ -4578,7 +4511,12 @@
             subtotal: totals.subtotal,
             total: totals.total,
             orderDate: new Date().toISOString(),
-            orderId: 'FR-' + Date.now().toString().slice(-8)
+            orderId: 'FR-' + Date.now().toString().slice(-8),
+            googleUser: {
+                id: userProfile.googleId,
+                email: userProfile.email,
+                name: userProfile.name
+            }
         };
         
         try {
@@ -4595,7 +4533,8 @@
                 // Build WhatsApp message
                 let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
                 whatsappMessage += `*Order ID:* ${orderData.orderId}%0A`;
-                whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
+                whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+                whatsappMessage += `*Google Account:* ${userProfile.email}%0A%0A`;
                 
                 whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
                 whatsappMessage += `Name: ${franchiseeName}%0A`;
@@ -4621,22 +4560,12 @@
                 const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
                 window.open(whatsappUrl, '_blank');
                 
-                // Clear cart and form
+                // Clear cart but keep form data (it's auto-filled from profile)
                 cart = [];
                 localStorage.removeItem('dsog_franchise_cart');
                 updateCartBadge();
                 renderCart();
                 
-                // Don't clear form if it was auto-filled from profile
-                if (!userProfile || (userProfile && (
-                    franchiseeName !== userProfile.name || 
-                    franchiseePhone !== userProfile.phone || 
-                    franchiseeLocation !== userProfile.location
-                ))) {
-                    document.getElementById('franchiseeName').value = '';
-                    document.getElementById('franchiseePhone').value = '';
-                    document.getElementById('franchiseeLocation').value = '';
-                }
                 document.getElementById('orderNotes').value = '';
                 
                 showNotification('Order submitted successfully! Opening WhatsApp...');
@@ -4657,7 +4586,8 @@
         // Build WhatsApp message
         let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
         whatsappMessage += `*Order ID:* FR-${Date.now().toString().slice(-8)}%0A`;
-        whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
+        whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+        whatsappMessage += `*Google Account:* ${userProfile.email}%0A%0A`;
         
         whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
         whatsappMessage += `Name: ${franchiseeName}%0A`;
@@ -4685,22 +4615,12 @@
         const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
         window.open(whatsappUrl, '_blank');
         
-        // Clear cart and form
+        // Clear cart but keep form data
         cart = [];
         localStorage.removeItem('dsog_franchise_cart');
         updateCartBadge();
         renderCart();
         
-        // Don't clear form if it was auto-filled from profile
-        if (!userProfile || (userProfile && (
-            franchiseeName !== userProfile.name || 
-            franchiseePhone !== userProfile.phone || 
-            franchiseeLocation !== userProfile.location
-        ))) {
-            document.getElementById('franchiseeName').value = '';
-            document.getElementById('franchiseePhone').value = '';
-            document.getElementById('franchiseeLocation').value = '';
-        }
         document.getElementById('orderNotes').value = '';
         
         showNotification('Opening WhatsApp to submit your order...');
