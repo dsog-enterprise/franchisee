@@ -2349,1503 +2349,1443 @@
 
     <!-- JavaScript -->
     <script>
-    // Configuration
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
-    const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycbzmBoCu_jXpp8oKpNAnX7Ly-bqvfdfhgiHge74ZW0Yae0wUlZERDERJYB-ZC76J9kQYQ/exec'; // Your Google Apps Script URL for delivery
-    
-    // State management
-    let cart = JSON.parse(localStorage.getItem('dsog_franchise_cart')) || [];
-    let allProducts = [];
-    let currentFilter = 'all';
-    let isLoadingProducts = false;
-    
-    // Delivery State Management
-    let deliveryAssistants = [];
-    let currentDeliveryFilter = 'all';
-    let selectedAssistant = null;
-    let isLoadingDelivery = false;
-    let deliveryBackendAvailable = true; // Track if backend is available
-    
-    // PWA variables
-    let deferredPrompt = null;
-    let isAppInstalled = false;
-    let isInstallPromptShown = false;
-    
-    // Initialize the page
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DSOG Franchise Platform v2.4.0');
+        // Configuration
+        // Configuration
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
+        const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycbzmBoCu_jXpp8oKpNAnX7Ly-bqvfdfhgiHge74ZW0oYae0wUlZERDERJYB-ZC76J9kQYQ/exec'; // Your Google Apps Script URL for delivery
         
-        // Initialize components
-        initMobileMenu();
-        initProductFilters();
-        initModal();
-        initCartModal();
-        initDeliverySection();
-        initPWA();
+        // State management
+        let cart = JSON.parse(localStorage.getItem('dsog_franchise_cart')) || [];
+        let allProducts = [];
+        let currentFilter = 'all';
+        let isLoadingProducts = false;
         
-        // Load products
-        showProductLoading();
-        setTimeout(() => {
-            loadProducts();
-        }, 500);
+        // Delivery State Management
+        let deliveryAssistants = [];
+        let currentDeliveryFilter = 'all';
+        let selectedAssistant = null;
+        let isLoadingDelivery = false;
         
-        // Update cart badge
-        updateCartBadge();
+        // PWA variables
+        let deferredPrompt = null;
+        let isAppInstalled = false;
+        let isInstallPromptShown = false;
         
-        // Set up navigation
-        setupNavigation();
-    });
-    
-    // Initialize Mobile Menu
-    function initMobileMenu() {
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuBackdrop = document.getElementById('menuBackdrop');
-        const closeMenu = document.getElementById('closeMenu');
-        
-        function toggleMobileMenu() {
-            const isOpen = mobileMenu.classList.contains('active');
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DSOG Franchise Platform v2.4.0');
             
-            if (!isOpen) {
-                mobileMenu.classList.add('active');
-                menuBackdrop.classList.add('active');
-                hamburgerBtn.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } else {
-                mobileMenu.classList.remove('active');
-                menuBackdrop.classList.remove('active');
-                hamburgerBtn.classList.remove('active');
-                document.body.style.overflow = 'auto';
+            // Initialize components
+            initMobileMenu();
+            initProductFilters();
+            initModal();
+            initCartModal();
+            initDeliverySection();
+            initPWA();
+            
+            // Load products
+            showProductLoading();
+            setTimeout(() => {
+                loadProducts();
+            }, 500);
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            // Set up navigation
+            setupNavigation();
+        });
+        
+        // Initialize Mobile Menu
+        function initMobileMenu() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBackdrop = document.getElementById('menuBackdrop');
+            const closeMenu = document.getElementById('closeMenu');
+            
+            function toggleMobileMenu() {
+                const isOpen = mobileMenu.classList.contains('active');
+                
+                if (!isOpen) {
+                    mobileMenu.classList.add('active');
+                    menuBackdrop.classList.add('active');
+                    hamburgerBtn.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mobileMenu.classList.remove('active');
+                    menuBackdrop.classList.remove('active');
+                    hamburgerBtn.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+            
+            hamburgerBtn.addEventListener('click', toggleMobileMenu);
+            closeMenu.addEventListener('click', toggleMobileMenu);
+            menuBackdrop.addEventListener('click', toggleMobileMenu);
+            
+            const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', toggleMobileMenu);
+            });
+        }
+        
+        window.closeMobileMenu = function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBackdrop = document.getElementById('menuBackdrop');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            
+            mobileMenu.classList.remove('active');
+            menuBackdrop.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Setup Navigation
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    navItems.forEach(i => i.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                });
+            });
+            
+            // Handle scroll to section
+            window.scrollToSection = function(sectionId) {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            };
+        }
+        
+        // Initialize Product Filters
+        function initProductFilters() {
+            const filterButtons = document.querySelectorAll('#productFilters .filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentFilter = this.dataset.filter;
+                    filterProducts();
+                });
+            });
+        }
+        
+        // Initialize Delivery Section
+        function initDeliverySection() {
+            initDeliveryFilters();
+            initDeliveryModal();
+            // Initialize backend first, then load assistants
+            initializeDeliveryBackend();
+        }
+        
+        // Initialize Delivery Filters
+        function initDeliveryFilters() {
+            const filterButtons = document.querySelectorAll('#deliveryFilters .filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    currentDeliveryFilter = this.dataset.filter;
+                    filterDeliveryAssistants();
+                });
+            });
+        }
+        
+        // Initialize Delivery Modal
+        function initDeliveryModal() {
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            const deliveryModalClose = document.getElementById('deliveryModalClose');
+            
+            deliveryModalClose.addEventListener('click', closeDeliveryModal);
+            
+            deliveryModal.addEventListener('click', function(e) {
+                if (e.target === deliveryModal) {
+                    closeDeliveryModal();
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && deliveryModal.classList.contains('active')) {
+                    closeDeliveryModal();
+                }
+            });
+        }
+        
+        // Initialize Modals
+        function initModal() {
+            const productModal = document.getElementById('productModal');
+            const modalClose = document.getElementById('modalClose');
+            
+            modalClose.addEventListener('click', closeModal);
+            
+            productModal.addEventListener('click', function(e) {
+                if (e.target === productModal) {
+                    closeModal();
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && productModal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        }
+        
+        function initCartModal() {
+            const cartModal = document.getElementById('cartModal');
+            const cartClose = document.getElementById('cartClose');
+            const floatingCartBtn = document.getElementById('floatingCartBtn');
+            
+            cartClose.addEventListener('click', closeCartModal);
+            floatingCartBtn.addEventListener('click', openCartModal);
+            
+            cartModal.addEventListener('click', function(e) {
+                if (e.target === cartModal) {
+                    closeCartModal();
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && cartModal.classList.contains('active')) {
+                    closeCartModal();
+                }
+            });
+        }
+        
+        // Initialize Delivery Backend
+        async function initializeDeliveryBackend() {
+            try {
+                console.log('🚀 Initializing delivery backend...');
+                showDeliveryLoading();
+                
+                // First check if backend is ready
+                const testResponse = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
+                
+                if (testResponse.ok) {
+                    const result = await testResponse.json();
+                    
+                    if (result.success) {
+                        console.log('✅ Backend is ready, loading assistants...');
+                        loadDeliveryAssistants();
+                    } else if (result.message && result.message.includes('not initialized')) {
+                        // Initialize the backend
+                        console.log('⚠️ Backend not initialized, initializing now...');
+                        const initResponse = await fetch(`${deliveryScriptUrl}?action=initialize`);
+                        const initResult = await initResponse.json();
+                        
+                        if (initResult.success) {
+                            console.log('✅ Backend initialized successfully!');
+                            showNotification('Delivery system initialized! Loading assistants...');
+                            
+                            // Wait a moment then load assistants
+                            setTimeout(() => {
+                                loadDeliveryAssistants();
+                            }, 1500);
+                        } else {
+                            throw new Error('Failed to initialize backend');
+                        }
+                    } else {
+                        throw new Error('Backend error: ' + result.message);
+                    }
+                } else {
+                    throw new Error('Cannot connect to backend');
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize delivery backend:', error);
+                showDeliveryError();
+                showNotification('Could not connect to delivery system. Please refresh the page.', 'error');
             }
         }
         
-        hamburgerBtn.addEventListener('click', toggleMobileMenu);
-        closeMenu.addEventListener('click', toggleMobileMenu);
-        menuBackdrop.addEventListener('click', toggleMobileMenu);
+        // Cart Management Functions
+        function updateCartBadge() {
+            const cartBadge = document.getElementById('cartBadge');
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartBadge.textContent = totalItems > 9 ? '9+' : totalItems;
+            
+            if (totalItems > 0) {
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+            
+            // Update order summary
+            updateOrderSummary();
+        }
         
-        const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', toggleMobileMenu);
-        });
-    }
-    
-    window.closeMobileMenu = function() {
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuBackdrop = document.getElementById('menuBackdrop');
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        function addToCart(product, buttonElement = null) {
+            try {
+                const cartProduct = {
+                    id: product.id || 'prod_' + Date.now() + Math.random().toString(36).substr(2, 9),
+                    name: product.name || 'Unnamed Product',
+                    price: product.basePrice || product.price || 0,
+                    image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    quantity: 1,
+                    category: product.category || product.collectionName || 'General'
+                };
+                
+                const existingItemIndex = cart.findIndex(item => item.id === cartProduct.id);
+                
+                if (existingItemIndex > -1) {
+                    cart[existingItemIndex].quantity += 1;
+                } else {
+                    cart.push(cartProduct);
+                }
+                
+                localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
+                updateCartBadge();
+                
+                if (buttonElement) {
+                    const originalText = buttonElement.innerHTML;
+                    buttonElement.classList.add('added');
+                    buttonElement.innerHTML = '<i class="fas fa-check"></i> Added to Cart';
+                    
+                    setTimeout(() => {
+                        buttonElement.classList.remove('added');
+                        buttonElement.innerHTML = originalText;
+                    }, 2000);
+                }
+                
+                showNotification(`Added ${cartProduct.name} to cart!`);
+                
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                showNotification('Failed to add item to cart');
+            }
+        }
         
-        mobileMenu.classList.remove('active');
-        menuBackdrop.classList.remove('active');
-        hamburgerBtn.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    };
-    
-    // Setup Navigation
-    function setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
+            updateCartBadge();
+            renderCart();
+            showNotification('Item removed from cart');
+        }
         
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                // Remove active class from all items
-                navItems.forEach(i => i.classList.remove('active'));
-                // Add active class to clicked item
-                this.classList.add('active');
+        function updateQuantity(productId, newQuantity) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex > -1) {
+                if (newQuantity < 1) {
+                    removeFromCart(productId);
+                } else {
+                    cart[itemIndex].quantity = newQuantity;
+                    localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
+                    renderCart();
+                    updateCartBadge();
+                }
+            }
+        }
+        
+        function renderCart() {
+            const cartBody = document.getElementById('cartBody');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            if (cart.length === 0) {
+                cartBody.innerHTML = `
+                    <div class="cart-empty">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Your cart is empty</p>
+                        <button onclick="closeCartModal()" style="padding: 0.8rem 2rem; background: var(--primary-red); color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; transition: var(--transition);">
+                            Continue Shopping
+                        </button>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+                return;
+            }
+            
+            let cartHTML = `
+                <div class="cart-items">
+            `;
+            
+            cart.forEach(item => {
+                cartHTML += `
+                    <div class="cart-item" data-id="${item.id}">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">KSh ${item.price * item.quantity}</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                                <span class="quantity-value">${item.quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                            </div>
+                            <button class="remove-item-btn" onclick="removeFromCart('${item.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
-        });
+            
+            const totals = calculateCartTotal();
+            
+            cartHTML += `
+                </div>
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>KSh ${totals.subtotal}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Items</span>
+                        <span>${cart.reduce((total, item) => total + item.quantity, 0)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total</span>
+                        <span>KSh ${totals.total}</span>
+                    </div>
+                </div>
+            `;
+            
+            cartBody.innerHTML = cartHTML;
+            checkoutBtn.disabled = false;
+        }
         
-        // Handle scroll to section
-        window.scrollToSection = function(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+        function calculateCartTotal() {
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            return {
+                subtotal,
+                total: subtotal
+            };
+        }
+        
+        function updateOrderSummary() {
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            
+            if (cart.length === 0) {
+                orderItems.innerHTML = '<p style="color: var(--gray); text-align: center;">No items in cart</p>';
+                orderTotal.textContent = 'KSh 0';
+                return;
+            }
+            
+            let itemsHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                itemsHTML += `
+                    <div class="order-item">
+                        <span>${item.quantity}x ${item.name}</span>
+                        <span>KSh ${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            orderItems.innerHTML = itemsHTML;
+            orderTotal.textContent = `KSh ${total}`;
+        }
+        
+        function openCartModal() {
+            const cartModal = document.getElementById('cartModal');
+            renderCart();
+            cartModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeCartModal() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function openOrderSummary() {
+            closeCartModal();
+            setTimeout(() => {
+                scrollToSection('orders');
+            }, 300);
+        }
+        
+        function openModal() {
+            const productModal = document.getElementById('productModal');
+            productModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const productModal = document.getElementById('productModal');
+            productModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Delivery Modal Functions
+        function openDeliveryModal(assistant) {
+            selectedAssistant = assistant;
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            const deliveryModalBody = document.getElementById('deliveryModalBody');
+            
+            deliveryModalBody.innerHTML = `
+                <div class="assistant-summary">
+                    <h3>Delivery Assistant Details</h3>
+                    <div class="assistant-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Assistant Name:</span>
+                            <span class="detail-value">${assistant.name}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Assistant ID:</span>
+                            <span class="detail-value">${assistant.id}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone:</span>
+                            <span class="detail-value">${assistant.phone}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Vehicle:</span>
+                            <span class="detail-value">${assistant.vehicle}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value"><span class="delivery-status status-${assistant.status}">${assistant.status}</span></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Current Capacity:</span>
+                            <span class="detail-value">${assistant.currentCapacity}/${assistant.maxCapacity}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orderDetails">Paste Your Order Details *</label>
+                    <textarea 
+                        id="orderDetails" 
+                        class="order-details-textarea" 
+                        placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
+                        required></textarea>
+                    <p class="textarea-helper">
+                        <i class="fas fa-info-circle"></i> Please include all necessary details for the delivery assistant to process your request efficiently.
+                    </p>
+                </div>
+                
+                <button class="send-delivery-request-btn" onclick="sendDeliveryRequest()">
+                    <i class="fab fa-whatsapp"></i> Send Pickup Request via WhatsApp
+                </button>
+            `;
+            
+            deliveryModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeDeliveryModal() {
+            const deliveryModal = document.getElementById('deliveryRequestModal');
+            deliveryModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            selectedAssistant = null;
+        }
+        
+        async function sendDeliveryRequest() {
+            const orderDetails = document.getElementById('orderDetails').value.trim();
+            
+            if (!orderDetails) {
+                showNotification('Please paste your order details', 'error');
+                return;
+            }
+            
+            if (!selectedAssistant) {
+                showNotification('No delivery assistant selected', 'error');
+                return;
+            }
+            
+            try {
+                // Get franchisee info from the order form
+                const franchiseeName = document.getElementById('franchiseeName').value.trim() || 'Franchisee';
+                const franchiseePhone = document.getElementById('franchiseePhone').value.trim() || '+254700000000';
+                const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
+                
+                // Send to backend
+                const response = await fetch(deliveryScriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'createPickupRequest',
+                        assistantId: selectedAssistant.id,
+                        assistantName: selectedAssistant.name,
+                        franchiseeName: franchiseeName,
+                        franchiseePhone: franchiseePhone,
+                        location: franchiseeLocation,
+                        orderDetails: orderDetails,
+                        changedBy: franchiseeName
+                    })
                 });
-            }
-        };
-    }
-    
-    // Initialize Product Filters
-    function initProductFilters() {
-        const filterButtons = document.querySelectorAll('#productFilters .filter-btn');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
                 
-                currentFilter = this.dataset.filter;
-                filterProducts();
-            });
-        });
-    }
-    
-    // Initialize Delivery Section
-    function initDeliverySection() {
-        initDeliveryFilters();
-        initDeliveryModal();
-        
-        // Load delivery assistants with fallback
-        setTimeout(() => {
-            loadDeliveryAssistantsWithFallback();
-        }, 1000); // Give products time to load first
-    }
-    
-    // Initialize Delivery Filters
-    function initDeliveryFilters() {
-        const filterButtons = document.querySelectorAll('#deliveryFilters .filter-btn');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+                const result = await response.json();
                 
-                currentDeliveryFilter = this.dataset.filter;
-                filterDeliveryAssistants();
-            });
-        });
-    }
-    
-    // Initialize Delivery Modal
-    function initDeliveryModal() {
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        const deliveryModalClose = document.getElementById('deliveryModalClose');
-        
-        deliveryModalClose.addEventListener('click', closeDeliveryModal);
-        
-        deliveryModal.addEventListener('click', function(e) {
-            if (e.target === deliveryModal) {
-                closeDeliveryModal();
+                if (result.success) {
+                    // Update assistant status locally
+                    updateAssistantStatusLocally(selectedAssistant.id, 'busy');
+                    
+                    // Build WhatsApp message from backend response
+                    const whatsappMessage = result.whatsappMessage || generateWhatsAppMessage(selectedAssistant, franchiseeName, franchiseePhone, franchiseeLocation, orderDetails, result.requestId);
+                    const whatsappUrl = `https://wa.me/${selectedAssistant.phone.replace(/\D/g, '')}?text=${whatsappMessage}`;
+                    
+                    // Open WhatsApp
+                    window.open(whatsappUrl, '_blank');
+                    
+                    // Also send a copy to main support
+                    const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
+                    const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
+                    window.open(supportWhatsappUrl, '_blank');
+                    
+                    showNotification('Pickup request sent to delivery assistant!');
+                    closeDeliveryModal();
+                    
+                    // Refresh the assistants list
+                    setTimeout(() => {
+                        loadDeliveryAssistants();
+                    }, 2000);
+                    
+                } else {
+                    throw new Error(result.message || 'Failed to create pickup request');
+                }
+                
+            } catch (error) {
+                console.error('Error sending delivery request:', error);
+                showNotification('Failed to send pickup request. Please try again.', 'error');
             }
-        });
+        }
         
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && deliveryModal.classList.contains('active')) {
-                closeDeliveryModal();
+        function updateAssistantStatusLocally(assistantId, newStatus) {
+            const assistant = deliveryAssistants.find(a => a.id === assistantId);
+            if (assistant) {
+                assistant.status = newStatus;
+                displayDeliveryAssistants(deliveryAssistants);
             }
-        });
-    }
-    
-    // Initialize Modals
-    function initModal() {
-        const productModal = document.getElementById('productModal');
-        const modalClose = document.getElementById('modalClose');
+        }
         
-        modalClose.addEventListener('click', closeModal);
-        
-        productModal.addEventListener('click', function(e) {
-            if (e.target === productModal) {
-                closeModal();
-            }
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && productModal.classList.contains('active')) {
-                closeModal();
-            }
-        });
-    }
-    
-    function initCartModal() {
-        const cartModal = document.getElementById('cartModal');
-        const cartClose = document.getElementById('cartClose');
-        const floatingCartBtn = document.getElementById('floatingCartBtn');
-        
-        cartClose.addEventListener('click', closeCartModal);
-        floatingCartBtn.addEventListener('click', openCartModal);
-        
-        cartModal.addEventListener('click', function(e) {
-            if (e.target === cartModal) {
-                closeCartModal();
-            }
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && cartModal.classList.contains('active')) {
-                closeCartModal();
-            }
-        });
-    }
-    
-    // NEW: Improved delivery assistant loading with fallback
-    async function loadDeliveryAssistantsWithFallback() {
-        showDeliveryLoading();
-        
-        try {
-            console.log('🔄 Attempting to load delivery assistants from backend...');
+        function generateWhatsAppMessage(assistant, franchiseeName, franchiseePhone, location, orderDetails, requestId) {
+            let message = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
+            message += `*Request ID:* ${requestId || 'REQ-' + Date.now().toString().slice(-8)}%0A`;
+            message += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+            message += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
             
-            // First try to load from backend
-            const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`, {
-                method: 'GET',
-                mode: 'no-cors' // This might help with CORS issues
-            }).catch(() => null);
+            message += `*FRANCHISEE INFORMATION*%0A`;
+            message += `Name: ${franchiseeName}%0A`;
+            message += `Phone: ${franchiseePhone}%0A`;
+            message += `Location: ${location || 'Not specified'}%0A%0A`;
             
-            if (response && response.ok) {
-                try {
+            message += `*ASSIGNED DELIVERY ASSISTANT*%0A`;
+            message += `Name: ${assistant.name}%0A`;
+            message += `ID: ${assistant.id}%0A`;
+            message += `Vehicle: ${assistant.vehicle}%0A%0A`;
+            
+            message += `*ORDER DETAILS*%0A`;
+            message += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
+            
+            message += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
+            message += `_Please acknowledge receipt and provide ETA_`;
+            
+            return message;
+        }
+        
+        // Product Loading Functions
+        function showProductLoading() {
+            const loadingElement = document.getElementById('productsLoading');
+            const errorElement = document.getElementById('productsError');
+            
+            if (loadingElement) {
+                loadingElement.classList.add('visible');
+            }
+            if (errorElement) {
+                errorElement.classList.remove('visible');
+            }
+            
+            updateLoadingProgress(10);
+            updateLoadingCount(0, '...');
+        }
+        
+        function hideProductLoading() {
+            const loadingElement = document.getElementById('productsLoading');
+            if (loadingElement) {
+                loadingElement.classList.remove('visible');
+            }
+        }
+        
+        function showProductError() {
+            const loadingElement = document.getElementById('productsLoading');
+            const errorElement = document.getElementById('productsError');
+            
+            hideProductLoading();
+            
+            if (errorElement) {
+                errorElement.classList.add('visible');
+            }
+        }
+        
+        function retryLoadingProducts() {
+            showProductLoading();
+            loadProducts();
+        }
+        
+        function updateLoadingProgress(progress) {
+            const progressBar = document.getElementById('loadingProgressBar');
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+        }
+        
+        function updateLoadingCount(count, total) {
+            const countElement = document.getElementById('loadingCount');
+            if (countElement) {
+                if (total === '...') {
+                    countElement.textContent = `${count} products loaded`;
+                } else {
+                    countElement.textContent = `${count} of ${total} products loaded`;
+                }
+            }
+        }
+        
+        // Load Products from Backend
+        async function loadProducts() {
+            if (isLoadingProducts) return;
+            
+            isLoadingProducts = true;
+            
+            try {
+                console.log('📦 Loading franchise products...');
+                
+                updateLoadingProgress(30);
+                
+                // Use the franchise backend URL
+                const response = await fetch(`${scriptUrl}?action=getProducts&timestamp=${Date.now()}`);
+                
+                if (response.ok) {
                     const result = await response.json();
                     
                     if (result.success && Array.isArray(result.data)) {
-                        console.log(`✅ Loaded ${result.data.length} delivery assistants from backend`);
-                        processDeliveryAssistants(result.data, true);
-                        deliveryBackendAvailable = true;
-                        return;
+                        allProducts = result.data.map(product => ({
+                            id: product.id || `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                            name: product.name || 'Unnamed Product',
+                            basePrice: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
+                            price: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
+                            image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                            category: product.category || product.collectionName || 'General',
+                            description: product.description || 'Premium quality product for franchise orders.',
+                            stock: product.stock || 10
+                        }));
+                        
+                        console.log(`✅ Loaded ${allProducts.length} products from franchise backend`);
+                        
+                        updateLoadingProgress(80);
+                        updateLoadingCount(allProducts.length, allProducts.length);
+                        
+                        // Display products
+                        displayProducts(allProducts);
+                        
+                        // Hide loading indicator
+                        setTimeout(() => {
+                            hideProductLoading();
+                            const container = document.getElementById('productsContainer');
+                            container.classList.add('loaded');
+                        }, 500);
+                        
+                    } else {
+                        throw new Error('Invalid response format from franchise backend');
                     }
-                } catch (jsonError) {
-                    console.log('⚠️ Could not parse JSON response, using fallback');
+                } else {
+                    throw new Error('Network response was not ok');
                 }
-            }
-            
-            // If backend fails, use sample data
-            console.log('🔄 Backend unavailable, loading sample delivery assistants...');
-            loadSampleDeliveryAssistants();
-            deliveryBackendAvailable = false;
-            
-        } catch (error) {
-            console.log('🔄 Error loading from backend, using sample data:', error);
-            loadSampleDeliveryAssistants();
-            deliveryBackendAvailable = false;
-        }
-    }
-    
-    function processDeliveryAssistants(data, fromBackend = false) {
-        deliveryAssistants = data.map(assistant => ({
-            id: assistant.id || `DA-${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-            name: assistant.name || 'Unknown Assistant',
-            phone: assistant.phone || '+254700000000',
-            vehicle: assistant.vehicle || 'Motorcycle',
-            status: assistant.status || 'available',
-            currentCapacity: parseInt(assistant.currentCapacity) || 0,
-            maxCapacity: parseInt(assistant.maxCapacity) || 10,
-            rating: parseFloat(assistant.rating) || 4.5,
-            completedDeliveries: parseInt(assistant.completedDeliveries) || 0,
-            location: assistant.location || 'Nairobi CBD',
-            zones: Array.isArray(assistant.zones) ? assistant.zones : 
-                   (assistant.zones ? assistant.zones.split(',') : ['Central']),
-            lastUpdated: assistant.lastUpdated || new Date().toISOString(),
-            isActive: assistant.isActive !== false,
-            notes: assistant.notes || '',
-            source: fromBackend ? 'backend' : 'sample'
-        }));
-        
-        console.log(`✅ Processed ${deliveryAssistants.length} delivery assistants`);
-        
-        // Display delivery assistants
-        displayDeliveryAssistants(deliveryAssistants);
-        
-        // Hide loading indicator
-        setTimeout(() => {
-            hideDeliveryLoading();
-            const container = document.getElementById('deliveryContainer');
-            container.classList.add('loaded');
-            
-            if (!fromBackend) {
-                showNotification('Using sample delivery data. Backend may be unavailable.', 'warning');
-            } else {
-                showNotification('Delivery assistants loaded successfully!');
-            }
-        }, 500);
-    }
-    
-    function loadSampleDeliveryAssistants() {
-        const sampleAssistants = [
-            {
-                id: 'DA-001',
-                name: 'John Kamau',
-                phone: '+254711223344',
-                vehicle: 'Motorcycle',
-                status: 'available',
-                currentCapacity: 2,
-                maxCapacity: 10,
-                rating: 4.8,
-                completedDeliveries: 45,
-                location: 'Nairobi CBD',
-                zones: ['Central', 'Westlands', 'Karen'],
-                lastUpdated: new Date().toISOString(),
-                isActive: true,
-                notes: 'Reliable and fast delivery'
-            },
-            {
-                id: 'DA-002',
-                name: 'Sarah Achieng',
-                phone: '+254722334455',
-                vehicle: 'Car',
-                status: 'busy',
-                currentCapacity: 8,
-                maxCapacity: 15,
-                rating: 4.9,
-                completedDeliveries: 67,
-                location: 'Westlands',
-                zones: ['Westlands', 'Parklands', 'Lavington'],
-                lastUpdated: new Date().toISOString(),
-                isActive: true,
-                notes: 'Handles large deliveries'
-            },
-            {
-                id: 'DA-003',
-                name: 'Peter Omondi',
-                phone: '+254733445566',
-                vehicle: 'Van',
-                status: 'available',
-                currentCapacity: 4,
-                maxCapacity: 20,
-                rating: 4.7,
-                completedDeliveries: 32,
-                location: 'Industrial Area',
-                zones: ['Industrial', 'South B', 'South C'],
-                lastUpdated: new Date().toISOString(),
-                isActive: true,
-                notes: 'Specializes in bulk deliveries'
-            },
-            {
-                id: 'DA-004',
-                name: 'Grace Wambui',
-                phone: '+254744556677',
-                vehicle: 'Motorcycle',
-                status: 'available',
-                currentCapacity: 1,
-                maxCapacity: 8,
-                rating: 4.6,
-                completedDeliveries: 28,
-                location: 'Karen',
-                zones: ['Karen', 'Langata', 'Rongai'],
-                lastUpdated: new Date().toISOString(),
-                isActive: true,
-                notes: 'Quick response time'
-            },
-            {
-                id: 'DA-005',
-                name: 'David Njoroge',
-                phone: '+254755667788',
-                vehicle: 'Motorcycle',
-                status: 'available',
-                currentCapacity: 3,
-                maxCapacity: 10,
-                rating: 4.5,
-                completedDeliveries: 39,
-                location: 'Eastlands',
-                zones: ['Eastlands', 'Embakasi', 'Umoja'],
-                lastUpdated: new Date().toISOString(),
-                isActive: true,
-                notes: 'Knows shortcuts well'
-            }
-        ];
-        
-        processDeliveryAssistants(sampleAssistants, false);
-    }
-    
-    // Cart Management Functions
-    function updateCartBadge() {
-        const cartBadge = document.getElementById('cartBadge');
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        cartBadge.textContent = totalItems > 9 ? '9+' : totalItems;
-        
-        if (totalItems > 0) {
-            cartBadge.style.display = 'flex';
-        } else {
-            cartBadge.style.display = 'none';
-        }
-        
-        // Update order summary
-        updateOrderSummary();
-    }
-    
-    function addToCart(product, buttonElement = null) {
-        try {
-            const cartProduct = {
-                id: product.id || 'prod_' + Date.now() + Math.random().toString(36).substr(2, 9),
-                name: product.name || 'Unnamed Product',
-                price: product.basePrice || product.price || 0,
-                image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                quantity: 1,
-                category: product.category || product.collectionName || 'General'
-            };
-            
-            const existingItemIndex = cart.findIndex(item => item.id === cartProduct.id);
-            
-            if (existingItemIndex > -1) {
-                cart[existingItemIndex].quantity += 1;
-            } else {
-                cart.push(cartProduct);
-            }
-            
-            localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
-            updateCartBadge();
-            
-            if (buttonElement) {
-                const originalText = buttonElement.innerHTML;
-                buttonElement.classList.add('added');
-                buttonElement.innerHTML = '<i class="fas fa-check"></i> Added to Cart';
                 
+            } catch (error) {
+                console.error('❌ Error loading products from franchise backend:', error);
+                
+                // Fallback to sample products
+                loadSampleProducts();
+                
+            } finally {
+                isLoadingProducts = false;
+            }
+        }
+        
+        function loadSampleProducts() {
+            console.log('📦 Loading sample products as fallback...');
+            
+            // Sample franchise products
+            allProducts = [
+                {
+                    id: 'FR-CL001',
+                    name: 'Premium Franchise Hoodie',
+                    basePrice: 8999,
+                    price: 8999,
+                    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    category: 'clothing',
+                    description: 'Premium franchise hoodie for official DSOG franchisees. Made with high-quality materials.',
+                    stock: 50
+                },
+                {
+                    id: 'FR-CL002',
+                    name: 'Franchise Polo Shirt',
+                    basePrice: 4550,
+                    price: 4550,
+                    image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    category: 'clothing',
+                    description: 'Official franchise polo shirt with DSOG branding.',
+                    stock: 75
+                },
+                {
+                    id: 'FR-AC001',
+                    name: 'Franchise Cap',
+                    basePrice: 2999,
+                    price: 2999,
+                    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    category: 'accessories',
+                    description: 'DSOG franchise branded cap for staff and promotions.',
+                    stock: 100
+                },
+                {
+                    id: 'FR-HG001',
+                    name: 'Display Stand',
+                    basePrice: 14999,
+                    price: 14999,
+                    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    category: 'home-goods',
+                    description: 'Premium display stand for franchise store products.',
+                    stock: 20
+                },
+                {
+                    id: 'FR-NEW001',
+                    name: 'New Arrival Collection',
+                    basePrice: 24999,
+                    price: 24999,
+                    image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                    category: 'new',
+                    description: 'Latest collection items for franchise stores.',
+                    stock: 30
+                }
+            ];
+            
+            updateLoadingProgress(100);
+            updateLoadingCount(allProducts.length, allProducts.length);
+            
+            displayProducts(allProducts);
+            
+            setTimeout(() => {
+                hideProductLoading();
+                const container = document.getElementById('productsContainer');
+                container.classList.add('loaded');
+            }, 500);
+            
+            showNotification('Loaded sample products for franchise orders');
+        }
+        
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+            
+            // Clear existing products except loading/error states
+            Array.from(container.children).forEach(child => {
+                if (child.id !== 'productsLoading' && child.id !== 'productsError') {
+                    container.removeChild(child);
+                }
+            });
+            
+            // Filter products
+            let filteredProducts = products;
+            if (currentFilter !== 'all') {
+                filteredProducts = products.filter(product => 
+                    product.category === currentFilter || 
+                    (currentFilter === 'new' && product.category === 'new')
+                );
+            }
+            
+            // Display products with staggered animation
+            filteredProducts.forEach((product, index) => {
                 setTimeout(() => {
-                    buttonElement.classList.remove('added');
-                    buttonElement.innerHTML = originalText;
-                }, 2000);
-            }
-            
-            showNotification(`Added ${cartProduct.name} to cart!`);
-            
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            showNotification('Failed to add item to cart');
+                    const productCard = createProductCard(product);
+                    container.appendChild(productCard);
+                }, index * 50);
+            });
         }
-    }
-    
-    function removeFromCart(productId) {
-        cart = cart.filter(item => item.id !== productId);
-        localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
-        updateCartBadge();
-        renderCart();
-        showNotification('Item removed from cart');
-    }
-    
-    function updateQuantity(productId, newQuantity) {
-        const itemIndex = cart.findIndex(item => item.id === productId);
-        if (itemIndex > -1) {
-            if (newQuantity < 1) {
-                removeFromCart(productId);
-            } else {
-                cart[itemIndex].quantity = newQuantity;
-                localStorage.setItem('dsog_franchise_cart', JSON.stringify(cart));
-                renderCart();
-                updateCartBadge();
-            }
-        }
-    }
-    
-    function renderCart() {
-        const cartBody = document.getElementById('cartBody');
-        const checkoutBtn = document.getElementById('checkoutBtn');
         
-        if (cart.length === 0) {
-            cartBody.innerHTML = `
-                <div class="cart-empty">
-                    <i class="fas fa-shopping-cart"></i>
-                    <p>Your cart is empty</p>
-                    <button onclick="closeCartModal()" style="padding: 0.8rem 2rem; background: var(--primary-red); color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; transition: var(--transition);">
-                        Continue Shopping
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.style.animationDelay = `${Math.random() * 0.3}s`;
+            
+            // Check if product is in cart
+            const cartItem = cart.find(item => item.id === product.id);
+            const quantityInCart = cartItem ? cartItem.quantity : 0;
+            
+            card.innerHTML = `
+                <div class="product-image-wrapper">
+                    <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+                    <button class="view-image-btn" onclick="event.stopPropagation(); openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <div class="product-badge">${product.category}</div>
+                    <h3 class="product-title">${product.name}</h3>
+                    <div class="product-price">KSh ${product.price}</div>
+                    <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
+                            onclick="window.addToCartToCart(${JSON.stringify(product).replace(/"/g, '&quot;')}, this)">
+                        <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
+                        ${quantityInCart > 0 ? `Added (${quantityInCart})` : 'Add to Cart'}
                     </button>
                 </div>
             `;
-            checkoutBtn.disabled = true;
-            return;
-        }
-        
-        let cartHTML = `
-            <div class="cart-items">
-        `;
-        
-        cart.forEach(item => {
-            cartHTML += `
-                <div class="cart-item" data-id="${item.id}">
-                    <div class="cart-item-image">
-                        <img src="${item.image}" alt="${item.name}" loading="lazy">
-                    </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">KSh ${item.price * item.quantity}</div>
-                    </div>
-                    <div class="cart-item-controls">
-                        <div class="quantity-control">
-                            <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                            <span class="quantity-value">${item.quantity}</span>
-                            <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                        </div>
-                        <button class="remove-item-btn" onclick="removeFromCart('${item.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-        
-        const totals = calculateCartTotal();
-        
-        cartHTML += `
-            </div>
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>KSh ${totals.subtotal}</span>
-                </div>
-                <div class="summary-row">
-                    <span>Items</span>
-                    <span>${cart.reduce((total, item) => total + item.quantity, 0)}</span>
-                </div>
-                <div class="summary-row">
-                    <span>Total</span>
-                    <span>KSh ${totals.total}</span>
-                </div>
-            </div>
-        `;
-        
-        cartBody.innerHTML = cartHTML;
-        checkoutBtn.disabled = false;
-    }
-    
-    function calculateCartTotal() {
-        const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-        return {
-            subtotal,
-            total: subtotal
-        };
-    }
-    
-    function updateOrderSummary() {
-        const orderItems = document.getElementById('orderItems');
-        const orderTotal = document.getElementById('orderTotal');
-        
-        if (cart.length === 0) {
-            orderItems.innerHTML = '<p style="color: var(--gray); text-align: center;">No items in cart</p>';
-            orderTotal.textContent = 'KSh 0';
-            return;
-        }
-        
-        let itemsHTML = '';
-        let total = 0;
-        
-        cart.forEach((item, index) => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
             
-            itemsHTML += `
-                <div class="order-item">
-                    <span>${item.quantity}x ${item.name}</span>
-                    <span>KSh ${itemTotal}</span>
-                </div>
-            `;
-        });
-        
-        orderItems.innerHTML = itemsHTML;
-        orderTotal.textContent = `KSh ${total}`;
-    }
-    
-    function openCartModal() {
-        const cartModal = document.getElementById('cartModal');
-        renderCart();
-        cartModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeCartModal() {
-        const cartModal = document.getElementById('cartModal');
-        cartModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-    
-    function openOrderSummary() {
-        closeCartModal();
-        setTimeout(() => {
-            scrollToSection('orders');
-        }, 300);
-    }
-    
-    function openModal() {
-        const productModal = document.getElementById('productModal');
-        productModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeModal() {
-        const productModal = document.getElementById('productModal');
-        productModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-    
-    // Delivery Modal Functions
-    function openDeliveryModal(assistant) {
-        selectedAssistant = assistant;
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        const deliveryModalBody = document.getElementById('deliveryModalBody');
-        
-        // Add source indicator if using sample data
-        const sourceIndicator = assistant.source === 'sample' ? 
-            '<p style="color: var(--primary-gold); font-size: 0.9rem; margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Using sample data. WhatsApp will still work.</p>' : '';
-        
-        deliveryModalBody.innerHTML = `
-            <div class="assistant-summary">
-                <h3>Delivery Assistant Details</h3>
-                ${sourceIndicator}
-                <div class="assistant-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Assistant Name:</span>
-                        <span class="detail-value">${assistant.name}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Assistant ID:</span>
-                        <span class="detail-value">${assistant.id}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Phone:</span>
-                        <span class="detail-value">${assistant.phone}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Vehicle:</span>
-                        <span class="detail-value">${assistant.vehicle}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value"><span class="delivery-status status-${assistant.status}">${assistant.status}</span></span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Current Capacity:</span>
-                        <span class="detail-value">${assistant.currentCapacity}/${assistant.maxCapacity}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="orderDetails">Paste Your Order Details *</label>
-                <textarea 
-                    id="orderDetails" 
-                    class="order-details-textarea" 
-                    placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
-                    required></textarea>
-                <p class="textarea-helper">
-                    <i class="fas fa-info-circle"></i> Please include all necessary details for the delivery assistant to process your request efficiently.
-                </p>
-            </div>
-            
-            <button class="send-delivery-request-btn" onclick="sendDeliveryRequest()">
-                <i class="fab fa-whatsapp"></i> Send Pickup Request via WhatsApp
-            </button>
-        `;
-        
-        deliveryModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeDeliveryModal() {
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        deliveryModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-        selectedAssistant = null;
-    }
-    
-    // FIXED: Updated sendDeliveryRequest function
-    async function sendDeliveryRequest() {
-        const orderDetailsElement = document.getElementById('orderDetails');
-        const orderDetails = orderDetailsElement ? orderDetailsElement.value.trim() : '';
-        
-        if (!orderDetails) {
-            showNotification('Please paste your order details', 'error');
-            orderDetailsElement?.focus();
-            return;
-        }
-        
-        if (!selectedAssistant) {
-            showNotification('No delivery assistant selected', 'error');
-            return;
-        }
-        
-        try {
-            // Get franchisee info from the order form
-            const franchiseeName = document.getElementById('franchiseeName').value.trim() || 'Franchisee';
-            const franchiseePhone = document.getElementById('franchiseePhone').value.trim() || '+254700000000';
-            const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
-            
-            // Generate order ID
-            const orderId = 'FR-' + Date.now().toString().slice(-8);
-            const orderDate = new Date().toLocaleDateString();
-            const orderTime = new Date().toLocaleTimeString();
-            
-            // Generate WhatsApp message
-            let whatsappMessage = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
-            whatsappMessage += `*Request ID:* ${orderId}%0A`;
-            whatsappMessage += `*Date:* ${orderDate}%0A`;
-            whatsappMessage += `*Time:* ${orderTime}%0A%0A`;
-            
-            whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-            whatsappMessage += `Name: ${franchiseeName}%0A`;
-            whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-            whatsappMessage += `Location: ${franchiseeLocation}%0A%0A`;
-            
-            whatsappMessage += `*ASSIGNED DELIVERY ASSISTANT*%0A`;
-            whatsappMessage += `Name: ${selectedAssistant.name}%0A`;
-            whatsappMessage += `ID: ${selectedAssistant.id}%0A`;
-            whatsappMessage += `Phone: ${selectedAssistant.phone}%0A`;
-            whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A%0A`;
-            
-            whatsappMessage += `*ORDER DETAILS*%0A`;
-            whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
-            
-            whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
-            whatsappMessage += `_Please acknowledge receipt and provide ETA_`;
-            
-            // Encode the message for WhatsApp
-            const encodedMessage = encodeURIComponent(whatsappMessage);
-            
-            // Open WhatsApp with the assistant
-            const whatsappUrl = `https://wa.me/${selectedAssistant.phone.replace(/\D/g, '')}?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-            
-            // Also send a copy to main support for tracking
-            const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
-            const supportWhatsappUrl = `https://wa.me/254733737983?text=${encodeURIComponent(supportMessage)}`;
-            window.open(supportWhatsappUrl, '_blank');
-            
-            showNotification('Pickup request sent to delivery assistant!');
-            closeDeliveryModal();
-            
-            // Update assistant status locally to busy
-            updateAssistantStatusLocally(selectedAssistant.id, 'busy');
-            
-            // Clear the order details textarea
-            if (orderDetailsElement) {
-                orderDetailsElement.value = '';
-            }
-            
-            // Refresh the assistants list after a delay
-            setTimeout(() => {
-                if (deliveryBackendAvailable) {
-                    loadDeliveryAssistantsWithFallback();
+            // Add click event to open modal
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('.add-to-cart-btn') && !e.target.closest('.view-image-btn')) {
+                    openProductModal(product);
                 }
-            }, 2000);
+            });
             
-        } catch (error) {
-            console.error('Error sending delivery request:', error);
-            showNotification('Failed to send pickup request. Please try again.', 'error');
-        }
-    }
-    
-    function updateAssistantStatusLocally(assistantId, newStatus) {
-        const assistant = deliveryAssistants.find(a => a.id === assistantId);
-        if (assistant) {
-            assistant.status = newStatus;
-            displayDeliveryAssistants(deliveryAssistants);
-        }
-    }
-    
-    // Delivery Loading States
-    function showDeliveryLoading() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        const errorElement = document.getElementById('deliveryError');
-        
-        if (loadingElement) {
-            loadingElement.classList.add('visible');
-        }
-        if (errorElement) {
-            errorElement.classList.remove('visible');
-        }
-    }
-    
-    function hideDeliveryLoading() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        if (loadingElement) {
-            loadingElement.classList.remove('visible');
-        }
-    }
-    
-    function showDeliveryError() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        const errorElement = document.getElementById('deliveryError');
-        
-        hideDeliveryLoading();
-        
-        if (errorElement) {
-            errorElement.classList.add('visible');
-        }
-    }
-    
-    function retryLoadingDeliveryAssistants() {
-        showDeliveryLoading();
-        loadDeliveryAssistantsWithFallback();
-    }
-    
-    function displayDeliveryAssistants(assistants) {
-        const container = document.getElementById('deliveryContainer');
-        
-        // Clear existing assistants except loading/error states
-        Array.from(container.children).forEach(child => {
-            if (child.id !== 'deliveryLoading' && child.id !== 'deliveryError') {
-                container.removeChild(child);
-            }
-        });
-        
-        // Filter assistants
-        let filteredAssistants = assistants;
-        if (currentDeliveryFilter !== 'all') {
-            filteredAssistants = assistants.filter(assistant => 
-                assistant.status === currentDeliveryFilter
-            );
+            return card;
         }
         
-        // Display assistants with staggered animation
-        filteredAssistants.forEach((assistant, index) => {
-            setTimeout(() => {
-                const deliveryCard = createDeliveryCard(assistant);
-                container.appendChild(deliveryCard);
-            }, index * 100);
-        });
-    }
-    
-    function createDeliveryCard(assistant) {
-        const card = document.createElement('div');
-        card.className = 'delivery-card';
+        // Global function for add to cart from product cards
+        window.addToCartToCart = function(product, buttonElement) {
+            addToCart(product, buttonElement);
+        };
         
-        const capacityPercentage = (assistant.currentCapacity / assistant.maxCapacity) * 100;
-        const capacityColor = capacityPercentage > 80 ? 'var(--light-red)' : 
-                             capacityPercentage > 60 ? 'var(--primary-gold)' : 
-                             'var(--success)';
-        
-        card.innerHTML = `
-            <div class="delivery-card-header">
-                <span class="delivery-status status-${assistant.status}">${assistant.status}</span>
-                <h3 class="delivery-name">${assistant.name}</h3>
-                <p class="delivery-id">ID: ${assistant.id}</p>
-                <div class="delivery-vehicle">
-                    <i class="fas fa-car"></i>
-                    <span>${assistant.vehicle}</span>
+        function openProductModal(product) {
+            const modal = document.getElementById('productModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            // Check if product is in cart
+            const cartItem = cart.find(item => item.id === product.id);
+            const quantityInCart = cartItem ? cartItem.quantity : 0;
+            
+            modalBody.innerHTML = `
+                <div class="modal-image-container">
+                    <img src="${product.image}" alt="${product.name}" class="modal-main-image">
                 </div>
-                <div class="delivery-rating">
-                    <i class="fas fa-star"></i>
-                    <span>${assistant.rating} (${assistant.completedDeliveries} deliveries)</span>
-                </div>
-            </div>
-            <div class="delivery-card-body">
-                <div class="delivery-info">
-                    <div class="info-row">
-                        <span class="info-label">Phone:</span>
-                        <span class="info-value">${assistant.phone}</span>
+                <div class="modal-details">
+                    <h2 class="modal-title">${product.name}</h2>
+                    <div class="modal-price">KSh ${product.price}</div>
+                    <div class="modal-category">${product.category}</div>
+                    <p class="modal-description">${product.description}</p>
+                    <div style="margin-top: 1rem;">
+                        <p><strong>Stock:</strong> ${product.stock} units available</p>
+                        <p><strong>SKU:</strong> ${product.id}</p>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value">${assistant.location}</span>
-                    </div>
-                </div>
-                
-                <div class="delivery-capacity">
-                    <div class="capacity-label">Current Capacity</div>
-                    <div class="capacity-bar">
-                        <div class="capacity-fill" style="width: ${capacityPercentage}%; background: ${capacityColor};"></div>
-                    </div>
-                    <div class="capacity-text">${assistant.currentCapacity}/${assistant.maxCapacity} items</div>
-                </div>
-                
-                <div class="delivery-buttons">
-                    <button class="pickup-btn" onclick="openDeliveryModal(${JSON.stringify(assistant).replace(/"/g, '&quot;')})" ${assistant.status === 'busy' ? 'disabled' : ''}>
-                        <i class="fas fa-truck-loading"></i>
-                        ${assistant.status === 'busy' ? 'Currently Busy' : 'Request Pickup'}
-                    </button>
-                    <button class="whatsapp-btn" onclick="window.open('https://wa.me/${assistant.phone.replace(/\D/g, '')}', '_blank')">
-                        <i class="fab fa-whatsapp"></i>
+                    <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
+                            onclick="window.addToCartToCart(${JSON.stringify(product).replace(/"/g, '&quot;')}, this); closeModal();"
+                            style="margin-top: 2rem;">
+                        <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
+                        ${quantityInCart > 0 ? `Update Cart (${quantityInCart})` : 'Add to Cart'}
                     </button>
                 </div>
-            </div>
-        `;
-        
-        return card;
-    }
-    
-    function filterDeliveryAssistants() {
-        displayDeliveryAssistants(deliveryAssistants);
-    }
-    
-    // Product Loading Functions
-    function showProductLoading() {
-        const loadingElement = document.getElementById('productsLoading');
-        const errorElement = document.getElementById('productsError');
-        
-        if (loadingElement) {
-            loadingElement.classList.add('visible');
-        }
-        if (errorElement) {
-            errorElement.classList.remove('visible');
+            `;
+            
+            openModal();
         }
         
-        updateLoadingProgress(10);
-        updateLoadingCount(0, '...');
-    }
-    
-    function hideProductLoading() {
-        const loadingElement = document.getElementById('productsLoading');
-        if (loadingElement) {
-            loadingElement.classList.remove('visible');
+        function filterProducts() {
+            displayProducts(allProducts);
         }
-    }
-    
-    function showProductError() {
-        const loadingElement = document.getElementById('productsLoading');
-        const errorElement = document.getElementById('productsError');
         
-        hideProductLoading();
-        
-        if (errorElement) {
-            errorElement.classList.add('visible');
-        }
-    }
-    
-    function retryLoadingProducts() {
-        showProductLoading();
-        loadProducts();
-    }
-    
-    function updateLoadingProgress(progress) {
-        const progressBar = document.getElementById('loadingProgressBar');
-        if (progressBar) {
-            progressBar.style.width = progress + '%';
-        }
-    }
-    
-    function updateLoadingCount(count, total) {
-        const countElement = document.getElementById('loadingCount');
-        if (countElement) {
-            if (total === '...') {
-                countElement.textContent = `${count} products loaded`;
-            } else {
-                countElement.textContent = `${count} of ${total} products loaded`;
+        // Delivery Assistant Functions
+        function showDeliveryLoading() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            const errorElement = document.getElementById('deliveryError');
+            
+            if (loadingElement) {
+                loadingElement.classList.add('visible');
+            }
+            if (errorElement) {
+                errorElement.classList.remove('visible');
             }
         }
-    }
-    
-    // Load Products from Backend
-    async function loadProducts() {
-        if (isLoadingProducts) return;
         
-        isLoadingProducts = true;
+        function hideDeliveryLoading() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            if (loadingElement) {
+                loadingElement.classList.remove('visible');
+            }
+        }
         
-        try {
-            console.log('📦 Loading franchise products...');
+        function showDeliveryError() {
+            const loadingElement = document.getElementById('deliveryLoading');
+            const errorElement = document.getElementById('deliveryError');
             
-            updateLoadingProgress(30);
+            hideDeliveryLoading();
             
-            // Use the franchise backend URL
-            const response = await fetch(`${scriptUrl}?action=getProducts&timestamp=${Date.now()}`);
+            if (errorElement) {
+                errorElement.classList.add('visible');
+            }
+        }
+        
+        function retryLoadingDeliveryAssistants() {
+            showDeliveryLoading();
+            loadDeliveryAssistants();
+        }
+        
+        async function loadDeliveryAssistants() {
+            if (isLoadingDelivery) return;
             
-            if (response.ok) {
+            isLoadingDelivery = true;
+            showDeliveryLoading();
+            
+            try {
+                console.log('🚚 Loading delivery assistants from backend...');
+                
+                const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('Backend response:', result);
                 
                 if (result.success && Array.isArray(result.data)) {
-                    allProducts = result.data.map(product => ({
-                        id: product.id || `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        name: product.name || 'Unnamed Product',
-                        basePrice: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
-                        price: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
-                        image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        category: product.category || product.collectionName || 'General',
-                        description: product.description || 'Premium quality product for franchise orders.',
-                        stock: product.stock || 10
+                    deliveryAssistants = result.data.map(assistant => ({
+                        id: assistant.id || `DA-${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+                        name: assistant.name || 'Unknown Assistant',
+                        phone: assistant.phone || '+254700000000',
+                        vehicle: assistant.vehicle || 'Vehicle not specified',
+                        status: assistant.status || 'available',
+                        currentCapacity: parseInt(assistant.currentCapacity) || 0,
+                        maxCapacity: parseInt(assistant.maxCapacity) || 10,
+                        rating: parseFloat(assistant.rating) || 4.5,
+                        completedDeliveries: parseInt(assistant.completedDeliveries) || 0,
+                        location: assistant.location || 'Location not specified',
+                        zones: Array.isArray(assistant.zones) ? assistant.zones : 
+                               (assistant.zones ? assistant.zones.split(',') : []),
+                        lastUpdated: assistant.lastUpdated || new Date().toISOString(),
+                        isActive: assistant.isActive !== false,
+                        notes: assistant.notes || ''
                     }));
                     
-                    console.log(`✅ Loaded ${allProducts.length} products from franchise backend`);
+                    console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants from backend`);
                     
-                    updateLoadingProgress(80);
-                    updateLoadingCount(allProducts.length, allProducts.length);
-                    
-                    // Display products
-                    displayProducts(allProducts);
+                    // Display delivery assistants
+                    displayDeliveryAssistants(deliveryAssistants);
                     
                     // Hide loading indicator
                     setTimeout(() => {
-                        hideProductLoading();
-                        const container = document.getElementById('productsContainer');
+                        hideDeliveryLoading();
+                        const container = document.getElementById('deliveryContainer');
                         container.classList.add('loaded');
                     }, 500);
                     
                 } else {
-                    throw new Error('Invalid response format from franchise backend');
+                    throw new Error(result.message || 'Invalid response from backend');
                 }
-            } else {
-                throw new Error('Network response was not ok');
+                
+            } catch (error) {
+                console.error('❌ Error loading delivery assistants:', error);
+                showDeliveryError();
+                showNotification('Could not load delivery assistants. Please refresh the page.', 'error');
+            } finally {
+                isLoadingDelivery = false;
             }
+        }
+        
+        function displayDeliveryAssistants(assistants) {
+            const container = document.getElementById('deliveryContainer');
             
-        } catch (error) {
-            console.error('❌ Error loading products from franchise backend:', error);
-            
-            // Fallback to sample products
-            loadSampleProducts();
-            
-        } finally {
-            isLoadingProducts = false;
-        }
-    }
-    
-    function loadSampleProducts() {
-        console.log('📦 Loading sample products as fallback...');
-        
-        // Sample franchise products
-        allProducts = [
-            {
-                id: 'FR-CL001',
-                name: 'Premium Franchise Hoodie',
-                basePrice: 8999,
-                price: 8999,
-                image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'clothing',
-                description: 'Premium franchise hoodie for official DSOG franchisees. Made with high-quality materials.',
-                stock: 50
-            },
-            {
-                id: 'FR-CL002',
-                name: 'Franchise Polo Shirt',
-                basePrice: 4550,
-                price: 4550,
-                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'clothing',
-                description: 'Official franchise polo shirt with DSOG branding.',
-                stock: 75
-            },
-            {
-                id: 'FR-AC001',
-                name: 'Franchise Cap',
-                basePrice: 2999,
-                price: 2999,
-                image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'accessories',
-                description: 'DSOG franchise branded cap for staff and promotions.',
-                stock: 100
-            },
-            {
-                id: 'FR-HG001',
-                name: 'Display Stand',
-                basePrice: 14999,
-                price: 14999,
-                image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'home-goods',
-                description: 'Premium display stand for franchise store products.',
-                stock: 20
-            },
-            {
-                id: 'FR-NEW001',
-                name: 'New Arrival Collection',
-                basePrice: 24999,
-                price: 24999,
-                image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'new',
-                description: 'Latest collection items for franchise stores.',
-                stock: 30
-            }
-        ];
-        
-        updateLoadingProgress(100);
-        updateLoadingCount(allProducts.length, allProducts.length);
-        
-        displayProducts(allProducts);
-        
-        setTimeout(() => {
-            hideProductLoading();
-            const container = document.getElementById('productsContainer');
-            container.classList.add('loaded');
-        }, 500);
-        
-        showNotification('Loaded sample products for franchise orders');
-    }
-    
-    function displayProducts(products) {
-        const container = document.getElementById('productsContainer');
-        
-        // Clear existing products except loading/error states
-        Array.from(container.children).forEach(child => {
-            if (child.id !== 'productsLoading' && child.id !== 'productsError') {
-                container.removeChild(child);
-            }
-        });
-        
-        // Filter products
-        let filteredProducts = products;
-        if (currentFilter !== 'all') {
-            filteredProducts = products.filter(product => 
-                product.category === currentFilter || 
-                (currentFilter === 'new' && product.category === 'new')
-            );
-        }
-        
-        // Display products with staggered animation
-        filteredProducts.forEach((product, index) => {
-            setTimeout(() => {
-                const productCard = createProductCard(product);
-                container.appendChild(productCard);
-            }, index * 50);
-        });
-    }
-    
-    function createProductCard(product) {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.style.animationDelay = `${Math.random() * 0.3}s`;
-        
-        // Check if product is in cart
-        const cartItem = cart.find(item => item.id === product.id);
-        const quantityInCart = cartItem ? cartItem.quantity : 0;
-        
-        card.innerHTML = `
-            <div class="product-image-wrapper">
-                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
-                <button class="view-image-btn" onclick="event.stopPropagation(); openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
-                    <i class="fas fa-expand"></i>
-                </button>
-            </div>
-            <div class="product-info">
-                <div class="product-badge">${product.category}</div>
-                <h3 class="product-title">${product.name}</h3>
-                <div class="product-price">KSh ${product.price}</div>
-                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
-                        onclick="window.addToCartToCart(${JSON.stringify(product).replace(/"/g, '&quot;')}, this)">
-                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
-                    ${quantityInCart > 0 ? `Added (${quantityInCart})` : 'Add to Cart'}
-                </button>
-            </div>
-        `;
-        
-        // Add click event to open modal
-        card.addEventListener('click', function(e) {
-            if (!e.target.closest('.add-to-cart-btn') && !e.target.closest('.view-image-btn')) {
-                openProductModal(product);
-            }
-        });
-        
-        return card;
-    }
-    
-    // Global function for add to cart from product cards
-    window.addToCartToCart = function(product, buttonElement) {
-        addToCart(product, buttonElement);
-    };
-    
-    function openProductModal(product) {
-        const modal = document.getElementById('productModal');
-        const modalBody = document.getElementById('modalBody');
-        
-        // Check if product is in cart
-        const cartItem = cart.find(item => item.id === product.id);
-        const quantityInCart = cartItem ? cartItem.quantity : 0;
-        
-        modalBody.innerHTML = `
-            <div class="modal-image-container">
-                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
-            </div>
-            <div class="modal-details">
-                <h2 class="modal-title">${product.name}</h2>
-                <div class="modal-price">KSh ${product.price}</div>
-                <div class="modal-category">${product.category}</div>
-                <p class="modal-description">${product.description}</p>
-                <div style="margin-top: 1rem;">
-                    <p><strong>Stock:</strong> ${product.stock} units available</p>
-                    <p><strong>SKU:</strong> ${product.id}</p>
-                </div>
-                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
-                        onclick="window.addToCartToCart(${JSON.stringify(product).replace(/"/g, '&quot;')}, this); closeModal();"
-                        style="margin-top: 2rem;">
-                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
-                    ${quantityInCart > 0 ? `Update Cart (${quantityInCart})` : 'Add to Cart'}
-                </button>
-            </div>
-        `;
-        
-        openModal();
-    }
-    
-    function filterProducts() {
-        displayProducts(allProducts);
-    }
-    
-    // Franchise Order Submission
-    async function submitFranchiseOrder() {
-        const franchiseeName = document.getElementById('franchiseeName').value.trim();
-        const franchiseePhone = document.getElementById('franchiseePhone').value.trim();
-        const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim();
-        const orderNotes = document.getElementById('orderNotes').value.trim();
-        
-        // Validation
-        if (!franchiseeName || !franchiseePhone || !franchiseeLocation) {
-            showNotification('Please fill in all required fields', 'error');
-            return;
-        }
-        
-        if (cart.length === 0) {
-            showNotification('Your cart is empty. Add products before submitting.', 'error');
-            return;
-        }
-        
-        // Calculate totals
-        const totals = calculateCartTotal();
-        
-        // Build order data
-        const orderData = {
-            action: 'submitFranchiseOrder',
-            franchiseeName: franchiseeName,
-            franchiseePhone: franchiseePhone,
-            franchiseeLocation: franchiseeLocation,
-            orderNotes: orderNotes,
-            items: cart,
-            subtotal: totals.subtotal,
-            total: totals.total,
-            orderDate: new Date().toISOString(),
-            orderId: 'FR-' + Date.now()
-        };
-        
-        try {
-            // Submit to franchise backend
-            const response = await fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
+            // Clear existing assistants except loading/error states
+            Array.from(container.children).forEach(child => {
+                if (child.id !== 'deliveryLoading' && child.id !== 'deliveryError') {
+                    container.removeChild(child);
+                }
             });
             
-            if (response.ok) {
-                // Build WhatsApp message
-                let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
-                whatsappMessage += `*Order ID:* ${orderData.orderId}%0A`;
-                whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
-                
-                whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-                whatsappMessage += `Name: ${franchiseeName}%0A`;
-                whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-                whatsappMessage += `Location: ${franchiseeLocation}%0A`;
-                
-                if (orderNotes) {
-                    whatsappMessage += `Notes: ${orderNotes}%0A`;
-                }
-                
-                whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
-                
-                cart.forEach((item, index) => {
-                    const itemTotal = item.price * item.quantity;
-                    whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
-                });
-                
-                whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
-                whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
-                whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
-                
-                // Encode the message for WhatsApp
-                const encodedMessage = encodeURIComponent(whatsappMessage);
-                
-                // Open WhatsApp
-                const whatsappUrl = `https://wa.me/254733737983?text=${encodedMessage}`;
-                window.open(whatsappUrl, '_blank');
-                
-                // Clear cart and form
-                cart = [];
-                localStorage.removeItem('dsog_franchise_cart');
-                updateCartBadge();
-                renderCart();
-                
-                document.getElementById('franchiseeName').value = '';
-                document.getElementById('franchiseePhone').value = '';
-                document.getElementById('franchiseeLocation').value = '';
-                document.getElementById('orderNotes').value = '';
-                
-                showNotification('Order submitted successfully! Opening WhatsApp...');
-                
-            } else {
-                throw new Error('Failed to submit order to backend');
+            // Filter assistants
+            let filteredAssistants = assistants;
+            if (currentDeliveryFilter !== 'all') {
+                filteredAssistants = assistants.filter(assistant => 
+                    assistant.status === currentDeliveryFilter
+                );
             }
             
-        } catch (error) {
-            console.error('Order submission error:', error);
+            // Display assistants with staggered animation
+            filteredAssistants.forEach((assistant, index) => {
+                setTimeout(() => {
+                    const deliveryCard = createDeliveryCard(assistant);
+                    container.appendChild(deliveryCard);
+                }, index * 100);
+            });
+        }
+        
+        function createDeliveryCard(assistant) {
+            const card = document.createElement('div');
+            card.className = 'delivery-card';
             
-            // Fallback: Direct WhatsApp order
-            submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes);
-        }
-    }
-    
-    function submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes) {
-        // Build WhatsApp message
-        let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
-        whatsappMessage += `*Order ID:* FR-${Date.now()}%0A`;
-        whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
-        
-        whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-        whatsappMessage += `Name: ${franchiseeName}%0A`;
-        whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-        whatsappMessage += `Location: ${franchiseeLocation}%0A`;
-        
-        if (orderNotes) {
-            whatsappMessage += `Notes: ${orderNotes}%0A`;
-        }
-        
-        whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
-        
-        const totals = calculateCartTotal();
-        
-        cart.forEach((item, index) => {
-            const itemTotal = item.price * item.quantity;
-            whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
-        });
-        
-        whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
-        whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
-        whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
-        
-        // Encode the message for WhatsApp
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        
-        // Open WhatsApp
-        const whatsappUrl = `https://wa.me/254733737983?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
-        
-        // Clear cart and form
-        cart = [];
-        localStorage.removeItem('dsog_franchise_cart');
-        updateCartBadge();
-        renderCart();
-        
-        document.getElementById('franchiseeName').value = '';
-        document.getElementById('franchiseePhone').value = '';
-        document.getElementById('franchiseeLocation').value = '';
-        document.getElementById('orderNotes').value = '';
-        
-        showNotification('Opening WhatsApp to submit your order...');
-    }
-    
-    // PWA Installation
-    function initPWA() {
-        if (window.matchMedia('(display-mode: standalone)').matches || 
-            window.navigator.standalone === true) {
-            isAppInstalled = true;
-            console.log('📱 Franchise app is installed as PWA');
-            hideInstallButton();
-        }
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('📱 PWA installation available for franchise app');
+            const capacityPercentage = (assistant.currentCapacity / assistant.maxCapacity) * 100;
+            const capacityColor = capacityPercentage > 80 ? 'var(--light-red)' : 
+                                 capacityPercentage > 60 ? 'var(--primary-gold)' : 
+                                 'var(--success)';
             
-            setTimeout(() => {
-                if (!isAppInstalled && !isInstallPromptShown) {
-                    showInstallButton();
-                }
-            }, 3000);
-        });
+            card.innerHTML = `
+                <div class="delivery-card-header">
+                    <span class="delivery-status status-${assistant.status}">${assistant.status}</span>
+                    <h3 class="delivery-name">${assistant.name}</h3>
+                    <p class="delivery-id">ID: ${assistant.id}</p>
+                    <div class="delivery-vehicle">
+                        <i class="fas fa-car"></i>
+                        <span>${assistant.vehicle}</span>
+                    </div>
+                    <div class="delivery-rating">
+                        <i class="fas fa-star"></i>
+                        <span>${assistant.rating} (${assistant.completedDeliveries} deliveries)</span>
+                    </div>
+                </div>
+                <div class="delivery-card-body">
+                    <div class="delivery-info">
+                        <div class="info-row">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value">${assistant.phone}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value">${assistant.location}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="delivery-capacity">
+                        <div class="capacity-label">Current Capacity</div>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: ${capacityPercentage}%; background: ${capacityColor};"></div>
+                        </div>
+                        <div class="capacity-text">${assistant.currentCapacity}/${assistant.maxCapacity} items</div>
+                    </div>
+                    
+                    <div class="delivery-buttons">
+                        <button class="pickup-btn" onclick="openDeliveryModal(${JSON.stringify(assistant).replace(/"/g, '&quot;')})" ${assistant.status === 'busy' ? 'disabled' : ''}>
+                            <i class="fas fa-truck-loading"></i>
+                            ${assistant.status === 'busy' ? 'Currently Busy' : 'Request Pickup'}
+                        </button>
+                        <button class="whatsapp-btn" onclick="window.open('https://wa.me/${assistant.phone.replace(/\D/g, '')}', '_blank')">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
         
-        window.addEventListener('appinstalled', () => {
-            isAppInstalled = true;
-            deferredPrompt = null;
-            console.log('✅ Franchise PWA installed successfully');
-            hideInstallPrompt();
-            hideInstallButton();
-            showNotification('Franchise app installed successfully!');
-        });
+        function filterDeliveryAssistants() {
+            displayDeliveryAssistants(deliveryAssistants);
+        }
         
-        initInstallButtons();
-        registerServiceWorker();
-    }
-    
-    function registerServiceWorker() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/franchise-service-worker.js')
-                .then(registration => {
-                    console.log('✅ Franchise Service Worker registered:', registration.scope);
-                })
-                .catch(error => {
-                    console.log('❌ Franchise Service Worker registration failed:', error);
+        // Franchise Order Submission
+        async function submitFranchiseOrder() {
+            const franchiseeName = document.getElementById('franchiseeName').value.trim();
+            const franchiseePhone = document.getElementById('franchiseePhone').value.trim();
+            const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim();
+            const orderNotes = document.getElementById('orderNotes').value.trim();
+            
+            // Validation
+            if (!franchiseeName || !franchiseePhone || !franchiseeLocation) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                showNotification('Your cart is empty. Add products before submitting.', 'error');
+                return;
+            }
+            
+            // Calculate totals
+            const totals = calculateCartTotal();
+            
+            // Build order data
+            const orderData = {
+                action: 'submitFranchiseOrder',
+                franchiseeName: franchiseeName,
+                franchiseePhone: franchiseePhone,
+                franchiseeLocation: franchiseeLocation,
+                orderNotes: orderNotes,
+                items: cart,
+                subtotal: totals.subtotal,
+                total: totals.total,
+                orderDate: new Date().toISOString(),
+                orderId: 'FR-' + Date.now()
+            };
+            
+            try {
+                // Submit to franchise backend
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
                 });
-        }
-    }
-    
-    function initInstallButtons() {
-        const installBtn = document.getElementById('installAppBtn');
-        const installNowBtn = document.getElementById('pwaInstallNow');
-        const installLaterBtn = document.getElementById('pwaInstallLater');
-        const installCloseBtn = document.getElementById('pwaInstallClose');
-        
-        if (installBtn) {
-            installBtn.addEventListener('click', showInstallPrompt);
-        }
-        
-        if (installNowBtn) {
-            installNowBtn.addEventListener('click', installPWA);
-        }
-        
-        if (installLaterBtn) {
-            installLaterBtn.addEventListener('click', hideInstallPrompt);
-        }
-        
-        if (installCloseBtn) {
-            installCloseBtn.addEventListener('click', hideInstallPrompt);
-        }
-    }
-    
-    function showInstallButton() {
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) {
-            installBtn.style.display = 'flex';
-        }
-    }
-    
-    function hideInstallButton() {
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) {
-            installBtn.style.display = 'none';
-        }
-    }
-    
-    function showInstallPrompt() {
-        if (isAppInstalled) {
-            showNotification('Franchise app is already installed!');
-            return;
-        }
-        
-        if (!deferredPrompt) {
-            showNotification('App installation not available on this device');
-            return;
-        }
-        
-        const installPrompt = document.getElementById('pwaInstallPrompt');
-        if (installPrompt) {
-            installPrompt.style.display = 'flex';
-            isInstallPromptShown = true;
-        }
-    }
-    
-    function hideInstallPrompt() {
-        const installPrompt = document.getElementById('pwaInstallPrompt');
-        if (installPrompt) {
-            installPrompt.style.display = 'none';
-        }
-    }
-    
-    async function installPWA() {
-        if (!deferredPrompt) {
-            showNotification('Installation not available');
-            return;
+                
+                if (response.ok) {
+                    // Build WhatsApp message
+                    let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
+                    whatsappMessage += `*Order ID:* ${orderData.orderId}%0A`;
+                    whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
+                    
+                    whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
+                    whatsappMessage += `Name: ${franchiseeName}%0A`;
+                    whatsappMessage += `Phone: ${franchiseePhone}%0A`;
+                    whatsappMessage += `Location: ${franchiseeLocation}%0A`;
+                    
+                    if (orderNotes) {
+                        whatsappMessage += `Notes: ${orderNotes}%0A`;
+                    }
+                    
+                    whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
+                    
+                    cart.forEach((item, index) => {
+                        const itemTotal = item.price * item.quantity;
+                        whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
+                    });
+                    
+                    whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
+                    whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
+                    whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
+                    
+                    // Open WhatsApp
+                    const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
+                    window.open(whatsappUrl, '_blank');
+                    
+                    // Clear cart and form
+                    cart = [];
+                    localStorage.removeItem('dsog_franchise_cart');
+                    updateCartBadge();
+                    renderCart();
+                    
+                    document.getElementById('franchiseeName').value = '';
+                    document.getElementById('franchiseePhone').value = '';
+                    document.getElementById('franchiseeLocation').value = '';
+                    document.getElementById('orderNotes').value = '';
+                    
+                    showNotification('Order submitted successfully! Opening WhatsApp...');
+                    
+                } else {
+                    throw new Error('Failed to submit order to backend');
+                }
+                
+            } catch (error) {
+                console.error('Order submission error:', error);
+                
+                // Fallback: Direct WhatsApp order
+                submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes);
+            }
         }
         
-        try {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
+        function submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes) {
+            // Build WhatsApp message
+            let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
+            whatsappMessage += `*Order ID:* FR-${Date.now()}%0A`;
+            whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A%0A`;
             
-            if (outcome === 'accepted') {
-                console.log('✅ User accepted franchise PWA installation');
+            whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
+            whatsappMessage += `Name: ${franchiseeName}%0A`;
+            whatsappMessage += `Phone: ${franchiseePhone}%0A`;
+            whatsappMessage += `Location: ${franchiseeLocation}%0A`;
+            
+            if (orderNotes) {
+                whatsappMessage += `Notes: ${orderNotes}%0A`;
+            }
+            
+            whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
+            
+            const totals = calculateCartTotal();
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
+            });
+            
+            whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
+            whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
+            whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
+            
+            // Open WhatsApp
+            const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Clear cart and form
+            cart = [];
+            localStorage.removeItem('dsog_franchise_cart');
+            updateCartBadge();
+            renderCart();
+            
+            document.getElementById('franchiseeName').value = '';
+            document.getElementById('franchiseePhone').value = '';
+            document.getElementById('franchiseeLocation').value = '';
+            document.getElementById('orderNotes').value = '';
+            
+            showNotification('Opening WhatsApp to submit your order...');
+        }
+        
+        // PWA Installation
+        function initPWA() {
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
                 isAppInstalled = true;
+                console.log('📱 Franchise app is installed as PWA');
+                hideInstallButton();
+            }
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('📱 PWA installation available for franchise app');
+                
+                setTimeout(() => {
+                    if (!isAppInstalled && !isInstallPromptShown) {
+                        showInstallButton();
+                    }
+                }, 3000);
+            });
+            
+            window.addEventListener('appinstalled', () => {
+                isAppInstalled = true;
+                deferredPrompt = null;
+                console.log('✅ Franchise PWA installed successfully');
                 hideInstallPrompt();
                 hideInstallButton();
-            } else {
-                console.log('❌ User dismissed franchise PWA installation');
+                showNotification('Franchise app installed successfully!');
+            });
+            
+            initInstallButtons();
+            registerServiceWorker();
+        }
+        
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/franchise-service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Franchise Service Worker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('❌ Franchise Service Worker registration failed:', error);
+                    });
+            }
+        }
+        
+        function initInstallButtons() {
+            const installBtn = document.getElementById('installAppBtn');
+            const installNowBtn = document.getElementById('pwaInstallNow');
+            const installLaterBtn = document.getElementById('pwaInstallLater');
+            const installCloseBtn = document.getElementById('pwaInstallClose');
+            
+            if (installBtn) {
+                installBtn.addEventListener('click', showInstallPrompt);
             }
             
-            deferredPrompt = null;
-        } catch (error) {
-            console.error('Error installing franchise PWA:', error);
-            showNotification('Error installing franchise app. Please try again.');
-        }
-    }
-    
-    // Notification system
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        
-        if (type === 'error') {
-            notification.style.background = 'var(--dark-red)';
-        } else if (type === 'warning') {
-            notification.style.background = 'var(--primary-gold)';
-            notification.style.color = 'var(--primary-black)';
-        }
-        
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
+            if (installNowBtn) {
+                installNowBtn.addEventListener('click', installPWA);
             }
-        }, 3000);
-    }
-</script>
+            
+            if (installLaterBtn) {
+                installLaterBtn.addEventListener('click', hideInstallPrompt);
+            }
+            
+            if (installCloseBtn) {
+                installCloseBtn.addEventListener('click', hideInstallPrompt);
+            }
+        }
+        
+        function showInstallButton() {
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) {
+                installBtn.style.display = 'flex';
+            }
+        }
+        
+        function hideInstallButton() {
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) {
+                installBtn.style.display = 'none';
+            }
+        }
+        
+        function showInstallPrompt() {
+            if (isAppInstalled) {
+                showNotification('Franchise app is already installed!');
+                return;
+            }
+            
+            if (!deferredPrompt) {
+                showNotification('App installation not available on this device');
+                return;
+            }
+            
+            const installPrompt = document.getElementById('pwaInstallPrompt');
+            if (installPrompt) {
+                installPrompt.style.display = 'flex';
+                isInstallPromptShown = true;
+            }
+        }
+        
+        function hideInstallPrompt() {
+            const installPrompt = document.getElementById('pwaInstallPrompt');
+            if (installPrompt) {
+                installPrompt.style.display = 'none';
+            }
+        }
+        
+        async function installPWA() {
+            if (!deferredPrompt) {
+                showNotification('Installation not available');
+                return;
+            }
+            
+            try {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('✅ User accepted franchise PWA installation');
+                    isAppInstalled = true;
+                    hideInstallPrompt();
+                    hideInstallButton();
+                } else {
+                    console.log('❌ User dismissed franchise PWA installation');
+                }
+                
+                deferredPrompt = null;
+            } catch (error) {
+                console.error('Error installing franchise PWA:', error);
+                showNotification('Error installing franchise app. Please try again.');
+            }
+        }
+        
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            if (type === 'error') {
+                notification.style.background = 'var(--dark-red)';
+            } else if (type === 'warning') {
+                notification.style.background = 'var(--primary-gold)';
+                notification.style.color = 'var(--primary-black)';
+            }
+            
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
