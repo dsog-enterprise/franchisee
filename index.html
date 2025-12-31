@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=1.0, user-scalable=no">
     
     <!-- App Version -->
-    <meta name="app-version" content="2.4.0">
+    <meta name="app-version" content="2.5.0">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#B22222">
@@ -37,6 +37,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Sign-in -->
+    <meta name="google-signin-client_id" content="369304497158-8ub6b68v2bjvsfciome6q56flh2rd1m4.apps.googleusercontent.com">
+    
     <!-- FIRST PAGE'S THEME AND STYLES -->
     <style>
         :root {
@@ -61,6 +64,10 @@
             --whatsapp-green: #25D366;
             --whatsapp-dark: #128C7E;
             --share-blue: #4285F4;
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC05;
+            --google-green: #34A853;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(178, 34, 34, 0.1);
             --shadow-lg: 0 10px 25px rgba(178, 34, 34, 0.15);
@@ -99,11 +106,55 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
         }
         
         .logo {
             height: 35px;
             filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3));
+        }
+        
+        /* User Profile in Header */
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-left: auto;
+            margin-right: 1rem;
+        }
+        
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid var(--primary-gold);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .user-name {
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .user-name {
+                display: block;
+            }
         }
         
         /* Hamburger Menu */
@@ -283,7 +334,6 @@
             cursor: pointer;
             transition: var(--transition);
             font-weight: 600;
-            margin-left: auto;
             text-decoration: none;
         }
         
@@ -292,7 +342,432 @@
             transform: translateY(-2px);
         }
         
-        /* PWA INSTALL PROMPT (From first page) */
+        /* USER ONBOARDING MODAL */
+        .user-onboarding-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2003;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 1rem;
+        }
+        
+        .user-onboarding-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .onboarding-content {
+            background: var(--white);
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            border: 3px solid var(--primary-red);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .onboarding-header {
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-red);
+        }
+        
+        .onboarding-header h2 {
+            color: var(--primary-gold);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .onboarding-body {
+            padding: 2rem;
+        }
+        
+        .onboarding-step {
+            display: none;
+        }
+        
+        .onboarding-step.active {
+            display: block;
+        }
+        
+        .onboarding-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .onboarding-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .onboarding-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+        }
+        
+        .onboarding-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .onboarding-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .onboarding-btn-primary {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+        
+        .onboarding-btn-primary:hover {
+            background: var(--secondary-red);
+            transform: translateY(-2px);
+        }
+        
+        .onboarding-btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .onboarding-btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .onboarding-btn-google {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .onboarding-btn-google:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                var(--google-red) 0deg 90deg,
+                var(--google-yellow) 90deg 180deg,
+                var(--google-green) 180deg 270deg,
+                var(--google-blue) 270deg 360deg
+            );
+            border-radius: 2px;
+            position: relative;
+        }
+        
+        .google-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: var(--white);
+            border-radius: 1px;
+        }
+        
+        .google-icon::after {
+            content: 'G';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--google-blue);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .location-permission {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        .location-icon {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+        }
+        
+        .permission-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .skip-onboarding {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .skip-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .skip-btn:hover {
+            color: var(--primary-red);
+            text-decoration: underline;
+        }
+        
+        .welcome-step {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary-red);
+            margin-bottom: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .user-info-summary {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        /* User Profile Modal */
+        .user-profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2004;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 1rem;
+        }
+        
+        .user-profile-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .profile-content {
+            background: var(--white);
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            border: 3px solid var(--primary-red);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .profile-header {
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-red);
+            position: relative;
+        }
+        
+        .profile-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-red);
+            color: var(--white);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .profile-close:hover {
+            background: var(--secondary-red);
+            transform: rotate(90deg);
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--primary-gold);
+        }
+        
+        .profile-body {
+            padding: 2rem;
+        }
+        
+        .profile-info {
+            margin-bottom: 2rem;
+        }
+        
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .profile-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .profile-btn-primary {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+        
+        .profile-btn-primary:hover {
+            background: var(--secondary-red);
+            transform: translateY(-2px);
+        }
+        
+        .profile-btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .profile-btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        /* PWA INSTALL PROMPT */
         .pwa-install-prompt {
             position: fixed;
             bottom: 100px;
@@ -700,7 +1175,7 @@
             100% { transform: scale(1); }
         }
         
-        /* Cart Modal - FROM FIRST PAGE */
+        /* Cart Modal */
         .cart-modal {
             position: fixed;
             top: 0;
@@ -1338,6 +1813,7 @@
         
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
         
         .form-group label {
@@ -1360,6 +1836,19 @@
             outline: none;
             border-color: var(--primary-red);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+        }
+        
+        .auto-fill-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--success);
+            color: var(--white);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0 8px 0 4px;
+            font-weight: 600;
+            display: none;
         }
         
         .whatsapp-checkout-btn {
@@ -1925,6 +2414,10 @@
                 display: none;
             }
             
+            .user-name {
+                display: none;
+            }
+            
             .products-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
@@ -1992,6 +2485,10 @@
                 grid-template-columns: 1fr;
                 gap: 0.8rem;
             }
+            
+            .onboarding-buttons {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 480px) {
@@ -2058,6 +2555,167 @@
     </style>
 </head>
 <body>
+    <!-- User Onboarding Modal -->
+    <div class="user-onboarding-modal" id="userOnboardingModal">
+        <div class="onboarding-content">
+            <div class="onboarding-header">
+                <h2><i class="fas fa-user-plus"></i> Welcome to DSOG Franchise</h2>
+            </div>
+            <div class="onboarding-body">
+                <!-- Step 1: Welcome -->
+                <div class="onboarding-step active" id="step1">
+                    <div class="welcome-step">
+                        <div class="welcome-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h2 class="welcome-title">Welcome Franchisee!</h2>
+                        <p class="onboarding-description">
+                            Let's set up your profile to make ordering seamless. 
+                            We'll collect your phone number and location for faster checkout.
+                        </p>
+                        <div class="onboarding-buttons">
+                            <button class="onboarding-btn onboarding-btn-primary" onclick="nextStep()">
+                                <i class="fas fa-arrow-right"></i> Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: User Information -->
+                <div class="onboarding-step" id="step2">
+                    <h3 class="onboarding-title">Your Information</h3>
+                    <p class="onboarding-description">
+                        Enter your details to auto-fill future orders
+                    </p>
+                    <div class="onboarding-form">
+                        <div class="form-group">
+                            <label for="onboardingName">Full Name *</label>
+                            <input type="text" id="onboardingName" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="onboardingPhone">Phone Number *</label>
+                            <input type="tel" id="onboardingPhone" class="form-control" placeholder="e.g., +254712345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="onboardingLocation">Franchise Location *</label>
+                            <textarea id="onboardingLocation" class="form-control" rows="2" placeholder="Enter your franchise location address" required></textarea>
+                        </div>
+                        <div class="onboarding-buttons">
+                            <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button class="onboarding-btn onboarding-btn-primary" onclick="nextStep()">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Location Permission -->
+                <div class="onboarding-step" id="step3">
+                    <div class="location-permission">
+                        <div class="location-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="onboarding-title">Enable Location Services</h3>
+                        <p class="onboarding-description">
+                            Allow location access for faster delivery requests and accurate pickup locations. 
+                            Your location data is stored locally on your device.
+                        </p>
+                        <div class="permission-buttons">
+                            <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button class="onboarding-btn onboarding-btn-primary" onclick="requestLocationPermission()">
+                                <i class="fas fa-check-circle"></i> Allow Location
+                            </button>
+                        </div>
+                        <div class="skip-onboarding">
+                            <button class="skip-btn" onclick="skipLocationPermission()">
+                                Skip for now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Google Sign-in (Optional) -->
+                <div class="onboarding-step" id="step4">
+                    <h3 class="onboarding-title">Connect Your Account (Optional)</h3>
+                    <p class="onboarding-description">
+                        Sign in with Google for enhanced security and backup of your profile data.
+                    </p>
+                    <div class="onboarding-buttons">
+                        <button class="onboarding-btn onboarding-btn-google" onclick="signInWithGoogle()">
+                            <span class="google-icon"></span>
+                            Sign in with Google
+                        </button>
+                        <button class="onboarding-btn onboarding-btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="onboarding-btn onboarding-btn-secondary" onclick="skipGoogleSignIn()">
+                            Skip
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Complete -->
+                <div class="onboarding-step" id="step5">
+                    <div class="welcome-step">
+                        <div class="welcome-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 class="welcome-title">Setup Complete!</h2>
+                        <p class="onboarding-description">
+                            Your profile has been saved locally on this device. 
+                            Your information will auto-fill in future orders.
+                        </p>
+                        
+                        <div class="user-info-summary" id="userInfoSummary">
+                            <!-- User info will be populated here -->
+                        </div>
+                        
+                        <div class="onboarding-buttons">
+                            <button class="onboarding-btn onboarding-btn-primary" onclick="completeOnboarding()">
+                                <i class="fas fa-rocket"></i> Start Ordering
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="user-profile-modal" id="userProfileModal">
+        <div class="profile-content">
+            <div class="profile-header">
+                <button class="profile-close" id="profileClose">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="profile-avatar" id="profileAvatar">
+                    <!-- Avatar will be populated -->
+                </div>
+                <h3 id="profileName">User Profile</h3>
+            </div>
+            <div class="profile-body">
+                <div class="profile-info" id="profileInfo">
+                    <!-- Profile info will be populated -->
+                </div>
+                <div class="profile-actions">
+                    <button class="profile-btn profile-btn-primary" onclick="editProfile()">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="profile-btn profile-btn-secondary" onclick="clearProfileData()">
+                        <i class="fas fa-trash"></i> Clear Local Data
+                    </button>
+                    <button class="profile-btn profile-btn-secondary" onclick="closeProfileModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- PWA Install Prompt -->
     <div class="pwa-install-prompt" id="pwaInstallPrompt">
         <button class="pwa-install-close" id="pwaInstallClose">
@@ -2086,6 +2744,14 @@
     <header>
         <div class="header-content">
             <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="logo">
+            
+            <!-- User Profile -->
+            <div class="user-profile-header" onclick="openProfileModal()">
+                <div class="user-avatar" id="userAvatar">
+                    <!-- Avatar will be populated -->
+                </div>
+                <span class="user-name" id="userNameDisplay">Guest</span>
+            </div>
             
             <!-- Desktop Navigation -->
             <nav class="nav-links">
@@ -2116,6 +2782,9 @@
             <a href="#products" onclick="closeMobileMenu()">Products</a>
             <a href="#orders" onclick="closeMobileMenu()">My Orders</a>
             <a href="#delivery" onclick="closeMobileMenu()">Delivery Hub</a>
+            <a href="#" onclick="openProfileModal(); closeMobileMenu();">
+                <i class="fas fa-user"></i> My Profile
+            </a>
             <a href="mailto:care.dsogstores@gmail.com" onclick="closeMobileMenu()">Email Support</a>
             <a href="https://wa.me/254733737983" onclick="closeMobileMenu()">WhatsApp Support</a>
             <a href="#" onclick="showInstallPrompt(); closeMobileMenu();" style="color: var(--primary-gold);">
@@ -2191,16 +2860,19 @@
                 <div class="form-group">
                     <label for="franchiseeName">Franchisee Name *</label>
                     <input type="text" id="franchiseeName" class="form-control" placeholder="Enter franchisee name" required>
+                    <div class="auto-fill-badge" id="nameBadge">Auto-filled</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="franchiseePhone">Phone Number *</label>
                     <input type="tel" id="franchiseePhone" class="form-control" placeholder="Enter phone number" required>
+                    <div class="auto-fill-badge" id="phoneBadge">Auto-filled</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="franchiseeLocation">Location/Address *</label>
                     <textarea id="franchiseeLocation" class="form-control" rows="3" placeholder="Enter franchise location address" required></textarea>
+                    <div class="auto-fill-badge" id="locationBadge">Auto-filled</div>
                 </div>
                 
                 <div class="form-group">
@@ -2344,6 +3016,10 @@
                 <i class="fas fa-shopping-cart nav-icon"></i>
                 <span class="nav-label">Cart</span>
             </button>
+            <button class="nav-item" onclick="openProfileModal()">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </button>
         </div>
     </nav>
 
@@ -2365,6 +3041,10 @@
     let selectedAssistant = null;
     let isLoadingDelivery = false;
     
+    // User Profile State
+    let userProfile = JSON.parse(localStorage.getItem('dsog_franchise_profile')) || null;
+    let currentOnboardingStep = 1;
+    
     // PWA variables
     let deferredPrompt = null;
     let isAppInstalled = false;
@@ -2372,7 +3052,7 @@
     
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DSOG Franchise Platform v2.4.0');
+        console.log('🚀 DSOG Franchise Platform v2.5.0');
         
         // Initialize components
         initMobileMenu();
@@ -2381,6 +3061,20 @@
         initCartModal();
         initDeliverySection();
         initPWA();
+        initProfileModal();
+        
+        // Check if user profile exists
+        if (!userProfile || !userProfile.name) {
+            // Show onboarding after a short delay
+            setTimeout(() => {
+                showOnboarding();
+            }, 1000);
+        } else {
+            // Update UI with user profile
+            updateUserProfileUI();
+            // Auto-fill order form
+            autoFillOrderForm();
+        }
         
         // Load products
         showProductLoading();
@@ -2399,6 +3093,344 @@
             loadDeliveryAssistants();
         }, 1000);
     });
+    
+    // User Profile Functions
+    function showOnboarding() {
+        const onboardingModal = document.getElementById('userOnboardingModal');
+        onboardingModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        currentOnboardingStep = 1;
+        showStep(currentOnboardingStep);
+    }
+    
+    function hideOnboarding() {
+        const onboardingModal = document.getElementById('userOnboardingModal');
+        onboardingModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+    
+    function showStep(stepNumber) {
+        // Hide all steps
+        for (let i = 1; i <= 5; i++) {
+            const step = document.getElementById(`step${i}`);
+            if (step) {
+                step.classList.remove('active');
+            }
+        }
+        
+        // Show current step
+        const currentStep = document.getElementById(`step${stepNumber}`);
+        if (currentStep) {
+            currentStep.classList.add('active');
+        }
+    }
+    
+    function nextStep() {
+        if (currentOnboardingStep === 2) {
+            // Validate step 2 (user info)
+            const name = document.getElementById('onboardingName').value.trim();
+            const phone = document.getElementById('onboardingPhone').value.trim();
+            const location = document.getElementById('onboardingLocation').value.trim();
+            
+            if (!name || !phone || !location) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Save temporarily
+            userProfile = {
+                name: name,
+                phone: phone,
+                location: location,
+                createdAt: new Date().toISOString()
+            };
+        }
+        
+        if (currentOnboardingStep < 5) {
+            currentOnboardingStep++;
+            showStep(currentOnboardingStep);
+            
+            // Update user info summary on step 5
+            if (currentOnboardingStep === 5) {
+                updateUserInfoSummary();
+            }
+        }
+    }
+    
+    function prevStep() {
+        if (currentOnboardingStep > 1) {
+            currentOnboardingStep--;
+            showStep(currentOnboardingStep);
+        }
+    }
+    
+    function requestLocationPermission() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Save location in profile
+                    if (userProfile) {
+                        userProfile.gpsLocation = {
+                            latitude: lat,
+                            longitude: lng
+                        };
+                    }
+                    
+                    showNotification('Location saved successfully!');
+                    nextStep();
+                },
+                function(error) {
+                    // Error
+                    console.error("Error getting location:", error);
+                    showNotification('Could not get location. You can skip for now.', 'warning');
+                    nextStep();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            showNotification('Geolocation is not supported by your browser', 'warning');
+            nextStep();
+        }
+    }
+    
+    function skipLocationPermission() {
+        if (userProfile) {
+            userProfile.gpsLocation = null;
+        }
+        nextStep();
+    }
+    
+    function signInWithGoogle() {
+        // Google Sign-in implementation
+        showNotification('Google Sign-in will be implemented in the next version', 'warning');
+        skipGoogleSignIn();
+    }
+    
+    function skipGoogleSignIn() {
+        nextStep();
+    }
+    
+    function updateUserInfoSummary() {
+        const summaryElement = document.getElementById('userInfoSummary');
+        if (summaryElement && userProfile) {
+            summaryElement.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">${userProfile.name}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">${userProfile.phone}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Location:</span>
+                    <span class="info-value">${userProfile.location}</span>
+                </div>
+                ${userProfile.gpsLocation ? `
+                <div class="info-item">
+                    <span class="info-label">GPS Location:</span>
+                    <span class="info-value">Saved</span>
+                </div>
+                ` : ''}
+            `;
+        }
+    }
+    
+    function completeOnboarding() {
+        // Save profile to localStorage
+        if (userProfile) {
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            showNotification('Profile saved successfully!');
+            
+            // Update UI
+            updateUserProfileUI();
+            
+            // Auto-fill order form
+            autoFillOrderForm();
+        }
+        
+        hideOnboarding();
+    }
+    
+    function updateUserProfileUI() {
+        if (userProfile) {
+            // Update header
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const profileAvatar = document.getElementById('profileAvatar');
+            const profileName = document.getElementById('profileName');
+            const profileInfo = document.getElementById('profileInfo');
+            
+            // Get initials for avatar
+            const initials = userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            if (userAvatar) {
+                userAvatar.textContent = initials;
+            }
+            
+            if (userNameDisplay) {
+                userNameDisplay.textContent = userProfile.name.split(' ')[0];
+            }
+            
+            if (profileAvatar) {
+                profileAvatar.textContent = initials;
+            }
+            
+            if (profileName) {
+                profileName.textContent = userProfile.name;
+            }
+            
+            if (profileInfo) {
+                profileInfo.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">Full Name:</span>
+                        <span class="info-value">${userProfile.name}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">${userProfile.phone}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value">${userProfile.location}</span>
+                    </div>
+                    ${userProfile.gpsLocation ? `
+                    <div class="info-item">
+                        <span class="info-label">GPS Location:</span>
+                        <span class="info-value">Saved (Lat: ${userProfile.gpsLocation.latitude.toFixed(4)}, Lng: ${userProfile.gpsLocation.longitude.toFixed(4)})</span>
+                    </div>
+                    ` : ''}
+                    <div class="info-item">
+                        <span class="info-label">Profile Created:</span>
+                        <span class="info-value">${new Date(userProfile.createdAt).toLocaleDateString()}</span>
+                    </div>
+                `;
+            }
+        }
+    }
+    
+    function autoFillOrderForm() {
+        if (userProfile) {
+            const nameField = document.getElementById('franchiseeName');
+            const phoneField = document.getElementById('franchiseePhone');
+            const locationField = document.getElementById('franchiseeLocation');
+            
+            if (nameField && userProfile.name) {
+                nameField.value = userProfile.name;
+                showAutoFillBadge('nameBadge');
+            }
+            
+            if (phoneField && userProfile.phone) {
+                phoneField.value = userProfile.phone;
+                showAutoFillBadge('phoneBadge');
+            }
+            
+            if (locationField && userProfile.location) {
+                locationField.value = userProfile.location;
+                showAutoFillBadge('locationBadge');
+            }
+        }
+    }
+    
+    function showAutoFillBadge(badgeId) {
+        const badge = document.getElementById(badgeId);
+        if (badge) {
+            badge.style.display = 'block';
+            setTimeout(() => {
+                badge.style.display = 'none';
+            }, 3000);
+        }
+    }
+    
+    function initProfileModal() {
+        const profileModal = document.getElementById('userProfileModal');
+        const profileClose = document.getElementById('profileClose');
+        
+        profileClose.addEventListener('click', closeProfileModal);
+        
+        profileModal.addEventListener('click', function(e) {
+            if (e.target === profileModal) {
+                closeProfileModal();
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && profileModal.classList.contains('active')) {
+                closeProfileModal();
+            }
+        });
+    }
+    
+    function openProfileModal() {
+        const profileModal = document.getElementById('userProfileModal');
+        
+        // Update profile info before showing
+        updateUserProfileUI();
+        
+        profileModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeProfileModal() {
+        const profileModal = document.getElementById('userProfileModal');
+        profileModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+    
+    function editProfile() {
+        closeProfileModal();
+        // Show onboarding starting at step 2
+        showOnboarding();
+        currentOnboardingStep = 2;
+        showStep(currentOnboardingStep);
+        
+        // Pre-fill existing data
+        if (userProfile) {
+            document.getElementById('onboardingName').value = userProfile.name || '';
+            document.getElementById('onboardingPhone').value = userProfile.phone || '';
+            document.getElementById('onboardingLocation').value = userProfile.location || '';
+        }
+    }
+    
+    function clearProfileData() {
+        if (confirm('Are you sure you want to clear all your profile data? This action cannot be undone.')) {
+            localStorage.removeItem('dsog_franchise_profile');
+            userProfile = null;
+            
+            // Clear form fields
+            document.getElementById('franchiseeName').value = '';
+            document.getElementById('franchiseePhone').value = '';
+            document.getElementById('franchiseeLocation').value = '';
+            
+            // Reset UI
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            
+            if (userAvatar) {
+                userAvatar.textContent = '?';
+            }
+            
+            if (userNameDisplay) {
+                userNameDisplay.textContent = 'Guest';
+            }
+            
+            showNotification('Profile data cleared successfully');
+            closeProfileModal();
+            
+            // Show onboarding again
+            setTimeout(() => {
+                showOnboarding();
+            }, 1000);
+        }
+    }
     
     // Initialize Mobile Menu
     function initMobileMenu() {
@@ -2790,6 +3822,26 @@
         const deliveryModal = document.getElementById('deliveryRequestModal');
         const deliveryModalBody = document.getElementById('deliveryModalBody');
         
+        // Auto-fill with user profile data
+        const franchiseeName = userProfile ? userProfile.name : '';
+        const franchiseePhone = userProfile ? userProfile.phone : '';
+        const franchiseeLocation = userProfile ? userProfile.location : '';
+        
+        let orderDetails = `Order Details:\n\n`;
+        orderDetails += `Franchisee: ${franchiseeName}\n`;
+        orderDetails += `Phone: ${franchiseePhone}\n`;
+        orderDetails += `Location: ${franchiseeLocation}\n\n`;
+        
+        if (cart.length > 0) {
+            orderDetails += `Items:\n`;
+            cart.forEach((item, index) => {
+                orderDetails += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price * item.quantity}\n`;
+            });
+            orderDetails += `\n`;
+        }
+        
+        orderDetails += `Additional Instructions:\n`;
+        
         deliveryModalBody.innerHTML = `
             <div class="assistant-summary">
                 <h3>Delivery Assistant Details</h3>
@@ -2827,9 +3879,9 @@
                     id="orderDetails" 
                     class="order-details-textarea" 
                     placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
-                    required></textarea>
+                    required>${orderDetails}</textarea>
                 <p class="textarea-helper">
-                    <i class="fas fa-info-circle"></i> Please include all necessary details for the delivery assistant to process your request efficiently.
+                    <i class="fas fa-info-circle"></i> Your profile information has been pre-filled. Please add any additional details for the delivery assistant.
                 </p>
             </div>
             
@@ -2863,10 +3915,10 @@
         }
         
         try {
-            // Get franchisee info from the order form
-            const franchiseeName = document.getElementById('franchiseeName').value.trim() || 'Franchisee';
-            const franchiseePhone = document.getElementById('franchiseePhone').value.trim() || '+254700000000';
-            const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
+            // Get franchisee info from user profile or form
+            const franchiseeName = userProfile ? userProfile.name : document.getElementById('franchiseeName').value.trim() || 'Franchisee';
+            const franchiseePhone = userProfile ? userProfile.phone : document.getElementById('franchiseePhone').value.trim() || '+254700000000';
+            const franchiseeLocation = userProfile ? userProfile.location : document.getElementById('franchiseeLocation').value.trim() || 'Location not specified';
             
             // Generate order ID
             const orderId = 'FR-' + Date.now().toString().slice(-8);
@@ -2889,17 +3941,6 @@
             whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A%0A`;
             
             whatsappMessage += `*ORDER DETAILS*%0A`;
-            
-            // Add cart items if available
-            if (cart.length > 0) {
-                whatsappMessage += `*CART ITEMS:*%0A`;
-                cart.forEach((item, index) => {
-                    whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price * item.quantity}%0A`;
-                });
-                whatsappMessage += `%0A`;
-            }
-            
-            whatsappMessage += `*ADDITIONAL DETAILS:*%0A`;
             whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
             
             whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
@@ -3586,9 +4627,16 @@
                 updateCartBadge();
                 renderCart();
                 
-                document.getElementById('franchiseeName').value = '';
-                document.getElementById('franchiseePhone').value = '';
-                document.getElementById('franchiseeLocation').value = '';
+                // Don't clear form if it was auto-filled from profile
+                if (!userProfile || (userProfile && (
+                    franchiseeName !== userProfile.name || 
+                    franchiseePhone !== userProfile.phone || 
+                    franchiseeLocation !== userProfile.location
+                ))) {
+                    document.getElementById('franchiseeName').value = '';
+                    document.getElementById('franchiseePhone').value = '';
+                    document.getElementById('franchiseeLocation').value = '';
+                }
                 document.getElementById('orderNotes').value = '';
                 
                 showNotification('Order submitted successfully! Opening WhatsApp...');
@@ -3643,9 +4691,16 @@
         updateCartBadge();
         renderCart();
         
-        document.getElementById('franchiseeName').value = '';
-        document.getElementById('franchiseePhone').value = '';
-        document.getElementById('franchiseeLocation').value = '';
+        // Don't clear form if it was auto-filled from profile
+        if (!userProfile || (userProfile && (
+            franchiseeName !== userProfile.name || 
+            franchiseePhone !== userProfile.phone || 
+            franchiseeLocation !== userProfile.location
+        ))) {
+            document.getElementById('franchiseeName').value = '';
+            document.getElementById('franchiseePhone').value = '';
+            document.getElementById('franchiseeLocation').value = '';
+        }
         document.getElementById('orderNotes').value = '';
         
         showNotification('Opening WhatsApp to submit your order...');
