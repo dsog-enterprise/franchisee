@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=1.0, user-scalable=no">
     
     <!-- App Version -->
-    <meta name="app-version" content="2.6.0">
+    <meta name="app-version" content="2.7.0">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#B22222">
@@ -352,14 +352,14 @@
             transform: translateY(-2px);
         }
         
-        /* GOOGLE SIGN-IN MODAL */
+        /* ENHANCED PROFESSIONAL GOOGLE SIGN-IN MODAL */
         .google-signin-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.98);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -367,7 +367,8 @@
             opacity: 0;
             visibility: hidden;
             transition: var(--transition);
-            padding: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
         }
         
         .google-signin-modal.active {
@@ -377,79 +378,164 @@
         
         .google-signin-content {
             background: var(--white);
-            border-radius: 15px;
-            max-width: 500px;
+            border-radius: 20px;
+            max-width: 900px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            animation: modalSlideIn 0.3s ease;
-            border: 3px solid var(--primary-red);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .google-signin-header {
-            background: var(--primary-black);
-            color: var(--white);
-            padding: 1.5rem;
-            border-radius: 12px 12px 0 0;
-            text-align: center;
-            border-bottom: 3px solid var(--primary-red);
-        }
-        
-        .google-signin-header h2 {
-            color: var(--primary-gold);
-            font-size: 1.5rem;
+            animation: modalSlideIn 0.4s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        @media (min-width: 992px) {
+            .google-signin-content {
+                flex-direction: row;
+                min-height: 600px;
+            }
+        }
+        
+        /* Left Panel - Branding */
+        .signin-left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--white);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .google-signin-body {
-            padding: 2rem;
+            align-items: center;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         
-        .google-signin-icon {
-            font-size: 4rem;
-            color: var(--google-blue);
-            margin-bottom: 1.5rem;
-            animation: pulse 2s infinite;
+        .signin-left-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png') center/contain no-repeat;
+            opacity: 0.05;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .google-signin-title {
-            font-size: 1.8rem;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .google-signin-description {
-            color: var(--text-secondary);
+        .signin-logo-container {
+            position: relative;
+            z-index: 1;
             margin-bottom: 2rem;
-            line-height: 1.6;
+        }
+        
+        .signin-logo {
+            height: 80px;
+            filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
+            margin-bottom: 1rem;
+        }
+        
+        .signin-brand-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-gold);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .signin-brand-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            max-width: 300px;
+        }
+        
+        .signin-features {
+            list-style: none;
+            margin-top: 2rem;
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .signin-features li {
+            margin-bottom: 1rem;
+            padding-left: 1.8rem;
+            position: relative;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        
+        .signin-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-gold);
+            font-weight: bold;
             font-size: 1.1rem;
         }
         
-        .google-signin-requirements {
-            background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            text-align: left;
-            border: 1px solid var(--border-color);
+        .signin-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+            margin: 2rem auto;
+            border-radius: 3px;
         }
         
-        .google-signin-requirements h3 {
+        /* Right Panel - Sign-in Form */
+        .signin-right-panel {
+            flex: 1;
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--white);
+        }
+        
+        .signin-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        
+        .signin-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+        
+        .signin-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .signin-form-container {
+            margin: 2rem 0;
+        }
+        
+        .signin-requirements {
+            background: linear-gradient(135deg, rgba(178, 34, 34, 0.05), rgba(212, 175, 55, 0.05));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(178, 34, 34, 0.1);
+        }
+        
+        .signin-requirements h3 {
             color: var(--primary-red);
             margin-bottom: 1rem;
             font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .requirements-list {
@@ -461,25 +547,157 @@
             padding-left: 1.5rem;
             position: relative;
             color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         
         .requirements-list li::before {
-            content: '✓';
+            content: '•';
             position: absolute;
             left: 0;
-            color: var(--success);
+            color: var(--primary-red);
             font-weight: bold;
+            font-size: 1.2rem;
         }
         
-        .google-signin-note {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(66, 133, 244, 0.1);
-            border-radius: 8px;
+        .signin-button-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .google-signin-button-wrapper {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .signin-or-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .signin-or-divider::before,
+        .signin-or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+        
+        .signin-or-divider span {
+            padding: 0 1rem;
+        }
+        
+        .signin-security-note {
+            background: rgba(66, 133, 244, 0.05);
+            padding: 1.2rem;
+            border-radius: 10px;
             border-left: 4px solid var(--google-blue);
+            margin-top: 2rem;
             font-size: 0.9rem;
             color: var(--text-secondary);
-            text-align: left;
+            line-height: 1.6;
+        }
+        
+        .signin-security-note strong {
+            color: var(--google-blue);
+            font-weight: 600;
+        }
+        
+        .signin-footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* Custom Google Button Styling */
+        .custom-google-button {
+            background: var(--white);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.9rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            min-width: 280px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .custom-google-button:hover {
+            background: #f8f9fa;
+            border-color: var(--google-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .custom-google-button:active {
+            transform: translateY(0);
+        }
+        
+        .google-button-icon {
+            width: 20px;
+            height: 20px;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                var(--google-red) 0deg 90deg,
+                var(--google-yellow) 90deg 180deg,
+                var(--google-green) 180deg 270deg,
+                var(--google-blue) 270deg 360deg
+            );
+            border-radius: 2px;
+            position: relative;
+        }
+        
+        .google-button-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: var(--white);
+            border-radius: 1px;
+        }
+        
+        .google-button-icon::after {
+            content: 'G';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--google-blue);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .signin-help {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        .signin-help a {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .signin-help a:hover {
+            text-decoration: underline;
         }
         
         /* User Profile Modal */
@@ -2285,7 +2503,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.98);
             z-index: 1999;
             display: flex;
             justify-content: center;
@@ -2293,6 +2511,7 @@
             color: var(--white);
             text-align: center;
             padding: 2rem;
+            backdrop-filter: blur(10px);
         }
         
         .content-overlay h2 {
@@ -2389,7 +2608,20 @@
                 gap: 0.8rem;
             }
             
-            .google-signin-title {
+            .google-signin-content {
+                flex-direction: column;
+            }
+            
+            .signin-left-panel,
+            .signin-right-panel {
+                padding: 2rem 1.5rem;
+            }
+            
+            .signin-brand-title {
+                font-size: 1.8rem;
+            }
+            
+            .signin-title {
                 font-size: 1.5rem;
             }
         }
@@ -2454,44 +2686,107 @@
                 height: auto;
                 padding: 0.8rem;
             }
+            
+            .custom-google-button {
+                min-width: 100%;
+                padding: 0.8rem 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Google Sign-in Modal -->
-    <div class="google-signin-modal" id="googleSigninModal">
+    <!-- ENHANCED PROFESSIONAL GOOGLE SIGN-IN MODAL -->
+    <div class="google-signin-modal active" id="googleSigninModal">
         <div class="google-signin-content">
-            <div class="google-signin-header">
-                <h2><i class="fab fa-google"></i> Sign In Required</h2>
+            <!-- Left Panel - Branding -->
+            <div class="signin-left-panel">
+                <div class="signin-logo-container">
+                    <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="signin-logo">
+                    <h1 class="signin-brand-title">DSOG FRANCHISE</h1>
+                    <p class="signin-brand-subtitle">Professional Order Management Platform</p>
+                </div>
+                
+                <div class="signin-divider"></div>
+                
+                <ul class="signin-features">
+                    <li>Secure franchise order management</li>
+                    <li>Professional inventory control</li>
+                    <li>Automated delivery coordination</li>
+                    <li>Real-time order tracking</li>
+                    <li>Dedicated franchise support</li>
+                </ul>
+                
+                <div style="margin-top: auto; text-align: center; width: 100%;">
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-top: 2rem;">
+                        <i class="fas fa-lock" style="margin-right: 0.5rem;"></i>
+                        Enterprise-grade security
+                    </p>
+                </div>
             </div>
-            <div class="google-signin-body">
-                <div class="google-signin-icon">
-                    <i class="fab fa-google"></i>
-                </div>
-                <h2 class="google-signin-title">Welcome to DSOG Franchise Platform</h2>
-                <p class="google-signin-description">
-                    To access the franchise ordering system, you must sign in with your Google account. 
-                    This ensures secure access and personalized experience.
-                </p>
-                
-                <div class="google-signin-requirements">
-                    <h3>Why Google Sign-in?</h3>
-                    <ul class="requirements-list">
-                        <li>Secure authentication for franchise orders</li>
-                        <li>Automatic profile information retrieval</li>
-                        <li>Seamless form auto-filling</li>
-                        <li>Enhanced security for your orders</li>
-                        <li>Quick access across devices</li>
-                    </ul>
+            
+            <!-- Right Panel - Sign-in Form -->
+            <div class="signin-right-panel">
+                <div class="signin-header">
+                    <h2 class="signin-title">Welcome to DSOG Franchise Platform</h2>
+                    <p class="signin-subtitle">
+                        Sign in with your Google account to access the professional franchise management system.
+                        Your information is securely authenticated and used solely for order processing.
+                    </p>
                 </div>
                 
-                <!-- Google Sign-in Button -->
-                <div id="googleSignInButton" class="gsi-container"></div>
+                <div class="signin-form-container">
+                    <div class="signin-requirements">
+                        <h3><i class="fas fa-shield-alt"></i> Platform Requirements</h3>
+                        <ul class="requirements-list">
+                            <li>Valid Google account for authentication</li>
+                            <li>Authorized franchisee access required</li>
+                            <li>Secure HTTPS connection enforced</li>
+                            <li>Data privacy compliance maintained</li>
+                            <li>Professional business use only</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="signin-button-container">
+                        <div class="google-signin-button-wrapper">
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                                <i class="fas fa-info-circle"></i> Click below to sign in securely with Google
+                            </p>
+                            
+                            <!-- Custom Google Sign-in Button -->
+                            <button class="custom-google-button" onclick="triggerGoogleSignIn()">
+                                <span class="google-button-icon"></span>
+                                Sign in with Google
+                            </button>
+                            
+                            <!-- Hidden Google Sign-in Button (will be triggered by custom button) -->
+                            <div id="googleSignInButton" style="display: none;"></div>
+                            
+                            <div class="signin-or-divider">
+                                <span>or</span>
+                            </div>
+                            
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
+                                For assistance, contact 
+                                <a href="mailto:care.dsogstores@gmail.com" style="color: var(--primary-red); font-weight: 600;">support</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="signin-security-note">
+                        <i class="fas fa-lock"></i>
+                        <strong>Security Notice:</strong> Your Google authentication ensures secure access to the franchise platform. 
+                        All communications are encrypted and your data is protected according to enterprise security standards.
+                    </div>
+                </div>
                 
-                <div class="google-signin-note">
-                    <i class="fas fa-info-circle"></i> 
-                    <strong>Note:</strong> Only authorized franchisees with Google accounts can access this platform. 
-                    Your information is used solely for order processing and will not be shared with third parties.
+                <div class="signin-footer">
+                    <p>
+                        <i class="fas fa-copyright"></i> 2024 DSOG Stores Franchise System. 
+                        <span style="color: var(--primary-red); font-weight: 600;">Authorized Use Only</span>
+                    </p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--gray);">
+                        Version 2.7.0 • Professional Edition
+                    </p>
                 </div>
             </div>
         </div>
@@ -2562,7 +2857,7 @@
     </div>
 
     <!-- Enhanced Header -->
-    <header>
+    <header style="display: none;">
         <div class="header-content">
             <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="logo">
             
@@ -2875,7 +3170,7 @@
     
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DSOG Franchise Platform v2.6.0');
+        console.log('🚀 DSOG Franchise Platform v2.7.0');
         
         // Initialize components
         initMobileMenu();
@@ -2924,7 +3219,7 @@
             ux_mode: 'popup'
         });
         
-        // Render the button
+        // Render the hidden Google button
         google.accounts.id.renderButton(
             document.getElementById('googleSignInButton'),
             {
@@ -2957,6 +3252,18 @@
             setTimeout(() => {
                 showGoogleSignInModal();
             }, 1000);
+        }
+    }
+    
+    function triggerGoogleSignIn() {
+        // Trigger the hidden Google Sign-in button
+        const googleButton = document.querySelector('#googleSignInButton div[role="button"]');
+        if (googleButton) {
+            googleButton.click();
+        } else {
+            // Fallback: show error and reload
+            console.error('Google Sign-in button not found');
+            showNotification('Unable to initiate Google Sign-in. Please refresh the page.', 'error');
         }
     }
     
@@ -3029,7 +3336,7 @@
             hideGoogleSignInModal();
             
             // Show success notification
-            showNotification(`Welcome ${googleUser.name}!`);
+            showNotification(`Welcome ${googleUser.name}!`, 'success');
             
             // Update UI
             updateUserProfileUI();
@@ -3087,9 +3394,11 @@
     function showGoogleSignInModal() {
         const signinModal = document.getElementById('googleSigninModal');
         const overlay = document.getElementById('contentOverlay');
+        const header = document.querySelector('header');
         
         signinModal.classList.add('active');
         overlay.style.display = 'flex';
+        header.style.display = 'none';
         document.body.style.overflow = 'hidden';
     }
     
@@ -3097,9 +3406,11 @@
         const signinModal = document.getElementById('googleSigninModal');
         const overlay = document.getElementById('contentOverlay');
         const mainContent = document.getElementById('mainContent');
+        const header = document.querySelector('header');
         
         signinModal.classList.remove('active');
         overlay.style.display = 'none';
+        header.style.display = 'block';
         mainContent.style.display = 'block';
         document.body.style.overflow = 'auto';
     }
@@ -3110,12 +3421,14 @@
         const floatingCartBtn = document.getElementById('floatingCartBtn');
         const bottomNav = document.querySelector('.bottom-nav');
         const userProfileHeader = document.getElementById('userProfileHeader');
+        const header = document.querySelector('header');
         
         overlay.style.display = 'none';
         mainContent.style.display = 'block';
         floatingCartBtn.style.display = 'flex';
         bottomNav.style.display = 'block';
         userProfileHeader.style.display = 'flex';
+        header.style.display = 'block';
     }
     
     function askForLocation() {
@@ -3178,11 +3491,13 @@
             const floatingCartBtn = document.getElementById('floatingCartBtn');
             const bottomNav = document.querySelector('.bottom-nav');
             const userProfileHeader = document.getElementById('userProfileHeader');
+            const header = document.querySelector('header');
             
             mainContent.style.display = 'none';
             floatingCartBtn.style.display = 'none';
             bottomNav.style.display = 'none';
             userProfileHeader.style.display = 'none';
+            header.style.display = 'none';
             
             // Show sign-in modal
             showGoogleSignInModal();
@@ -3230,7 +3545,7 @@
                 userNameDisplay.textContent = userProfile.givenName || userProfile.name.split(' ')[0];
             }
             
-            if (profileName) {
+                        if (profileName) {
                 profileName.textContent = userProfile.name;
             }
             
@@ -3559,7 +3874,7 @@
             
         } catch (error) {
             console.error('Error adding to cart:', error);
-            showNotification('Failed to add item to cart');
+            showNotification('Failed to add item to cart', 'error');
         }
     }
     
@@ -4756,7 +5071,7 @@
             deferredPrompt = null;
         } catch (error) {
             console.error('Error installing franchise PWA:', error);
-            showNotification('Error installing franchise app. Please try again.');
+            showNotification('Error installing franchise app. Please try again.', 'error');
         }
     }
     
