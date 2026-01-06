@@ -37,26 +37,10 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Sign-in SDK -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- Add this after Google Sign-in SDK -->
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
-    <!-- Firebase Configuration -->
-    <script>
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOb4BqfiN3vt1Y13UTEpA_boCqNRH6rrQ",
-            authDomain: "dsog-stores-dashboard.firebaseapp.com",
-            databaseURL: "https://dsog-stores-dashboard-default-rtdb.firebaseio.com",
-            projectId: "dsog-stores-dashboard",
-            storageBucket: "dsog-stores-dashboard.firebasestorage.app",
-            messagingSenderId: "1085972125142",
-            appId: "1:1085972125142:web:16d4ad46261cb45b52c077"
-        };
-    </script>
+    
     <!-- FIRST PAGE'S THEME AND STYLES -->
     <style>
         :root {
@@ -177,8 +161,8 @@
             }
         }
         
-        /* Google Sign-in Container */
-        .gsi-container {
+        /* Firebase Sign-in Container */
+        .firebase-signin-container {
             display: flex;
             justify-content: center;
             margin: 1rem 0;
@@ -369,8 +353,8 @@
             transform: translateY(-2px);
         }
         
-        /* ENHANCED PROFESSIONAL GOOGLE SIGN-IN MODAL */
-        .google-signin-modal {
+        /* ENHANCED PROFESSIONAL FIREBASE SIGN-IN MODAL */
+        .firebase-signin-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -388,12 +372,12 @@
             backdrop-filter: blur(10px);
         }
         
-        .google-signin-modal.active {
+        .firebase-signin-modal.active {
             opacity: 1;
             visibility: visible;
         }
         
-        .google-signin-content {
+        .firebase-signin-content {
             background: var(--white);
             border-radius: 20px;
             max-width: 900px;
@@ -409,7 +393,7 @@
         }
         
         @media (min-width: 992px) {
-            .google-signin-content {
+            .firebase-signin-content {
                 flex-direction: row;
                 min-height: 600px;
             }
@@ -582,11 +566,65 @@
             text-align: center;
         }
         
-        .google-signin-button-wrapper {
-            display: inline-flex;
+        .firebase-signin-button-wrapper {
+            display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            width: 100%;
+        }
+        
+        .signin-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .signin-option-btn {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: var(--white);
+            color: var(--text-primary);
+        }
+        
+        .signin-option-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .signin-option-btn.google {
+            border-color: var(--google-blue);
+        }
+        
+        .signin-option-btn.google:hover {
+            border-color: var(--google-blue);
+            background: rgba(66, 133, 244, 0.05);
+        }
+        
+        .signin-option-btn.email {
+            border-color: var(--primary-red);
+        }
+        
+        .signin-option-btn.email:hover {
+            border-color: var(--primary-red);
+            background: rgba(178, 34, 34, 0.05);
+        }
+        
+        .signin-option-btn .icon {
+            font-size: 1.2rem;
         }
         
         .signin-or-divider {
@@ -595,6 +633,8 @@
             margin: 1.5rem 0;
             color: var(--text-secondary);
             font-size: 0.9rem;
+            width: 100%;
+            max-width: 300px;
         }
         
         .signin-or-divider::before,
@@ -607,6 +647,93 @@
         
         .signin-or-divider span {
             padding: 0 1rem;
+        }
+        
+        /* Email Sign-in Form */
+        .email-signin-form {
+            display: none;
+            width: 100%;
+            max-width: 300px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .email-signin-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: left;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .form-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .form-btn-primary {
+            background: var(--primary-red);
+            color: var(--white);
+        }
+        
+        .form-btn-primary:hover {
+            background: var(--secondary-red);
+            transform: translateY(-2px);
+        }
+        
+        .form-btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .form-error {
+            color: var(--dark-red);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .form-error.active {
+            display: block;
         }
         
         .signin-security-note {
@@ -632,72 +759,6 @@
             font-size: 0.85rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border-color);
-        }
-        
-        /* Custom Google Button Styling */
-        .custom-google-button {
-            background: var(--white);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 0.9rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            min-width: 280px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        
-        .custom-google-button:hover {
-            background: #f8f9fa;
-            border-color: var(--google-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-        }
-        
-        .custom-google-button:active {
-            transform: translateY(0);
-        }
-        
-        .google-button-icon {
-            width: 20px;
-            height: 20px;
-            background: conic-gradient(
-                from 0deg at 50% 50%,
-                var(--google-red) 0deg 90deg,
-                var(--google-yellow) 90deg 180deg,
-                var(--google-green) 180deg 270deg,
-                var(--google-blue) 270deg 360deg
-            );
-            border-radius: 2px;
-            position: relative;
-        }
-        
-        .google-button-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: var(--white);
-            border-radius: 1px;
-        }
-        
-        .google-button-icon::after {
-            content: 'G';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--google-blue);
-            font-weight: bold;
-            font-size: 0.9rem;
         }
         
         .signin-help {
@@ -846,13 +907,13 @@
             transform: translateY(-2px);
         }
         
-        .profile-btn-google {
-            background: var(--google-blue);
+        .sign-out-btn {
+            background: var(--google-red);
             color: var(--white);
         }
         
-        .profile-btn-google:hover {
-            background: #3367d6;
+        .sign-out-btn:hover {
+            background: #d3342d;
             transform: translateY(-2px);
         }
         
@@ -864,16 +925,6 @@
         
         .profile-btn-secondary:hover {
             background: var(--border-color);
-        }
-        
-        .sign-out-btn {
-            background: var(--google-red);
-            color: var(--white);
-        }
-        
-        .sign-out-btn:hover {
-            background: #d3342d;
-            transform: translateY(-2px);
         }
         
         /* PWA INSTALL PROMPT */
@@ -1920,19 +1971,19 @@
             border: 2px solid var(--primary-red);
         }
         
-        .form-group {
+        .order-form .form-group {
             margin-bottom: 1.5rem;
             position: relative;
         }
         
-        .form-group label {
+        .order-form .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--text-primary);
         }
         
-        .form-control {
+        .order-form .form-control {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
@@ -1941,7 +1992,7 @@
             transition: var(--transition);
         }
         
-        .form-control:focus {
+        .order-form .form-control:focus {
             outline: none;
             border-color: var(--primary-red);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
@@ -2625,7 +2676,7 @@
                 gap: 0.8rem;
             }
             
-            .google-signin-content {
+            .firebase-signin-content {
                 flex-direction: column;
             }
             
@@ -2703,414 +2754,24 @@
                 height: auto;
                 padding: 0.8rem;
             }
-            
-            .custom-google-button {
-                min-width: 100%;
-                padding: 0.8rem 1.5rem;
-            }
-        }
-            /* Firebase Auth Modal Styles */
-            .firebase-auth-modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.98);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 2005;
-                opacity: 0;
-                visibility: hidden;
-                transition: var(--transition);
-                padding: 2rem;
-                backdrop-filter: blur(10px);
-            }
-            
-            .firebase-auth-modal.active {
-                opacity: 1;
-                visibility: visible;
-            }
-            
-            .auth-modal-content {
-                background: var(--white);
-                border-radius: 20px;
-                max-width: 1000px;
-                width: 100%;
-                max-height: 90vh;
-                overflow-y: auto;
-                position: relative;
-                animation: modalSlideIn 0.4s ease;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            }
-            
-            @media (min-width: 992px) {
-                .auth-modal-content {
-                    flex-direction: row;
-                    min-height: 600px;
-                }
-            }
-            
-            /* Left Panel */
-            .auth-left-panel {
-                flex: 1;
-                background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
-                color: var(--white);
-                padding: 3rem 2rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .auth-left-panel::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png') center/contain no-repeat;
-                opacity: 0.05;
-            }
-            
-            .auth-logo-container {
-                position: relative;
-                z-index: 1;
-                margin-bottom: 2rem;
-            }
-            
-            .auth-logo {
-                height: 80px;
-                filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
-                margin-bottom: 1rem;
-            }
-            
-            .auth-brand-title {
-                font-size: 2.2rem;
-                font-weight: 800;
-                color: var(--primary-gold);
-                margin-bottom: 0.5rem;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-            }
-            
-            .auth-brand-subtitle {
-                font-size: 1.1rem;
-                color: rgba(255, 255, 255, 0.8);
-                margin-bottom: 2rem;
-                font-weight: 400;
-                max-width: 300px;
-            }
-            
-            .auth-features {
-                list-style: none;
-                margin-top: 2rem;
-                text-align: left;
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .auth-features li {
-                margin-bottom: 1rem;
-                padding-left: 1.8rem;
-                position: relative;
-                color: rgba(255, 255, 255, 0.9);
-                font-size: 0.95rem;
-            }
-            
-            .auth-features li::before {
-                content: '✓';
-                position: absolute;
-                left: 0;
-                color: var(--primary-gold);
-                font-weight: bold;
-                font-size: 1.1rem;
-            }
-            
-            .auth-divider {
-                width: 60px;
-                height: 3px;
-                background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
-                margin: 2rem auto;
-                border-radius: 3px;
-            }
-            
-            /* Right Panel */
-            .auth-right-panel {
-                flex: 1.2;
-                padding: 3rem 2.5rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                background: var(--white);
-            }
-            
-            .auth-header {
-                margin-bottom: 2rem;
-                text-align: center;
-            }
-            
-            .auth-title {
-                font-size: 1.8rem;
-                font-weight: 700;
-                color: var(--text-primary);
-                margin-bottom: 0.8rem;
-                line-height: 1.3;
-            }
-            
-            .auth-subtitle {
-                font-size: 1rem;
-                color: var(--text-secondary);
-                line-height: 1.6;
-                max-width: 400px;
-                margin: 0 auto;
-            }
-            
-            .auth-form-container {
-                margin: 1rem 0;
-            }
-            
-            .auth-requirements {
-                background: linear-gradient(135deg, rgba(178, 34, 34, 0.05), rgba(212, 175, 55, 0.05));
-                padding: 1.5rem;
-                border-radius: 12px;
-                margin-bottom: 2rem;
-                border: 1px solid rgba(178, 34, 34, 0.1);
-            }
-            
-            .auth-requirements h3 {
-                color: var(--primary-red);
-                margin-bottom: 1rem;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            
-            .auth-button-container {
-                margin: 1rem 0;
-                text-align: center;
-            }
-            
-            .auth-button-wrapper {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-            
-            /* Auth Buttons */
-            .auth-btn {
-                background: var(--white);
-                border: 2px solid var(--border-color);
-                border-radius: 12px;
-                padding: 0.9rem 2rem;
-                font-size: 1rem;
-                font-weight: 600;
-                color: var(--text-primary);
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.8rem;
-                width: 100%;
-                max-width: 300px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            }
-            
-            .auth-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-            }
-            
-            .google-auth-btn:hover {
-                border-color: var(--google-blue);
-                background: #f8f9fa;
-            }
-            
-            .email-auth-btn:hover {
-                border-color: var(--primary-red);
-                background: #f8f9fa;
-            }
-            
-            .phone-auth-btn:hover {
-                border-color: var(--success);
-                background: #f8f9fa;
-            }
-            
-            .auth-btn-icon {
-                width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.1rem;
-            }
-            
-            .google-icon {
-                color: var(--google-blue);
-            }
-            
-            .email-icon {
-                color: var(--primary-red);
-            }
-            
-            .phone-icon {
-                color: var(--success);
-            }
-            
-            .auth-or-divider {
-                display: flex;
-                align-items: center;
-                margin: 1rem 0;
-                color: var(--text-secondary);
-                font-size: 0.9rem;
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .auth-or-divider::before,
-            .auth-or-divider::after {
-                content: '';
-                flex: 1;
-                height: 1px;
-                background: var(--border-color);
-            }
-            
-            .auth-or-divider span {
-                padding: 0 1rem;
-            }
-            
-            /* Form Styles */
-            .email-signin-form,
-            .signup-form,
-            .phone-signin-form {
-                width: 100%;
-                max-width: 300px;
-                animation: fadeIn 0.3s ease;
-            }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .email-submit-btn,
-            .signup-submit-btn,
-            .phone-submit-btn,
-            .verify-btn {
-                background: var(--primary-red);
-                color: var(--white);
-                border: none;
-                margin-top: 1rem;
-            }
-            
-            .email-submit-btn:hover,
-            .signup-submit-btn:hover,
-            .phone-submit-btn:hover,
-            .verify-btn:hover {
-                background: var(--secondary-red);
-            }
-            
-            .auth-link-btn {
-                background: none;
-                border: none;
-                color: var(--primary-red);
-                cursor: pointer;
-                font-size: 0.9rem;
-                margin-top: 0.5rem;
-                text-decoration: underline;
-                padding: 0.5rem;
-            }
-            
-            .auth-link-btn:hover {
-                color: var(--secondary-red);
-            }
-            
-            .auth-help {
-                margin-top: 1rem;
-                font-size: 0.85rem;
-                color: var(--text-secondary);
-                text-align: center;
-            }
-            
-            .auth-security-note {
-                background: rgba(66, 133, 244, 0.05);
-                padding: 1.2rem;
-                border-radius: 10px;
-                border-left: 4px solid var(--google-blue);
-                margin-top: 2rem;
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                line-height: 1.6;
-            }
-            
-            .auth-security-note strong {
-                color: var(--google-blue);
-                font-weight: 600;
-            }
-            
-            .auth-footer {
-                margin-top: 1.5rem;
-                text-align: center;
-                color: var(--text-secondary);
-                font-size: 0.85rem;
-                padding-top: 1.5rem;
-                border-top: 1px solid var(--border-color);
-            }
-            
-            /* Verification Code */
-            .verification-code-container {
-                display: flex;
-                gap: 0.5rem;
-                justify-content: center;
-                margin: 1rem 0;
-            }
-            
-            .verification-code-input {
-                width: 40px;
-                height: 50px;
-                text-align: center;
-                font-size: 1.5rem;
-                border: 2px solid var(--border-color);
-                border-radius: 8px;
-                background: var(--white);
-                transition: var(--transition);
-            }
-            
-            .verification-code-input:focus {
-                border-color: var(--primary-red);
-                outline: none;
-                box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.1);
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Replace the existing google-signin-modal with this -->
-    <!-- FIREBASE AUTHENTICATION MODAL -->
-    <div class="firebase-auth-modal active" id="firebaseAuthModal">
-        <div class="auth-modal-content">
+    <!-- ENHANCED PROFESSIONAL FIREBASE SIGN-IN MODAL -->
+    <div class="firebase-signin-modal active" id="firebaseSigninModal">
+        <div class="firebase-signin-content">
             <!-- Left Panel - Branding -->
-            <div class="auth-left-panel">
-                <div class="auth-logo-container">
-                    <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="auth-logo">
-                    <h1 class="auth-brand-title">DSOG FRANCHISE</h1>
-                    <p class="auth-brand-subtitle">Professional Order Management Platform</p>
+            <div class="signin-left-panel">
+                <div class="signin-logo-container">
+                    <img src="https://i.postimg.cc/kMZ1jTww/Untitled-design-4-removebg-preview.png" alt="DSOG Franchise" class="signin-logo">
+                    <h1 class="signin-brand-title">DSOG FRANCHISE</h1>
+                    <p class="signin-brand-subtitle">Professional Order Management Platform</p>
                 </div>
                 
-                <div class="auth-divider"></div>
+                <div class="signin-divider"></div>
                 
-                <ul class="auth-features">
+                <ul class="signin-features">
                     <li>Secure franchise order management</li>
                     <li>Professional inventory control</li>
                     <li>Automated delivery coordination</li>
@@ -3121,149 +2782,126 @@
                 <div style="margin-top: auto; text-align: center; width: 100%;">
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-top: 2rem;">
                         <i class="fas fa-lock" style="margin-right: 0.5rem;"></i>
-                        Enterprise-grade security with Firebase
+                        Enterprise-grade security
                     </p>
                 </div>
             </div>
             
-            <!-- Right Panel - Sign-in Options -->
-            <div class="auth-right-panel">
-                <div class="auth-header">
-                    <h2 class="auth-title">Welcome to DSOG Franchise Platform</h2>
-                    <p class="auth-subtitle">
+            <!-- Right Panel - Sign-in Form -->
+            <div class="signin-right-panel">
+                <div class="signin-header">
+                    <h2 class="signin-title">Welcome to DSOG Franchise Platform</h2>
+                    <p class="signin-subtitle">
                         Sign in to access the professional franchise management system.
-                        Your information is securely authenticated using Firebase.
+                        Your information is securely authenticated and used solely for order processing.
                     </p>
                 </div>
                 
-                <div class="auth-form-container">
-                    <div class="auth-requirements">
+                <div class="signin-form-container">
+                    <div class="signin-requirements">
                         <h3><i class="fas fa-shield-alt"></i> Platform Requirements</h3>
                         <ul class="requirements-list">
-                            <li>Google account for authentication</li>
+                            <li>Valid account for authentication</li>
                             <li>Authorized franchisee access required</li>
                             <li>Secure HTTPS connection enforced</li>
-                            <li>Firebase security compliance</li>
+                            <li>Data privacy compliance maintained</li>
                             <li>Professional business use only</li>
                         </ul>
                     </div>
                     
-                    <div class="auth-button-container">
-                        <div class="auth-button-wrapper">
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
-                                <i class="fas fa-sign-in-alt"></i> Choose your sign-in method
+                    <div class="signin-button-container">
+                        <div class="firebase-signin-button-wrapper">
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                                <i class="fas fa-info-circle"></i> Choose your sign-in method
                             </p>
                             
-                            <!-- Firebase Google Sign-in -->
-                            <button class="auth-btn google-auth-btn" onclick="signInWithGoogle()">
-                                <div class="auth-btn-icon google-icon">
-                                    <i class="fab fa-google"></i>
-                                </div>
-                                <span>Continue with Google</span>
-                            </button>
+                            <!-- Sign-in Options -->
+                            <div class="signin-options">
+                                <button class="signin-option-btn google" onclick="signInWithGoogle()">
+                                    <i class="fab fa-google icon"></i>
+                                    Sign in with Google
+                                </button>
+                                
+                                <button class="signin-option-btn email" onclick="showEmailSignIn()">
+                                    <i class="fas fa-envelope icon"></i>
+                                    Sign in with Email
+                                </button>
+                            </div>
                             
-                            <!-- Email/Password Option -->
-                            <button class="auth-btn email-auth-btn" onclick="showEmailSignIn()">
-                                <div class="auth-btn-icon email-icon">
-                                    <i class="fas fa-envelope"></i>
+                            <!-- Email Sign-in Form -->
+                            <div class="email-signin-form" id="emailSigninForm">
+                                <div class="form-group">
+                                    <label for="signinEmail">Email Address</label>
+                                    <input type="email" id="signinEmail" class="form-control" placeholder="Enter your email" required>
                                 </div>
-                                <span>Sign in with Email</span>
-                            </button>
-                            
-                            <!-- Phone Option -->
-                            <button class="auth-btn phone-auth-btn" onclick="showPhoneSignIn()">
-                                <div class="auth-btn-icon phone-icon">
-                                    <i class="fas fa-phone"></i>
+                                
+                                <div class="form-group">
+                                    <label for="signinPassword">Password</label>
+                                    <input type="password" id="signinPassword" class="form-control" placeholder="Enter your password" required>
                                 </div>
-                                <span>Sign in with Phone</span>
-                            </button>
+                                
+                                <div class="form-error" id="emailSigninError"></div>
+                                
+                                <div class="form-actions">
+                                    <button class="form-btn form-btn-primary" onclick="signInWithEmail()">
+                                        Sign In
+                                    </button>
+                                    <button class="form-btn form-btn-secondary" onclick="hideEmailSignIn()">
+                                        Cancel
+                                    </button>
+                                </div>
+                                
+                                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                                    <a href="javascript:void(0)" onclick="showPasswordReset()" style="color: var(--primary-red);">
+                                        Forgot password?
+                                    </a>
+                                </p>
+                            </div>
                             
-                            <div class="auth-or-divider">
+                            <!-- Password Reset Form -->
+                            <div class="email-signin-form" id="passwordResetForm">
+                                <div class="form-group">
+                                    <label for="resetEmail">Email Address</label>
+                                    <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email" required>
+                                </div>
+                                
+                                <div class="form-error" id="passwordResetError"></div>
+                                
+                                <div class="form-actions">
+                                    <button class="form-btn form-btn-primary" onclick="resetPassword()">
+                                        Reset Password
+                                    </button>
+                                    <button class="form-btn form-btn-secondary" onclick="hidePasswordReset()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="signin-or-divider">
                                 <span>or</span>
                             </div>
                             
-                            <!-- Email Form (Initially Hidden) -->
-                            <div class="email-signin-form" id="emailSigninForm" style="display: none;">
-                                <div class="form-group">
-                                    <label for="authEmail">Email Address</label>
-                                    <input type="email" id="authEmail" class="form-control" placeholder="Enter your email">
-                                </div>
-                                <div class="form-group">
-                                    <label for="authPassword">Password</label>
-                                    <input type="password" id="authPassword" class="form-control" placeholder="Enter your password">
-                                </div>
-                                <button class="auth-btn email-submit-btn" onclick="signInWithEmail()">
-                                    Sign In
-                                </button>
-                                <button class="auth-link-btn" onclick="showSignUpForm()">
-                                    Don't have an account? Sign Up
-                                </button>
-                            </div>
-                            
-                            <!-- Sign Up Form (Initially Hidden) -->
-                            <div class="signup-form" id="signupForm" style="display: none;">
-                                <div class="form-group">
-                                    <label for="signupName">Full Name</label>
-                                    <input type="text" id="signupName" class="form-control" placeholder="Enter your full name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="signupEmail">Email Address</label>
-                                    <input type="email" id="signupEmail" class="form-control" placeholder="Enter your email">
-                                </div>
-                                <div class="form-group">
-                                    <label for="signupPassword">Password</label>
-                                    <input type="password" id="signupPassword" class="form-control" placeholder="Create a password">
-                                </div>
-                                <button class="auth-btn signup-submit-btn" onclick="signUpWithEmail()">
-                                    Create Account
-                                </button>
-                                <button class="auth-link-btn" onclick="showEmailSignIn()">
-                                    Already have an account? Sign In
-                                </button>
-                            </div>
-                            
-                            <!-- Phone Form (Initially Hidden) -->
-                            <div class="phone-signin-form" id="phoneSigninForm" style="display: none;">
-                                <div class="form-group">
-                                    <label for="phoneNumber">Phone Number</label>
-                                    <input type="tel" id="phoneNumber" class="form-control" placeholder="+254 712 345 678">
-                                </div>
-                                <div class="form-group">
-                                    <label for="verificationCode">Verification Code</label>
-                                    <input type="text" id="verificationCode" class="form-control" placeholder="Enter 6-digit code" disabled>
-                                </div>
-                                <button class="auth-btn phone-submit-btn" onclick="sendVerificationCode()" id="sendCodeBtn">
-                                    Send Verification Code
-                                </button>
-                                <button class="auth-btn verify-btn" onclick="verifyPhoneCode()" id="verifyBtn" style="display: none;">
-                                    Verify Code
-                                </button>
-                                <button class="auth-link-btn" onclick="hidePhoneSignIn()">
-                                    Back to Sign In Options
-                                </button>
-                            </div>
-                            
-                            <div class="auth-help">
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
                                 For assistance, contact 
                                 <a href="mailto:care.dsogstores@gmail.com" style="color: var(--primary-red); font-weight: 600;">support</a>
-                            </div>
+                            </p>
                         </div>
                     </div>
                     
-                    <div class="auth-security-note">
+                    <div class="signin-security-note">
                         <i class="fas fa-lock"></i>
-                        <strong>Security Notice:</strong> Powered by Firebase Authentication. All communications are encrypted 
-                        and your data is protected according to enterprise security standards.
+                        <strong>Security Notice:</strong> Your authentication ensures secure access to the franchise platform. 
+                        All communications are encrypted and your data is protected according to enterprise security standards.
                     </div>
                 </div>
                 
-                <div class="auth-footer">
+                <div class="signin-footer">
                     <p>
                         <i class="fas fa-copyright"></i> 2024 DSOG Stores Franchise System. 
                         <span style="color: var(--primary-red); font-weight: 600;">Authorized Use Only</span>
                     </p>
                     <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--gray);">
-                        Version 2.7.0 • Professional Edition • Firebase Secure Auth
+                        Version 2.7.0 • Professional Edition
                     </p>
                 </div>
             </div>
@@ -3329,8 +2967,10 @@
     <div class="content-overlay" id="contentOverlay" style="display: none;">
         <div>
             <h2>Sign In Required</h2>
-            <p>Please sign in with Google to access the franchise platform</p>
-            <div id="overlayGoogleSignIn" class="gsi-container"></div>
+            <p>Please sign in to access the franchise platform</p>
+            <div class="firebase-signin-container" id="overlaySignIn">
+                <!-- Firebase sign-in buttons will be shown here -->
+            </div>
         </div>
     </div>
 
@@ -3619,64 +3259,53 @@
 
     <!-- JavaScript -->
     <script>
-    // ============================================
-    // CONFIGURATION
-    // ============================================
-    
-    // Firebase Configuration - Replace with your actual Firebase config
+    // Firebase Configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyCOb4BqfiN3vt1Y13UTEpA_boCqNRH6rrQ",
-        authDomain: "dsog-stores-dashboard.firebaseapp.com",
-        databaseURL: "https://dsog-stores-dashboard-default-rtdb.firebaseio.com",
-        projectId: "dsog-stores-dashboard",
-        storageBucket: "dsog-stores-dashboard.firebasestorage.app",
-        messagingSenderId: "1085972125142",
-        appId: "1:1085972125142:web:16d4ad46261cb45b52c077"
+        apiKey: "AIzaSyC5vFfQm98U_5XNMn-2tj_RIT4eIGz-Vbs",
+        authDomain: "dsog-franchisee.firebaseapp.com",
+        projectId: "dsog-franchisee",
+        storageBucket: "dsog-franchisee.firebasestorage.app",
+        messagingSenderId: "771246937206",
+        appId: "1:771246937206:web:17c86eefc43ca3bfef3b57"
     };
-    
-    // Backend URLs
+
+    // Configuration
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpY5zDbfzFMYfgWCDY0dLRaCh_sajs_Pd3tT8lto5S_BA6UICTfjn8dkFuBq7Gx0-d/exec';
     const deliveryScriptUrl = 'https://script.google.com/macros/s/AKfycbzmBoCu_jXpp8oKpNAnX7Ly-bqvfdfhgiHge74ZW0oYae0wUlZERDERJYB-ZC76J9kQYQ/exec';
     
-    // Firebase instances
-    let firebaseApp;
-    let firebaseAuth;
-    let phoneAuthProvider;
-    let recaptchaVerifier;
-    let confirmationResult;
-    
-    // ============================================
-    // STATE MANAGEMENT
-    // ============================================
-    
+    // State management
     let cart = JSON.parse(localStorage.getItem('dsog_franchise_cart')) || [];
     let allProducts = [];
     let currentFilter = 'all';
     let isLoadingProducts = false;
+    
+    // Delivery State Management
     let deliveryAssistants = [];
     let currentDeliveryFilter = 'all';
     let selectedAssistant = null;
     let isLoadingDelivery = false;
+    
+    // User Profile State
     let userProfile = JSON.parse(localStorage.getItem('dsog_franchise_profile')) || null;
     let currentUser = null;
-    let phoneVerificationId = null;
+    
+    // Firebase App
+    let firebaseApp = null;
+    let firebaseAuth = null;
     
     // PWA variables
     let deferredPrompt = null;
     let isAppInstalled = false;
     let isInstallPromptShown = false;
     
-    // ============================================
-    // INITIALIZATION
-    // ============================================
-    
+    // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DSOG Franchise Platform v2.7.0 with Firebase');
+        console.log('🚀 DSOG Franchise Platform v2.7.0');
         
         // Initialize Firebase
         initializeFirebase();
         
-        // Initialize UI components
+        // Initialize components
         initMobileMenu();
         initProductFilters();
         initModal();
@@ -3684,24 +3313,14 @@
         initDeliverySection();
         initPWA();
         initProfileModal();
-        initAuthForms();
-        
-        // Check for existing auth
-        setTimeout(() => {
-            checkFirebaseAuth();
-        }, 1000);
     });
     
-    // ============================================
-    // FIREBASE AUTHENTICATION
-    // ============================================
-    
+    // Firebase Functions
     function initializeFirebase() {
         try {
             // Initialize Firebase
             firebaseApp = firebase.initializeApp(firebaseConfig);
             firebaseAuth = firebase.auth();
-            phoneAuthProvider = new firebase.auth.PhoneAuthProvider();
             
             console.log('✅ Firebase initialized successfully');
             
@@ -3710,7 +3329,7 @@
             
         } catch (error) {
             console.error('❌ Firebase initialization error:', error);
-            showNotification('Authentication system error. Please refresh the page.', 'error');
+            showNotification('Authentication service unavailable. Please refresh the page.', 'error');
         }
     }
     
@@ -3718,466 +3337,355 @@
         if (user) {
             // User is signed in
             currentUser = user;
-            handleUserSignedIn(user);
+            console.log('👤 User signed in:', user.email);
+            
+            // Create or update user profile
+            userProfile = {
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName || user.email.split('@')[0],
+                photoURL: user.photoURL,
+                phoneNumber: user.phoneNumber || '',
+                emailVerified: user.emailVerified,
+                location: userProfile?.location || '',
+                locationUpdated: userProfile?.locationUpdated || false,
+                createdAt: user.metadata.creationTime,
+                lastLogin: user.metadata.lastSignInTime
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            
+            // Hide sign-in modal
+            hideFirebaseSignInModal();
+            
+            // Show success notification
+            showNotification(`Welcome ${userProfile.name}!`, 'success');
+            
+            // Update UI
+            updateUserProfileUI();
+            
+            // Show main content
+            showMainContent();
+            
+            // Auto-fill order form
+            autoFillOrderForm();
+            
+            // Load products
+            showProductLoading();
+            setTimeout(() => {
+                loadProducts();
+            }, 500);
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            // Set up navigation
+            setupNavigation();
+            
+            // Load delivery assistants after products
+            setTimeout(() => {
+                loadDeliveryAssistants();
+            }, 1000);
+            
+            // Ask for location if not already set
+            if (!userProfile.location || !userProfile.locationUpdated) {
+                setTimeout(() => {
+                    askForLocation();
+                }, 2000);
+            }
         } else {
             // User is signed out
             currentUser = null;
-            handleUserSignedOut();
+            
+            // Show sign-in modal if not already shown
+            if (!document.getElementById('firebaseSigninModal').classList.contains('active')) {
+                setTimeout(() => {
+                    showFirebaseSignInModal();
+                }, 500);
+            }
         }
     }
     
-    function checkFirebaseAuth() {
-        const user = firebaseAuth?.currentUser;
-        
-        if (user) {
-            handleUserSignedIn(user);
-            return true;
-        } else if (userProfile && userProfile.uid) {
-            // User data exists but not authenticated
-            showFirebaseAuthModal();
-        } else {
-            // No user data
-            showFirebaseAuthModal();
-        }
-        return false;
-    }
-    
-    function handleUserSignedIn(user) {
-        console.log('✅ User signed in:', user.email || user.phoneNumber);
-        
-        // Create or update user profile
-        userProfile = {
-            uid: user.uid,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            emailVerified: user.emailVerified,
-            phoneVerified: !!user.phoneNumber,
-            location: userProfile?.location || '',
-            locationUpdated: userProfile?.locationUpdated || false,
-            createdAt: user.metadata.creationTime,
-            lastLogin: user.metadata.lastSignInTime
-        };
-        
-        // Save to localStorage
-        localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
-        
-        // Hide auth modal
-        hideFirebaseAuthModal();
-        
-        // Show welcome message
-        const welcomeName = user.displayName || user.email || user.phoneNumber;
-        showNotification(`Welcome ${welcomeName}!`, 'success');
-        
-        // Update UI
-        updateUserProfileUI();
-        showMainContent();
-        autoFillOrderForm();
-        
-        // Load data
-        showProductLoading();
-        setTimeout(() => {
-            loadProducts();
-        }, 500);
-        
-        updateCartBadge();
-        setupNavigation();
-        
-        setTimeout(() => {
-            loadDeliveryAssistants();
-        }, 1000);
-        
-        // Ask for location if not set
-        if (!userProfile.location || !userProfile.locationUpdated) {
-            setTimeout(() => {
-                askForLocation();
-            }, 2000);
+    async function signInWithGoogle() {
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            // Add scopes if needed
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            // Sign in with popup
+            const result = await firebaseAuth.signInWithPopup(provider);
+            console.log('Google sign-in successful:', result.user.email);
+            
+        } catch (error) {
+            console.error('Google sign-in error:', error);
+            
+            let errorMessage = 'Failed to sign in with Google. ';
+            if (error.code === 'auth/popup-blocked') {
+                errorMessage += 'Popup was blocked by browser. Please allow popups for this site.';
+            } else if (error.code === 'auth/cancelled-popup-request') {
+                errorMessage += 'Sign-in was cancelled.';
+            } else {
+                errorMessage += 'Please try again.';
+            }
+            
+            showNotification(errorMessage, 'error');
         }
     }
     
-    function handleUserSignedOut() {
-        console.log('User signed out');
+    async function signInWithEmail() {
+        const email = document.getElementById('signinEmail').value.trim();
+        const password = document.getElementById('signinPassword').value.trim();
+        const errorElement = document.getElementById('emailSigninError');
         
-        // Clear user data
-        userProfile = null;
-        currentUser = null;
-        localStorage.removeItem('dsog_franchise_profile');
+        // Clear previous errors
+        errorElement.textContent = '';
+        errorElement.classList.remove('active');
         
-        // Show auth modal
-        showFirebaseAuthModal();
+        if (!email || !password) {
+            errorElement.textContent = 'Please enter both email and password';
+            errorElement.classList.add('active');
+            return;
+        }
         
-        // Hide main content
+        try {
+            await firebaseAuth.signInWithEmailAndPassword(email, password);
+            // Success handling is done in auth state changed listener
+            hideEmailSignIn();
+            
+        } catch (error) {
+            console.error('Email sign-in error:', error);
+            
+            let errorMessage = '';
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Invalid email address format';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'This account has been disabled';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'No account found with this email';
+                    break;
+                case 'auth/wrong-password':
+                    errorMessage = 'Incorrect password';
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Too many failed attempts. Please try again later';
+                    break;
+                default:
+                    errorMessage = 'Failed to sign in. Please try again';
+            }
+            
+            errorElement.textContent = errorMessage;
+            errorElement.classList.add('active');
+        }
+    }
+    
+    async function resetPassword() {
+        const email = document.getElementById('resetEmail').value.trim();
+        const errorElement = document.getElementById('passwordResetError');
+        
+        // Clear previous errors
+        errorElement.textContent = '';
+        errorElement.classList.remove('active');
+        
+        if (!email) {
+            errorElement.textContent = 'Please enter your email address';
+            errorElement.classList.add('active');
+            return;
+        }
+        
+        try {
+            await firebaseAuth.sendPasswordResetEmail(email);
+            showNotification('Password reset email sent. Please check your inbox.', 'success');
+            hidePasswordReset();
+            
+        } catch (error) {
+            console.error('Password reset error:', error);
+            
+            let errorMessage = '';
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Invalid email address format';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'No account found with this email';
+                    break;
+                default:
+                    errorMessage = 'Failed to send reset email. Please try again';
+            }
+            
+            errorElement.textContent = errorMessage;
+            errorElement.classList.add('active');
+        }
+    }
+    
+    async function signOut() {
+        try {
+            await firebaseAuth.signOut();
+            
+            // Clear local data
+            userProfile = null;
+            localStorage.removeItem('dsog_franchise_profile');
+            
+            // Clear cart
+            cart = [];
+            localStorage.removeItem('dsog_franchise_cart');
+            
+            // Update UI
+            updateCartBadge();
+            showNotification('Signed out successfully');
+            
+            closeProfileModal();
+            
+        } catch (error) {
+            console.error('Sign out error:', error);
+            showNotification('Failed to sign out. Please try again.', 'error');
+        }
+    }
+    
+    function showFirebaseSignInModal() {
+        const signinModal = document.getElementById('firebaseSigninModal');
+        const overlay = document.getElementById('contentOverlay');
+        const header = document.querySelector('header');
+        
+        signinModal.classList.add('active');
+        overlay.style.display = 'flex';
+        header.style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        
+        // Hide any open forms
+        hideEmailSignIn();
+        hidePasswordReset();
+    }
+    
+    function hideFirebaseSignInModal() {
+        const signinModal = document.getElementById('firebaseSigninModal');
+        const overlay = document.getElementById('contentOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const header = document.querySelector('header');
+        
+        signinModal.classList.remove('active');
+        overlay.style.display = 'none';
+        header.style.display = 'block';
+        mainContent.style.display = 'block';
+        document.body.style.overflow = 'auto';
+        
+        // Hide any open forms
+        hideEmailSignIn();
+        hidePasswordReset();
+    }
+    
+    function showEmailSignIn() {
+        document.getElementById('emailSigninForm').classList.add('active');
+        document.getElementById('passwordResetForm').classList.remove('active');
+        
+        // Clear form fields
+        document.getElementById('signinEmail').value = '';
+        document.getElementById('signinPassword').value = '';
+        document.getElementById('emailSigninError').textContent = '';
+        document.getElementById('emailSigninError').classList.remove('active');
+    }
+    
+    function hideEmailSignIn() {
+        document.getElementById('emailSigninForm').classList.remove('active');
+    }
+    
+    function showPasswordReset() {
+        document.getElementById('passwordResetForm').classList.add('active');
+        document.getElementById('emailSigninForm').classList.remove('active');
+        
+        // Clear form fields
+        document.getElementById('resetEmail').value = '';
+        document.getElementById('passwordResetError').textContent = '';
+        document.getElementById('passwordResetError').classList.remove('active');
+    }
+    
+    function hidePasswordReset() {
+        document.getElementById('passwordResetForm').classList.remove('active');
+    }
+    
+    function showMainContent() {
+        const overlay = document.getElementById('contentOverlay');
         const mainContent = document.getElementById('mainContent');
         const floatingCartBtn = document.getElementById('floatingCartBtn');
         const bottomNav = document.querySelector('.bottom-nav');
         const userProfileHeader = document.getElementById('userProfileHeader');
         const header = document.querySelector('header');
         
-        if (mainContent) mainContent.style.display = 'none';
-        if (floatingCartBtn) floatingCartBtn.style.display = 'none';
-        if (bottomNav) bottomNav.style.display = 'none';
-        if (userProfileHeader) userProfileHeader.style.display = 'none';
-        if (header) header.style.display = 'none';
+        overlay.style.display = 'none';
+        mainContent.style.display = 'block';
+        floatingCartBtn.style.display = 'flex';
+        bottomNav.style.display = 'block';
+        userProfileHeader.style.display = 'flex';
+        header.style.display = 'block';
     }
     
-    // ============================================
-    // AUTHENTICATION METHODS
-    // ============================================
-    
-    async function signInWithGoogle() {
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('email');
-            provider.addScope('profile');
-            
-            const result = await firebaseAuth.signInWithPopup(provider);
-            // Handled by onAuthStateChanged
-            
-        } catch (error) {
-            console.error('Google sign-in error:', error);
-            handleAuthError(error);
-        }
-    }
-    
-    async function signInWithEmail() {
-        const email = document.getElementById('authEmail').value.trim();
-        const password = document.getElementById('authPassword').value.trim();
+    function askForLocation() {
+        if (!userProfile || !userProfile.uid) return;
         
-        if (!email || !password) {
-            showNotification('Please enter email and password', 'error');
-            return;
-        }
+        const location = prompt(
+            'Please enter your franchise location/address:\n\nThis will be used to auto-fill your orders and delivery requests.',
+            userProfile.location || ''
+        );
         
-        try {
-            await firebaseAuth.signInWithEmailAndPassword(email, password);
-            // Handled by onAuthStateChanged
+        if (location !== null) {
+            userProfile.location = location.trim();
+            userProfile.locationUpdated = true;
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
             
-        } catch (error) {
-            console.error('Email sign-in error:', error);
-            handleAuthError(error);
+            // Update form
+            autoFillOrderForm();
+            
+            showNotification('Location saved successfully!');
         }
     }
     
-    async function signUpWithEmail() {
-        const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const password = document.getElementById('signupPassword').value.trim();
+    function editUserLocation() {
+        if (!userProfile || !userProfile.uid) return;
         
-        if (!name || !email || !password) {
-            showNotification('Please fill in all fields', 'error');
-            return;
+        const location = prompt(
+            'Update your franchise location/address:',
+            userProfile.location || ''
+        );
+        
+        if (location !== null) {
+            userProfile.location = location.trim();
+            userProfile.locationUpdated = true;
+            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
+            
+            // Update form and UI
+            autoFillOrderForm();
+            updateUserProfileUI();
+            
+            showNotification('Location updated successfully!');
         }
         
-        if (password.length < 6) {
-            showNotification('Password must be at least 6 characters', 'error');
-            return;
-        }
-        
-        try {
-            const result = await firebaseAuth.createUserWithEmailAndPassword(email, password);
-            
-            // Update display name
-            await result.user.updateProfile({
-                displayName: name
-            });
-            
-            // Send email verification
-            await result.user.sendEmailVerification();
-            
-            showNotification('Account created! Please check your email for verification.');
-            showEmailSignIn();
-            
-        } catch (error) {
-            console.error('Email sign-up error:', error);
-            handleAuthError(error);
-        }
+        closeProfileModal();
     }
-    
-    async function sendVerificationCode() {
-        const phoneNumber = document.getElementById('phoneNumber').value.trim();
-        
-        if (!phoneNumber) {
-            showNotification('Please enter your phone number', 'error');
-            return;
-        }
-        
-        // Format phone number
-        let formattedPhone = phoneNumber.replace(/\D/g, '');
-        if (!formattedPhone.startsWith('+')) {
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '+254' + formattedPhone.substring(1);
-            } else if (formattedPhone.length === 9) {
-                formattedPhone = '+254' + formattedPhone;
-            } else {
-                formattedPhone = '+' + formattedPhone;
-            }
-        }
-        
-        try {
-            // Set up recaptcha
-            const recaptchaContainer = document.getElementById('recaptcha-container');
-            if (!recaptchaContainer) {
-                const container = document.createElement('div');
-                container.id = 'recaptcha-container';
-                container.style.display = 'none';
-                document.body.appendChild(container);
-            }
-            
-            recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                size: 'invisible',
-                callback: () => {
-                    console.log('reCAPTCHA solved');
-                }
-            });
-            
-            // Send verification code
-            const verificationId = await phoneAuthProvider.verifyPhoneNumber(
-                formattedPhone,
-                recaptchaVerifier
-            );
-            
-            phoneVerificationId = verificationId;
-            
-            // Show verification code input
-            document.getElementById('verificationCode').disabled = false;
-            document.getElementById('sendCodeBtn').style.display = 'none';
-            document.getElementById('verifyBtn').style.display = 'block';
-            
-            showNotification('Verification code sent to your phone');
-            
-        } catch (error) {
-            console.error('Phone auth error:', error);
-            handleAuthError(error);
-            
-            // Clean up recaptcha
-            if (recaptchaVerifier) {
-                recaptchaVerifier.clear();
-            }
-        }
-    }
-    
-    async function verifyPhoneCode() {
-        const verificationCode = document.getElementById('verificationCode').value.trim();
-        
-        if (!verificationCode || !phoneVerificationId) {
-            showNotification('Please enter the verification code', 'error');
-            return;
-        }
-        
-        try {
-            const credential = firebase.auth.PhoneAuthProvider.credential(
-                phoneVerificationId,
-                verificationCode
-            );
-            
-            await firebaseAuth.signInWithCredential(credential);
-            // Handled by onAuthStateChanged
-            
-            // Clean up
-            if (recaptchaVerifier) {
-                recaptchaVerifier.clear();
-            }
-            
-        } catch (error) {
-            console.error('Phone verification error:', error);
-            handleAuthError(error);
-        }
-    }
-    
-    async function signOut() {
-        if (confirm('Are you sure you want to sign out?')) {
-            try {
-                await firebaseAuth.signOut();
-                cart = [];
-                localStorage.removeItem('dsog_franchise_cart');
-                updateCartBadge();
-                showNotification('Signed out successfully');
-                
-            } catch (error) {
-                console.error('Sign out error:', error);
-                showNotification('Error signing out. Please try again.', 'error');
-            }
-        }
-    }
-    
-    // ============================================
-    // AUTH UI MANAGEMENT
-    // ============================================
-    
-    function initAuthForms() {
-        // Reset forms to default state
-        showSignInOptions();
-    }
-    
-    function showFirebaseAuthModal() {
-        const authModal = document.getElementById('firebaseAuthModal');
-        const overlay = document.getElementById('contentOverlay');
-        const header = document.querySelector('header');
-        
-        if (authModal) {
-            authModal.classList.add('active');
-        }
-        if (overlay) {
-            overlay.style.display = 'flex';
-        }
-        if (header) {
-            header.style.display = 'none';
-        }
-        document.body.style.overflow = 'hidden';
-        
-        // Reset forms
-        showSignInOptions();
-    }
-    
-    function hideFirebaseAuthModal() {
-        const authModal = document.getElementById('firebaseAuthModal');
-        const overlay = document.getElementById('contentOverlay');
-        const mainContent = document.getElementById('mainContent');
-        const header = document.querySelector('header');
-        
-        if (authModal) {
-            authModal.classList.remove('active');
-        }
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
-        if (header) {
-            header.style.display = 'block';
-        }
-        if (mainContent) {
-            mainContent.style.display = 'block';
-        }
-        document.body.style.overflow = 'auto';
-    }
-    
-    function showSignInOptions() {
-        document.getElementById('emailSigninForm').style.display = 'none';
-        document.getElementById('signupForm').style.display = 'none';
-        document.getElementById('phoneSigninForm').style.display = 'none';
-    }
-    
-    function showEmailSignIn() {
-        document.getElementById('emailSigninForm').style.display = 'block';
-        document.getElementById('signupForm').style.display = 'none';
-        document.getElementById('phoneSigninForm').style.display = 'none';
-        // Clear form fields
-        document.getElementById('authEmail').value = '';
-        document.getElementById('authPassword').value = '';
-    }
-    
-    function showSignUpForm() {
-        document.getElementById('emailSigninForm').style.display = 'none';
-        document.getElementById('signupForm').style.display = 'block';
-        document.getElementById('phoneSigninForm').style.display = 'none';
-        // Clear form fields
-        document.getElementById('signupName').value = '';
-        document.getElementById('signupEmail').value = '';
-        document.getElementById('signupPassword').value = '';
-    }
-    
-    function showPhoneSignIn() {
-        document.getElementById('emailSigninForm').style.display = 'none';
-        document.getElementById('signupForm').style.display = 'none';
-        document.getElementById('phoneSigninForm').style.display = 'block';
-        // Clear form fields
-        document.getElementById('phoneNumber').value = '';
-        document.getElementById('verificationCode').value = '';
-    }
-    
-    function hidePhoneSignIn() {
-        document.getElementById('phoneSigninForm').style.display = 'none';
-        document.getElementById('verificationCode').value = '';
-        document.getElementById('verificationCode').disabled = true;
-        document.getElementById('sendCodeBtn').style.display = 'block';
-        document.getElementById('verifyBtn').style.display = 'none';
-        phoneVerificationId = null;
-        
-        // Clean up recaptcha
-        if (recaptchaVerifier) {
-            recaptchaVerifier.clear();
-        }
-    }
-    
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
-    
-    function handleAuthError(error) {
-        console.error('Authentication error:', error);
-        
-        let errorMessage = 'Authentication failed. ';
-        
-        switch (error.code) {
-            case 'auth/invalid-email':
-                errorMessage += 'Invalid email address.';
-                break;
-            case 'auth/user-disabled':
-                errorMessage += 'This account has been disabled.';
-                break;
-            case 'auth/user-not-found':
-                errorMessage += 'No account found with this email.';
-                break;
-            case 'auth/wrong-password':
-                errorMessage += 'Incorrect password.';
-                break;
-            case 'auth/email-already-in-use':
-                errorMessage += 'Email already in use.';
-                break;
-            case 'auth/weak-password':
-                errorMessage += 'Password must be at least 6 characters.';
-                break;
-            case 'auth/operation-not-allowed':
-                errorMessage += 'This sign-in method is not enabled.';
-                break;
-            case 'auth/invalid-verification-code':
-                errorMessage += 'Invalid verification code.';
-                break;
-            case 'auth/invalid-phone-number':
-                errorMessage += 'Invalid phone number format. Use +2547XXXXXXXX';
-                break;
-            case 'auth/captcha-check-failed':
-                errorMessage += 'reCAPTCHA verification failed.';
-                break;
-            case 'auth/too-many-requests':
-                errorMessage += 'Too many attempts. Please try again later.';
-                break;
-            case 'auth/network-request-failed':
-                errorMessage += 'Network error. Please check your connection.';
-                break;
-            case 'auth/popup-closed-by-user':
-                errorMessage = 'Sign-in cancelled.';
-                break;
-            default:
-                errorMessage += 'Please try again.';
-        }
-        
-        showNotification(errorMessage, 'error');
-    }
-    
-    // ============================================
-    // USER PROFILE MANAGEMENT
-    // ============================================
     
     function updateUserProfileUI() {
-        if (userProfile && currentUser) {
+        if (userProfile) {
+            // Update header
             const userAvatar = document.getElementById('userAvatar');
             const userNameDisplay = document.getElementById('userNameDisplay');
             const profileAvatar = document.getElementById('profileAvatar');
             const profileName = document.getElementById('profileName');
             const profileInfo = document.getElementById('profileInfo');
             
-            // Set avatar
+            // Set avatar image or initials
             if (userProfile.photoURL) {
                 if (userAvatar) {
-                    userAvatar.innerHTML = `<img src="${userProfile.photoURL}" alt="${userProfile.displayName}">`;
+                    userAvatar.innerHTML = `<img src="${userProfile.photoURL}" alt="${userProfile.name}">`;
                 }
                 if (profileAvatar) {
-                    profileAvatar.innerHTML = `<img src="${userProfile.photoURL}" alt="${userProfile.displayName}">`;
+                    profileAvatar.innerHTML = `<img src="${userProfile.photoURL}" alt="${userProfile.name}">`;
                 }
             } else {
-                const name = userProfile.displayName || userProfile.email || userProfile.phoneNumber || 'User';
-                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                // Get initials for avatar
+                const initials = userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 
                 if (userAvatar) {
                     userAvatar.textContent = initials;
@@ -4191,39 +3699,23 @@
             }
             
             if (userNameDisplay) {
-                const displayName = userProfile.displayName || 
-                                   userProfile.email?.split('@')[0] || 
-                                   userProfile.phoneNumber ||
-                                   'User';
-                userNameDisplay.textContent = displayName;
+                userNameDisplay.textContent = userProfile.name.split(' ')[0];
             }
             
             if (profileName) {
-                profileName.textContent = userProfile.displayName || userProfile.email || userProfile.phoneNumber || 'User';
+                profileName.textContent = userProfile.name;
             }
             
             if (profileInfo) {
                 profileInfo.innerHTML = `
                     <div class="info-item">
-                        <span class="info-label">Account ID:</span>
-                        <span class="info-value">${userProfile.uid.substring(0, 8)}...</span>
-                    </div>
-                    ${userProfile.displayName ? `
-                    <div class="info-item">
                         <span class="info-label">Full Name:</span>
-                        <span class="info-value">${userProfile.displayName}</span>
+                        <span class="info-value">${userProfile.name}</span>
                     </div>
-                    ` : ''}
-                    ${userProfile.email ? `
                     <div class="info-item">
                         <span class="info-label">Email:</span>
                         <span class="info-value">${userProfile.email}</span>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Email Verified:</span>
-                        <span class="info-value">${userProfile.emailVerified ? 'Yes' : 'No'}</span>
-                    </div>
-                    ` : ''}
                     ${userProfile.phoneNumber ? `
                     <div class="info-item">
                         <span class="info-label">Phone:</span>
@@ -4247,53 +3739,14 @@
         }
     }
     
-    function askForLocation() {
-        if (!userProfile || !userProfile.uid) return;
-        
-        const location = prompt(
-            'Please enter your franchise location/address:\n\nThis will be used to auto-fill your orders and delivery requests.',
-            userProfile.location || ''
-        );
-        
-        if (location !== null && location.trim() !== '') {
-            userProfile.location = location.trim();
-            userProfile.locationUpdated = true;
-            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
-            
-            autoFillOrderForm();
-            showNotification('Location saved successfully!');
-        }
-    }
-    
-    function editUserLocation() {
-        if (!userProfile || !userProfile.uid) return;
-        
-        const location = prompt(
-            'Update your franchise location/address:',
-            userProfile.location || ''
-        );
-        
-        if (location !== null) {
-            userProfile.location = location.trim();
-            userProfile.locationUpdated = true;
-            localStorage.setItem('dsog_franchise_profile', JSON.stringify(userProfile));
-            
-            autoFillOrderForm();
-            updateUserProfileUI();
-            showNotification('Location updated successfully!');
-        }
-        
-        closeProfileModal();
-    }
-    
     function autoFillOrderForm() {
         if (userProfile) {
             const nameField = document.getElementById('franchiseeName');
             const phoneField = document.getElementById('franchiseePhone');
             const locationField = document.getElementById('franchiseeLocation');
             
-            if (nameField && userProfile.displayName) {
-                nameField.value = userProfile.displayName;
+            if (nameField && userProfile.name) {
+                nameField.value = userProfile.name;
                 showAutoFillBadge('nameBadge');
             }
             
@@ -4319,25 +3772,17 @@
         }
     }
     
-    // ============================================
-    // PROFILE MODAL
-    // ============================================
-    
     function initProfileModal() {
         const profileModal = document.getElementById('userProfileModal');
         const profileClose = document.getElementById('profileClose');
         
-        if (profileClose) {
-            profileClose.addEventListener('click', closeProfileModal);
-        }
+        profileClose.addEventListener('click', closeProfileModal);
         
-        if (profileModal) {
-            profileModal.addEventListener('click', function(e) {
-                if (e.target === profileModal) {
-                    closeProfileModal();
-                }
-            });
-        }
+        profileModal.addEventListener('click', function(e) {
+            if (e.target === profileModal) {
+                closeProfileModal();
+            }
+        });
         
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && profileModal.classList.contains('active')) {
@@ -4353,25 +3798,21 @@
         }
         
         const profileModal = document.getElementById('userProfileModal');
-        if (profileModal) {
-            updateUserProfileUI();
-            profileModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+        
+        // Update profile info before showing
+        updateUserProfileUI();
+        
+        profileModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
     
     function closeProfileModal() {
         const profileModal = document.getElementById('userProfileModal');
-        if (profileModal) {
-            profileModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+        profileModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
     }
     
-    // ============================================
-    // MOBILE MENU
-    // ============================================
-    
+    // Initialize Mobile Menu
     function initMobileMenu() {
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -4384,19 +3825,19 @@
             if (!isOpen) {
                 mobileMenu.classList.add('active');
                 menuBackdrop.classList.add('active');
-                if (hamburgerBtn) hamburgerBtn.classList.add('active');
+                hamburgerBtn.classList.add('active');
                 document.body.style.overflow = 'hidden';
             } else {
                 mobileMenu.classList.remove('active');
                 menuBackdrop.classList.remove('active');
-                if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+                hamburgerBtn.classList.remove('active');
                 document.body.style.overflow = 'auto';
             }
         }
         
-        if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMobileMenu);
-        if (closeMenu) closeMenu.addEventListener('click', toggleMobileMenu);
-        if (menuBackdrop) menuBackdrop.addEventListener('click', toggleMobileMenu);
+        hamburgerBtn.addEventListener('click', toggleMobileMenu);
+        closeMenu.addEventListener('click', toggleMobileMenu);
+        menuBackdrop.addEventListener('click', toggleMobileMenu);
         
         const mobileLinks = document.querySelectorAll('.mobile-nav-links a');
         mobileLinks.forEach(link => {
@@ -4409,61 +3850,38 @@
         const menuBackdrop = document.getElementById('menuBackdrop');
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         
-        if (mobileMenu) mobileMenu.classList.remove('active');
-        if (menuBackdrop) menuBackdrop.classList.remove('active');
-        if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        menuBackdrop.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
         document.body.style.overflow = 'auto';
     };
     
-    // ============================================
-    // NAVIGATION
-    // ============================================
-    
+    // Setup Navigation
     function setupNavigation() {
         const navItems = document.querySelectorAll('.nav-item');
         
         navItems.forEach(item => {
             item.addEventListener('click', function() {
+                // Remove active class from all items
                 navItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
                 this.classList.add('active');
             });
         });
-    }
-    
-    window.scrollToSection = function(sectionId) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    };
-    
-    // ============================================
-    // MAIN CONTENT
-    // ============================================
-    
-    function showMainContent() {
-        const overlay = document.getElementById('contentOverlay');
-        const mainContent = document.getElementById('mainContent');
-        const floatingCartBtn = document.getElementById('floatingCartBtn');
-        const bottomNav = document.querySelector('.bottom-nav');
-        const userProfileHeader = document.getElementById('userProfileHeader');
-        const header = document.querySelector('header');
         
-        if (overlay) overlay.style.display = 'none';
-        if (mainContent) mainContent.style.display = 'block';
-        if (floatingCartBtn) floatingCartBtn.style.display = 'flex';
-        if (bottomNav) bottomNav.style.display = 'block';
-        if (userProfileHeader) userProfileHeader.style.display = 'flex';
-        if (header) header.style.display = 'block';
+        // Handle scroll to section
+        window.scrollToSection = function(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        };
     }
     
-    // ============================================
-    // PRODUCT MANAGEMENT
-    // ============================================
-    
+    // Initialize Product Filters
     function initProductFilters() {
         const filterButtons = document.querySelectorAll('#productFilters .filter-btn');
         
@@ -4478,223 +3896,59 @@
         });
     }
     
-    async function loadProducts() {
-        if (isLoadingProducts) return;
+    // Initialize Delivery Section
+    function initDeliverySection() {
+        initDeliveryFilters();
+        initDeliveryModal();
+    }
+    
+    // Initialize Delivery Filters
+    function initDeliveryFilters() {
+        const filterButtons = document.querySelectorAll('#deliveryFilters .filter-btn');
         
-        isLoadingProducts = true;
-        showProductLoading();
-        
-        try {
-            console.log('📦 Loading franchise products...');
-            updateLoadingProgress(30);
-            
-            const response = await fetch(`${scriptUrl}?action=getProducts&timestamp=${Date.now()}`);
-            
-            if (response.ok) {
-                const result = await response.json();
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
                 
-                if (result.success && Array.isArray(result.data)) {
-                    allProducts = result.data.map(product => ({
-                        id: product.id || `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        name: product.name || 'Unnamed Product',
-                        basePrice: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
-                        price: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
-                        image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        category: product.category || product.collectionName || 'General',
-                        description: product.description || 'Premium quality product for franchise orders.',
-                        stock: product.stock || 10
-                    }));
-                    
-                    console.log(`✅ Loaded ${allProducts.length} products`);
-                    updateLoadingProgress(80);
-                    updateLoadingCount(allProducts.length, allProducts.length);
-                    
-                    displayProducts(allProducts);
-                    
-                    setTimeout(() => {
-                        hideProductLoading();
-                        const container = document.getElementById('productsContainer');
-                        if (container) container.classList.add('loaded');
-                    }, 500);
-                    
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            } else {
-                throw new Error('Network response was not ok');
-            }
-            
-        } catch (error) {
-            console.error('❌ Error loading products:', error);
-            loadSampleProducts();
-            
-        } finally {
-            isLoadingProducts = false;
-        }
-    }
-    
-    function loadSampleProducts() {
-        console.log('📦 Loading sample products as fallback...');
-        
-        allProducts = [
-            {
-                id: 'FR-CL001',
-                name: 'Premium Franchise Hoodie',
-                basePrice: 8999,
-                price: 8999,
-                image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'clothing',
-                description: 'Premium franchise hoodie for official DSOG franchisees. Made with high-quality materials.',
-                stock: 50
-            },
-            {
-                id: 'FR-CL002',
-                name: 'Franchise Polo Shirt',
-                basePrice: 4550,
-                price: 4550,
-                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'clothing',
-                description: 'Official franchise polo shirt with DSOG branding.',
-                stock: 75
-            },
-            {
-                id: 'FR-AC001',
-                name: 'Franchise Cap',
-                basePrice: 2999,
-                price: 2999,
-                image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'accessories',
-                description: 'DSOG franchise branded cap for staff and promotions.',
-                stock: 100
-            },
-            {
-                id: 'FR-HG001',
-                name: 'Display Stand',
-                basePrice: 14999,
-                price: 14999,
-                image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'home-goods',
-                description: 'Premium display stand for franchise store products.',
-                stock: 20
-            },
-            {
-                id: 'FR-NEW001',
-                name: 'New Arrival Collection',
-                basePrice: 24999,
-                price: 24999,
-                image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                category: 'new',
-                description: 'Latest collection items for franchise stores.',
-                stock: 30
-            }
-        ];
-        
-        updateLoadingProgress(100);
-        updateLoadingCount(allProducts.length, allProducts.length);
-        
-        displayProducts(allProducts);
-        
-        setTimeout(() => {
-            hideProductLoading();
-            const container = document.getElementById('productsContainer');
-            if (container) container.classList.add('loaded');
-        }, 500);
-        
-        showNotification('Loaded sample products for franchise orders');
-    }
-    
-    function displayProducts(products) {
-        const container = document.getElementById('productsContainer');
-        if (!container) return;
-        
-        // Clear existing products
-        Array.from(container.children).forEach(child => {
-            if (child.id !== 'productsLoading' && child.id !== 'productsError') {
-                container.removeChild(child);
-            }
-        });
-        
-        // Filter products
-        let filteredProducts = products;
-        if (currentFilter !== 'all') {
-            filteredProducts = products.filter(product => 
-                product.category === currentFilter || 
-                (currentFilter === 'new' && product.category === 'new')
-            );
-        }
-        
-        // Display products
-        filteredProducts.forEach((product, index) => {
-            setTimeout(() => {
-                const productCard = createProductCard(product);
-                container.appendChild(productCard);
-            }, index * 50);
+                currentDeliveryFilter = this.dataset.filter;
+                filterDeliveryAssistants();
+            });
         });
     }
     
-    function createProductCard(product) {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.style.animationDelay = `${Math.random() * 0.3}s`;
+    // Initialize Delivery Modal
+    function initDeliveryModal() {
+        const deliveryModal = document.getElementById('deliveryRequestModal');
+        const deliveryModalClose = document.getElementById('deliveryModalClose');
         
-        const cartItem = cart.find(item => item.id === product.id);
-        const quantityInCart = cartItem ? cartItem.quantity : 0;
+        deliveryModalClose.addEventListener('click', closeDeliveryModal);
         
-        card.innerHTML = `
-            <div class="product-image-wrapper">
-                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
-                <button class="view-image-btn" onclick="event.stopPropagation(); openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
-                    <i class="fas fa-expand"></i>
-                </button>
-            </div>
-            <div class="product-info">
-                <div class="product-badge">${product.category}</div>
-                <h3 class="product-title">${product.name}</h3>
-                <div class="product-price">KSh ${product.price}</div>
-                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
-                        onclick="addToCartToProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, this)">
-                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
-                    ${quantityInCart > 0 ? `Added (${quantityInCart})` : 'Add to Cart'}
-                </button>
-            </div>
-        `;
-        
-        card.addEventListener('click', function(e) {
-            if (!e.target.closest('.add-to-cart-btn') && !e.target.closest('.view-image-btn')) {
-                openProductModal(product);
+        deliveryModal.addEventListener('click', function(e) {
+            if (e.target === deliveryModal) {
+                closeDeliveryModal();
             }
         });
         
-        return card;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && deliveryModal.classList.contains('active')) {
+                closeDeliveryModal();
+            }
+        });
     }
     
-    window.addToCartToProduct = function(product, buttonElement) {
-        addToCart(product, buttonElement);
-    };
-    
-    function filterProducts() {
-        displayProducts(allProducts);
-    }
-    
-    // ============================================
-    // PRODUCT MODAL
-    // ============================================
-    
+    // Initialize Modals
     function initModal() {
         const productModal = document.getElementById('productModal');
         const modalClose = document.getElementById('modalClose');
         
-        if (modalClose) {
-            modalClose.addEventListener('click', closeModal);
-        }
+        modalClose.addEventListener('click', closeModal);
         
-        if (productModal) {
-            productModal.addEventListener('click', function(e) {
-                if (e.target === productModal) {
-                    closeModal();
-                }
-            });
-        }
+        productModal.addEventListener('click', function(e) {
+            if (e.target === productModal) {
+                closeModal();
+            }
+        });
         
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && productModal.classList.contains('active')) {
@@ -4703,136 +3957,41 @@
         });
     }
     
-    function openProductModal(product) {
-        if (!userProfile || !userProfile.uid) {
-            showNotification('Please sign in first', 'error');
-            return;
-        }
-        
-        const modal = document.getElementById('productModal');
-        const modalBody = document.getElementById('modalBody');
-        if (!modal || !modalBody) return;
-        
-        const cartItem = cart.find(item => item.id === product.id);
-        const quantityInCart = cartItem ? cartItem.quantity : 0;
-        
-        modalBody.innerHTML = `
-            <div class="modal-image-container">
-                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
-            </div>
-            <div class="modal-details">
-                <h2 class="modal-title">${product.name}</h2>
-                <div class="modal-price">KSh ${product.price}</div>
-                <div class="modal-category">${product.category}</div>
-                <p class="modal-description">${product.description}</p>
-                <div style="margin-top: 1rem;">
-                    <p><strong>Stock:</strong> ${product.stock} units available</p>
-                    <p><strong>SKU:</strong> ${product.id}</p>
-                </div>
-                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
-                        onclick="addToCartToProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, this); closeModal();"
-                        style="margin-top: 2rem;">
-                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
-                    ${quantityInCart > 0 ? `Update Cart (${quantityInCart})` : 'Add to Cart'}
-                </button>
-            </div>
-        `;
-        
-        openModal();
-    }
-    
-    function openModal() {
-        const productModal = document.getElementById('productModal');
-        if (productModal) {
-            productModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-    
-    function closeModal() {
-        const productModal = document.getElementById('productModal');
-        if (productModal) {
-            productModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    }
-    
-    // ============================================
-    // LOADING STATES
-    // ============================================
-    
-    function showProductLoading() {
-        const loadingElement = document.getElementById('productsLoading');
-        const errorElement = document.getElementById('productsError');
-        
-        if (loadingElement) loadingElement.classList.add('visible');
-        if (errorElement) errorElement.classList.remove('visible');
-        
-        updateLoadingProgress(10);
-        updateLoadingCount(0, '...');
-    }
-    
-    function hideProductLoading() {
-        const loadingElement = document.getElementById('productsLoading');
-        if (loadingElement) loadingElement.classList.remove('visible');
-    }
-    
-    function showProductError() {
-        const loadingElement = document.getElementById('productsLoading');
-        const errorElement = document.getElementById('productsError');
-        
-        hideProductLoading();
-        if (errorElement) errorElement.classList.add('visible');
-    }
-    
-    function retryLoadingProducts() {
-        showProductLoading();
-        loadProducts();
-    }
-    
-    function updateLoadingProgress(progress) {
-        const progressBar = document.getElementById('loadingProgressBar');
-        if (progressBar) {
-            progressBar.style.width = progress + '%';
-        }
-    }
-    
-    function updateLoadingCount(count, total) {
-        const countElement = document.getElementById('loadingCount');
-        if (countElement) {
-            if (total === '...') {
-                countElement.textContent = `${count} products loaded`;
-            } else {
-                countElement.textContent = `${count} of ${total} products loaded`;
-            }
-        }
-    }
-    
-    // ============================================
-    // CART MANAGEMENT
-    // ============================================
-    
     function initCartModal() {
         const cartModal = document.getElementById('cartModal');
         const cartClose = document.getElementById('cartClose');
         const floatingCartBtn = document.getElementById('floatingCartBtn');
         
-        if (cartClose) cartClose.addEventListener('click', closeCartModal);
-        if (floatingCartBtn) floatingCartBtn.addEventListener('click', openCartModal);
+        cartClose.addEventListener('click', closeCartModal);
+        floatingCartBtn.addEventListener('click', openCartModal);
         
-        if (cartModal) {
-            cartModal.addEventListener('click', function(e) {
-                if (e.target === cartModal) {
-                    closeCartModal();
-                }
-            });
-        }
+        cartModal.addEventListener('click', function(e) {
+            if (e.target === cartModal) {
+                closeCartModal();
+            }
+        });
         
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && cartModal.classList.contains('active')) {
                 closeCartModal();
             }
         });
+    }
+    
+    // Cart Management Functions
+    function updateCartBadge() {
+        const cartBadge = document.getElementById('cartBadge');
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartBadge.textContent = totalItems > 9 ? '9+' : totalItems;
+        
+        if (totalItems > 0) {
+            cartBadge.style.display = 'flex';
+        } else {
+            cartBadge.style.display = 'none';
+        }
+        
+        // Update order summary
+        updateOrderSummary();
     }
     
     function addToCart(product, buttonElement = null) {
@@ -4898,26 +4057,9 @@
         }
     }
     
-    function updateCartBadge() {
-        const cartBadge = document.getElementById('cartBadge');
-        if (!cartBadge) return;
-        
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        cartBadge.textContent = totalItems > 9 ? '9+' : totalItems;
-        
-        if (totalItems > 0) {
-            cartBadge.style.display = 'flex';
-        } else {
-            cartBadge.style.display = 'none';
-        }
-        
-        updateOrderSummary();
-    }
-    
     function renderCart() {
         const cartBody = document.getElementById('cartBody');
         const checkoutBtn = document.getElementById('checkoutBtn');
-        if (!cartBody || !checkoutBtn) return;
         
         if (cart.length === 0) {
             cartBody.innerHTML = `
@@ -4996,7 +4138,6 @@
     function updateOrderSummary() {
         const orderItems = document.getElementById('orderItems');
         const orderTotal = document.getElementById('orderTotal');
-        if (!orderItems || !orderTotal) return;
         
         if (cart.length === 0) {
             orderItems.innerHTML = '<p style="color: var(--gray); text-align: center;">No items in cart</p>';
@@ -5030,19 +4171,15 @@
         }
         
         const cartModal = document.getElementById('cartModal');
-        if (cartModal) {
-            renderCart();
-            cartModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+        renderCart();
+        cartModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
     
     function closeCartModal() {
         const cartModal = document.getElementById('cartModal');
-        if (cartModal) {
-            cartModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+        cartModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
     }
     
     function openOrderSummary() {
@@ -5052,213 +4189,535 @@
         }, 300);
     }
     
-    // ============================================
-    // ORDER SUBMISSION
-    // ============================================
+    function openModal() {
+        const productModal = document.getElementById('productModal');
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
     
-    async function submitFranchiseOrder() {
+    function closeModal() {
+        const productModal = document.getElementById('productModal');
+        productModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Delivery Modal Functions
+    function openDeliveryModal(assistant) {
         if (!userProfile || !userProfile.uid) {
             showNotification('Please sign in first', 'error');
             return;
         }
         
-        const user = firebaseAuth.currentUser;
-        if (!user) {
+        selectedAssistant = assistant;
+        const deliveryModal = document.getElementById('deliveryRequestModal');
+        const deliveryModalBody = document.getElementById('deliveryModalBody');
+        
+        // Auto-fill with user profile data
+        const franchiseeName = userProfile ? userProfile.name : '';
+        const franchiseePhone = userProfile ? userProfile.phoneNumber : '';
+        const franchiseeLocation = userProfile ? userProfile.location : '';
+        
+        let orderDetails = `Order Details:\n\n`;
+        orderDetails += `Franchisee: ${franchiseeName}\n`;
+        orderDetails += `Phone: ${franchiseePhone || 'Not provided'}\n`;
+        orderDetails += `Location: ${franchiseeLocation || 'Not set'}\n\n`;
+        
+        if (cart.length > 0) {
+            orderDetails += `Items:\n`;
+            cart.forEach((item, index) => {
+                orderDetails += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price * item.quantity}\n`;
+            });
+            orderDetails += `\n`;
+        }
+        
+        orderDetails += `Additional Instructions:\n`;
+        
+        deliveryModalBody.innerHTML = `
+            <div class="assistant-summary">
+                <h3>Delivery Assistant Details</h3>
+                <div class="assistant-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Assistant Name:</span>
+                        <span class="detail-value">${assistant.name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Assistant ID:</span>
+                        <span class="detail-value">${assistant.id}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Phone:</span>
+                        <span class="detail-value">${assistant.phone}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Vehicle:</span>
+                        <span class="detail-value">${assistant.vehicle}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value"><span class="delivery-status status-${assistant.status}">${assistant.status}</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Current Capacity:</span>
+                        <span class="detail-value">${assistant.currentCapacity}/${assistant.maxCapacity}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="orderDetails">Paste Your Order Details *</label>
+                <textarea 
+                    id="orderDetails" 
+                    class="order-details-textarea" 
+                    placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
+                    required>${orderDetails}</textarea>
+                <p class="textarea-helper">
+                    <i class="fas fa-info-circle"></i> Your profile information has been pre-filled. Please add any additional details for the delivery assistant.
+                </p>
+            </div>
+            
+            <button class="send-delivery-request-btn" onclick="sendDeliveryRequest()">
+                <i class="fab fa-whatsapp"></i> Send Pickup Request via WhatsApp
+            </button>
+        `;
+        
+        deliveryModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeDeliveryModal() {
+        const deliveryModal = document.getElementById('deliveryRequestModal');
+        deliveryModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        selectedAssistant = null;
+    }
+    
+    async function sendDeliveryRequest() {
+        if (!userProfile || !userProfile.uid) {
             showNotification('Please sign in first', 'error');
             return;
         }
         
-        const franchiseeName = document.getElementById('franchiseeName').value.trim();
-        const franchiseePhone = document.getElementById('franchiseePhone').value.trim();
-        const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim();
-        const orderNotes = document.getElementById('orderNotes').value.trim();
+        const orderDetails = document.getElementById('orderDetails').value.trim();
         
-        // Validation
-        if (!franchiseeName || !franchiseePhone || !franchiseeLocation) {
-            showNotification('Please fill in all required fields', 'error');
+        if (!orderDetails) {
+            showNotification('Please paste your order details', 'error');
             return;
         }
         
-        if (cart.length === 0) {
-            showNotification('Your cart is empty. Add products before submitting.', 'error');
+        if (!selectedAssistant) {
+            showNotification('No delivery assistant selected', 'error');
             return;
         }
-        
-        // Calculate totals
-        const totals = calculateCartTotal();
-        
-        // Build order data with Firebase user info
-        const orderData = {
-            action: 'submitFranchiseOrder',
-            franchiseeName: franchiseeName,
-            franchiseePhone: franchiseePhone,
-            franchiseeLocation: franchiseeLocation,
-            orderNotes: orderNotes,
-            items: cart,
-            subtotal: totals.subtotal,
-            total: totals.total,
-            orderDate: new Date().toISOString(),
-            orderId: 'FR-' + Date.now().toString().slice(-8),
-            firebaseUser: {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                phoneNumber: user.phoneNumber
-            }
-        };
         
         try {
-            // Submit to backend
-            const response = await fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
-            });
+            // Get franchisee info from user profile
+            const franchiseeName = userProfile.name;
+            const franchiseePhone = userProfile.phoneNumber || document.getElementById('franchiseePhone').value.trim();
+            const franchiseeLocation = userProfile.location || document.getElementById('franchiseeLocation').value.trim();
             
-            if (response.ok) {
-                // Build WhatsApp message
-                let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
-                whatsappMessage += `*Order ID:* ${orderData.orderId}%0A`;
-                whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
-                whatsappMessage += `*Firebase User:* ${user.email || user.phoneNumber || user.uid}%0A%0A`;
-                
-                whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-                whatsappMessage += `Name: ${franchiseeName}%0A`;
-                whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-                whatsappMessage += `Location: ${franchiseeLocation}%0A`;
-                
-                if (orderNotes) {
-                    whatsappMessage += `Notes: ${orderNotes}%0A`;
-                }
-                
-                whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
-                
-                cart.forEach((item, index) => {
-                    const itemTotal = item.price * item.quantity;
-                    whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
-                });
-                
-                whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
-                whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
-                whatsappMessage += `_This order was placed via DSOG Franchise Platform (Firebase Auth)_`;
-                
-                // Open WhatsApp
-                const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
+            // Generate order ID
+            const orderId = 'FR-' + Date.now().toString().slice(-8);
+            
+            // Build WhatsApp message
+            let whatsappMessage = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
+            whatsappMessage += `*Request ID:* ${orderId}%0A`;
+            whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+            whatsappMessage += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
+            
+            whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
+            whatsappMessage += `Name: ${franchiseeName}%0A`;
+            whatsappMessage += `Phone: ${franchiseePhone}%0A`;
+            whatsappMessage += `Location: ${franchiseeLocation}%0A%0A`;
+            
+            whatsappMessage += `*ASSIGNED DELIVERY ASSISTANT*%0A`;
+            whatsappMessage += `Name: ${selectedAssistant.name}%0A`;
+            whatsappMessage += `ID: ${selectedAssistant.id}%0A`;
+            whatsappMessage += `Phone: ${selectedAssistant.phone}%0A`;
+            whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A%0A`;
+            
+            whatsappMessage += `*ORDER DETAILS*%0A`;
+            whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
+            
+            whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
+            whatsappMessage += `_Please acknowledge receipt and provide ETA_`;
+            
+            // Clean phone number for WhatsApp
+            const assistantPhone = selectedAssistant.phone.replace(/\D/g, '');
+            if (!assistantPhone.startsWith('254')) {
+                // If it's not in Kenyan format, assume it's missing country code
+                const cleanedPhone = assistantPhone.startsWith('0') ? '254' + assistantPhone.substring(1) : '254' + assistantPhone;
+                const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${whatsappMessage}`;
                 window.open(whatsappUrl, '_blank');
-                
-                // Clear cart
-                cart = [];
-                localStorage.removeItem('dsog_franchise_cart');
-                updateCartBadge();
-                renderCart();
-                document.getElementById('orderNotes').value = '';
-                
-                showNotification('Order submitted successfully! Opening WhatsApp...');
-                
             } else {
-                throw new Error('Failed to submit order to backend');
+                const whatsappUrl = `https://wa.me/${assistantPhone}?text=${whatsappMessage}`;
+                window.open(whatsappUrl, '_blank');
+            }
+            
+            // Also send copy to support
+            const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
+            const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
+            window.open(supportWhatsappUrl, '_blank');
+            
+            // Show success notification
+            showNotification('Pickup request sent to delivery assistant!');
+            
+            // Close modal
+            closeDeliveryModal();
+            
+            // Update assistant status locally
+            const assistantIndex = deliveryAssistants.findIndex(a => a.id === selectedAssistant.id);
+            if (assistantIndex > -1) {
+                deliveryAssistants[assistantIndex].status = 'busy';
+                deliveryAssistants[assistantIndex].currentCapacity = Math.min(
+                    deliveryAssistants[assistantIndex].currentCapacity + 1,
+                    deliveryAssistants[assistantIndex].maxCapacity
+                );
+                filterDeliveryAssistants();
             }
             
         } catch (error) {
-            console.error('Order submission error:', error);
+            console.error('Error sending delivery request:', error);
+            showNotification('Failed to send pickup request. Please try again.', 'error');
+        }
+    }
+    
+    // Product Loading Functions
+    function showProductLoading() {
+        const loadingElement = document.getElementById('productsLoading');
+        const errorElement = document.getElementById('productsError');
+        
+        if (loadingElement) {
+            loadingElement.classList.add('visible');
+        }
+        if (errorElement) {
+            errorElement.classList.remove('visible');
+        }
+        
+        updateLoadingProgress(10);
+        updateLoadingCount(0, '...');
+    }
+    
+    function hideProductLoading() {
+        const loadingElement = document.getElementById('productsLoading');
+        if (loadingElement) {
+            loadingElement.classList.remove('visible');
+        }
+    }
+    
+    function showProductError() {
+        const loadingElement = document.getElementById('productsLoading');
+        const errorElement = document.getElementById('productsError');
+        
+        hideProductLoading();
+        
+        if (errorElement) {
+            errorElement.classList.add('visible');
+        }
+    }
+    
+    function retryLoadingProducts() {
+        showProductLoading();
+        loadProducts();
+    }
+    
+    function updateLoadingProgress(progress) {
+        const progressBar = document.getElementById('loadingProgressBar');
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+    }
+    
+    function updateLoadingCount(count, total) {
+        const countElement = document.getElementById('loadingCount');
+        if (countElement) {
+            if (total === '...') {
+                countElement.textContent = `${count} products loaded`;
+            } else {
+                countElement.textContent = `${count} of ${total} products loaded`;
+            }
+        }
+    }
+    
+    // Load Products from Backend
+    async function loadProducts() {
+        if (isLoadingProducts) return;
+        
+        isLoadingProducts = true;
+        
+        try {
+            console.log('📦 Loading franchise products...');
             
-            // Fallback: Direct WhatsApp order
-            submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes);
-        }
-    }
-    
-    function submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes) {
-        const user = firebaseAuth.currentUser;
-        if (!user) return;
-        
-        // Build WhatsApp message
-        let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
-        whatsappMessage += `*Order ID:* FR-${Date.now().toString().slice(-8)}%0A`;
-        whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
-        whatsappMessage += `*Firebase User:* ${user.email || user.phoneNumber || user.uid}%0A%0A`;
-        
-        whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-        whatsappMessage += `Name: ${franchiseeName}%0A`;
-        whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-        whatsappMessage += `Location: ${franchiseeLocation}%0A`;
-        
-        if (orderNotes) {
-            whatsappMessage += `Notes: ${orderNotes}%0A`;
-        }
-        
-        whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
-        
-        const totals = calculateCartTotal();
-        
-        cart.forEach((item, index) => {
-            const itemTotal = item.price * item.quantity;
-            whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
-        });
-        
-        whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
-        whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
-        whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
-        
-        // Open WhatsApp
-        const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
-        window.open(whatsappUrl, '_blank');
-        
-        // Clear cart
-        cart = [];
-        localStorage.removeItem('dsog_franchise_cart');
-        updateCartBadge();
-        renderCart();
-        document.getElementById('orderNotes').value = '';
-        
-        showNotification('Opening WhatsApp to submit your order...');
-    }
-    
-    // ============================================
-    // DELIVERY MANAGEMENT
-    // ============================================
-    
-    function initDeliverySection() {
-        initDeliveryFilters();
-        initDeliveryModal();
-    }
-    
-    function initDeliveryFilters() {
-        const filterButtons = document.querySelectorAll('#deliveryFilters .filter-btn');
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+            updateLoadingProgress(30);
+            
+            // Use the franchise backend URL
+            const response = await fetch(`${scriptUrl}?action=getProducts&timestamp=${Date.now()}`);
+            
+            if (response.ok) {
+                const result = await response.json();
                 
-                currentDeliveryFilter = this.dataset.filter;
-                filterDeliveryAssistants();
-            });
-        });
+                if (result.success && Array.isArray(result.data)) {
+                    allProducts = result.data.map(product => ({
+                        id: product.id || `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        name: product.name || 'Unnamed Product',
+                        basePrice: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
+                        price: parseFloat(product.basePrice) || parseFloat(product.price) || 0,
+                        image: product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                        category: product.category || product.collectionName || 'General',
+                        description: product.description || 'Premium quality product for franchise orders.',
+                        stock: product.stock || 10
+                    }));
+                    
+                    console.log(`✅ Loaded ${allProducts.length} products from franchise backend`);
+                    
+                    updateLoadingProgress(80);
+                    updateLoadingCount(allProducts.length, allProducts.length);
+                    
+                    // Display products
+                    displayProducts(allProducts);
+                    
+                    // Hide loading indicator
+                    setTimeout(() => {
+                        hideProductLoading();
+                        const container = document.getElementById('productsContainer');
+                        container.classList.add('loaded');
+                    }, 500);
+                    
+                } else {
+                    throw new Error('Invalid response format from franchise backend');
+                }
+            } else {
+                throw new Error('Network response was not ok');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error loading products from franchise backend:', error);
+            
+            // Fallback to sample products
+            loadSampleProducts();
+            
+        } finally {
+            isLoadingProducts = false;
+        }
     }
     
-    function initDeliveryModal() {
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        const deliveryModalClose = document.getElementById('deliveryModalClose');
+    function loadSampleProducts() {
+        console.log('📦 Loading sample products as fallback...');
         
-        if (deliveryModalClose) {
-            deliveryModalClose.addEventListener('click', closeDeliveryModal);
-        }
+        // Sample franchise products
+        allProducts = [
+            {
+                id: 'FR-CL001',
+                name: 'Premium Franchise Hoodie',
+                basePrice: 8999,
+                price: 8999,
+                image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                category: 'clothing',
+                description: 'Premium franchise hoodie for official DSOG franchisees. Made with high-quality materials.',
+                stock: 50
+            },
+            {
+                id: 'FR-CL002',
+                name: 'Franchise Polo Shirt',
+                basePrice: 4550,
+                price: 4550,
+                image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                category: 'clothing',
+                description: 'Official franchise polo shirt with DSOG branding.',
+                stock: 75
+            },
+            {
+                id: 'FR-AC001',
+                name: 'Franchise Cap',
+                basePrice: 2999,
+                price: 2999,
+                image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                category: 'accessories',
+                description: 'DSOG franchise branded cap for staff and promotions.',
+                stock: 100
+            },
+            {
+                id: 'FR-HG001',
+                name: 'Display Stand',
+                basePrice: 14999,
+                price: 14999,
+                image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                category: 'home-goods',
+                description: 'Premium display stand for franchise store products.',
+                stock: 20
+            },
+            {
+                id: 'FR-NEW001',
+                name: 'New Arrival Collection',
+                basePrice: 24999,
+                price: 24999,
+                image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                category: 'new',
+                description: 'Latest collection items for franchise stores.',
+                stock: 30
+            }
+        ];
         
-        if (deliveryModal) {
-            deliveryModal.addEventListener('click', function(e) {
-                if (e.target === deliveryModal) {
-                    closeDeliveryModal();
-                }
-            });
-        }
+        updateLoadingProgress(100);
+        updateLoadingCount(allProducts.length, allProducts.length);
         
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && deliveryModal.classList.contains('active')) {
-                closeDeliveryModal();
+        displayProducts(allProducts);
+        
+        setTimeout(() => {
+            hideProductLoading();
+            const container = document.getElementById('productsContainer');
+            container.classList.add('loaded');
+        }, 500);
+        
+        showNotification('Loaded sample products for franchise orders');
+    }
+    
+    function displayProducts(products) {
+        const container = document.getElementById('productsContainer');
+        
+        // Clear existing products except loading/error states
+        Array.from(container.children).forEach(child => {
+            if (child.id !== 'productsLoading' && child.id !== 'productsError') {
+                container.removeChild(child);
             }
         });
+        
+        // Filter products
+        let filteredProducts = products;
+        if (currentFilter !== 'all') {
+            filteredProducts = products.filter(product => 
+                product.category === currentFilter || 
+                (currentFilter === 'new' && product.category === 'new')
+            );
+        }
+        
+        // Display products with staggered animation
+        filteredProducts.forEach((product, index) => {
+            setTimeout(() => {
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            }, index * 50);
+        });
+    }
+    
+    function createProductCard(product) {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.style.animationDelay = `${Math.random() * 0.3}s`;
+        
+        // Check if product is in cart
+        const cartItem = cart.find(item => item.id === product.id);
+        const quantityInCart = cartItem ? cartItem.quantity : 0;
+        
+        card.innerHTML = `
+            <div class="product-image-wrapper">
+                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+                <button class="view-image-btn" onclick="event.stopPropagation(); openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+            <div class="product-info">
+                <div class="product-badge">${product.category}</div>
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-price">KSh ${product.price}</div>
+                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
+                        onclick="addToCartToProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, this)">
+                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
+                    ${quantityInCart > 0 ? `Added (${quantityInCart})` : 'Add to Cart'}
+                </button>
+            </div>
+        `;
+        
+        // Add click event to open modal
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('.add-to-cart-btn') && !e.target.closest('.view-image-btn')) {
+                openProductModal(product);
+            }
+        });
+        
+        return card;
+    }
+    
+    // Global function for add to cart from product cards
+    window.addToCartToProduct = function(product, buttonElement) {
+        addToCart(product, buttonElement);
+    };
+    
+    function openProductModal(product) {
+        if (!userProfile || !userProfile.uid) {
+            showNotification('Please sign in first', 'error');
+            return;
+        }
+        
+        const modal = document.getElementById('productModal');
+        const modalBody = document.getElementById('modalBody');
+        
+        // Check if product is in cart
+        const cartItem = cart.find(item => item.id === product.id);
+        const quantityInCart = cartItem ? cartItem.quantity : 0;
+        
+        modalBody.innerHTML = `
+            <div class="modal-image-container">
+                <img src="${product.image}" alt="${product.name}" class="modal-main-image">
+            </div>
+            <div class="modal-details">
+                <h2 class="modal-title">${product.name}</h2>
+                <div class="modal-price">KSh ${product.price}</div>
+                <div class="modal-category">${product.category}</div>
+                <p class="modal-description">${product.description}</p>
+                <div style="margin-top: 1rem;">
+                    <p><strong>Stock:</strong> ${product.stock} units available</p>
+                    <p><strong>SKU:</strong> ${product.id}</p>
+                </div>
+                <button class="add-to-cart-btn ${quantityInCart > 0 ? 'added' : ''}" 
+                        onclick="addToCartToProduct(${JSON.stringify(product).replace(/"/g, '&quot;')}, this); closeModal();"
+                        style="margin-top: 2rem;">
+                    <i class="fas ${quantityInCart > 0 ? 'fa-check' : 'fa-cart-plus'}"></i>
+                    ${quantityInCart > 0 ? `Update Cart (${quantityInCart})` : 'Add to Cart'}
+                </button>
+            </div>
+        `;
+        
+        openModal();
+    }
+    
+    function filterProducts() {
+        displayProducts(allProducts);
+    }
+    
+    // Delivery Assistant Functions
+    function showDeliveryLoading() {
+        const loadingElement = document.getElementById('deliveryLoading');
+        const errorElement = document.getElementById('deliveryError');
+        
+        if (loadingElement) {
+            loadingElement.classList.add('visible');
+        }
+        if (errorElement) {
+            errorElement.classList.remove('visible');
+        }
+    }
+    
+    function hideDeliveryLoading() {
+        const loadingElement = document.getElementById('deliveryLoading');
+        if (loadingElement) {
+            loadingElement.classList.remove('visible');
+        }
+    }
+    
+    function showDeliveryError() {
+        const loadingElement = document.getElementById('deliveryLoading');
+        const errorElement = document.getElementById('deliveryError');
+        
+        hideDeliveryLoading();
+        
+        if (errorElement) {
+            errorElement.classList.add('visible');
+        }
+    }
+    
+    function retryLoadingDeliveryAssistants() {
+        showDeliveryLoading();
+        loadDeliveryAssistants();
     }
     
     async function loadDeliveryAssistants() {
@@ -5270,6 +4729,7 @@
         try {
             console.log('🚚 Loading delivery assistants...');
             
+            // Try to load from backend
             const response = await fetch(`${deliveryScriptUrl}?action=getDeliveryAssistants&timestamp=${Date.now()}`);
             
             if (response.ok) {
@@ -5294,26 +4754,30 @@
                         notes: assistant.notes || ''
                     }));
                     
-                    console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants`);
+                    console.log(`✅ Loaded ${deliveryAssistants.length} delivery assistants from backend`);
                     
                 } else {
+                    // Fallback to sample data
                     loadSampleDeliveryAssistants();
                 }
             } else {
+                // Fallback to sample data
                 loadSampleDeliveryAssistants();
             }
             
         } catch (error) {
             console.error('❌ Error loading delivery assistants:', error);
+            // Fallback to sample data
             loadSampleDeliveryAssistants();
-            
         } finally {
+            // Display assistants
             displayDeliveryAssistants(deliveryAssistants);
             
+            // Hide loading indicator
             setTimeout(() => {
                 hideDeliveryLoading();
                 const container = document.getElementById('deliveryContainer');
-                if (container) container.classList.add('loaded');
+                container.classList.add('loaded');
             }, 500);
             
             isLoadingDelivery = false;
@@ -5395,9 +4859,8 @@
     
     function displayDeliveryAssistants(assistants) {
         const container = document.getElementById('deliveryContainer');
-        if (!container) return;
         
-        // Clear existing assistants
+        // Clear existing assistants except loading/error states
         Array.from(container.children).forEach(child => {
             if (child.id !== 'deliveryLoading' && child.id !== 'deliveryError') {
                 container.removeChild(child);
@@ -5412,7 +4875,7 @@
             );
         }
         
-        // Display assistants
+        // Display assistants with staggered animation
         filteredAssistants.forEach((assistant, index) => {
             setTimeout(() => {
                 const deliveryCard = createDeliveryCard(assistant);
@@ -5426,6 +4889,9 @@
         card.className = 'delivery-card';
         
         const capacityPercentage = (assistant.currentCapacity / assistant.maxCapacity) * 100;
+        const capacityColor = capacityPercentage > 80 ? 'var(--light-red)' : 
+                             capacityPercentage > 60 ? 'var(--primary-gold)' : 
+                             'var(--success)';
         
         card.innerHTML = `
             <div class="delivery-card-header">
@@ -5456,7 +4922,7 @@
                 <div class="delivery-capacity">
                     <div class="capacity-label">Current Capacity</div>
                     <div class="capacity-bar">
-                        <div class="capacity-fill" style="width: ${capacityPercentage}%;"></div>
+                        <div class="capacity-fill" style="width: ${capacityPercentage}%; background: ${capacityColor};"></div>
                     </div>
                     <div class="capacity-text">${assistant.currentCapacity}/${assistant.maxCapacity} items</div>
                 </div>
@@ -5480,216 +4946,159 @@
         displayDeliveryAssistants(deliveryAssistants);
     }
     
-    function showDeliveryLoading() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        const errorElement = document.getElementById('deliveryError');
-        
-        if (loadingElement) loadingElement.classList.add('visible');
-        if (errorElement) errorElement.classList.remove('visible');
-    }
-    
-    function hideDeliveryLoading() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        if (loadingElement) loadingElement.classList.remove('visible');
-    }
-    
-    function showDeliveryError() {
-        const loadingElement = document.getElementById('deliveryLoading');
-        const errorElement = document.getElementById('deliveryError');
-        
-        hideDeliveryLoading();
-        if (errorElement) errorElement.classList.add('visible');
-    }
-    
-    function retryLoadingDeliveryAssistants() {
-        showDeliveryLoading();
-        loadDeliveryAssistants();
-    }
-    
-    function openDeliveryModal(assistant) {
+    // Franchise Order Submission
+    async function submitFranchiseOrder() {
         if (!userProfile || !userProfile.uid) {
             showNotification('Please sign in first', 'error');
             return;
         }
         
-        selectedAssistant = assistant;
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        const deliveryModalBody = document.getElementById('deliveryModalBody');
-        if (!deliveryModal || !deliveryModalBody) return;
+        const franchiseeName = document.getElementById('franchiseeName').value.trim();
+        const franchiseePhone = document.getElementById('franchiseePhone').value.trim();
+        const franchiseeLocation = document.getElementById('franchiseeLocation').value.trim();
+        const orderNotes = document.getElementById('orderNotes').value.trim();
         
-        // Auto-fill with user profile data
-        const franchiseeName = userProfile ? userProfile.displayName || userProfile.email || userProfile.phoneNumber : '';
-        const franchiseePhone = userProfile ? userProfile.phoneNumber || '' : '';
-        const franchiseeLocation = userProfile ? userProfile.location : '';
-        
-        let orderDetails = `Order Details:\n\n`;
-        orderDetails += `Franchisee: ${franchiseeName}\n`;
-        orderDetails += `Phone: ${franchiseePhone || 'Not provided'}\n`;
-        orderDetails += `Location: ${franchiseeLocation || 'Not set'}\n\n`;
-        
-        if (cart.length > 0) {
-            orderDetails += `Items:\n`;
-            cart.forEach((item, index) => {
-                orderDetails += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price * item.quantity}\n`;
-            });
-            orderDetails += `\n`;
-        }
-        
-        orderDetails += `Additional Instructions:\n`;
-        
-        deliveryModalBody.innerHTML = `
-            <div class="assistant-summary">
-                <h3>Delivery Assistant Details</h3>
-                <div class="assistant-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Assistant Name:</span>
-                        <span class="detail-value">${assistant.name}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Assistant ID:</span>
-                        <span class="detail-value">${assistant.id}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Phone:</span>
-                        <span class="detail-value">${assistant.phone}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Vehicle:</span>
-                        <span class="detail-value">${assistant.vehicle}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status:</span>
-                        <span class="detail-value"><span class="delivery-status status-${assistant.status}">${assistant.status}</span></span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Current Capacity:</span>
-                        <span class="detail-value">${assistant.currentCapacity}/${assistant.maxCapacity}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="orderDetails">Paste Your Order Details *</label>
-                <textarea 
-                    id="orderDetails" 
-                    class="order-details-textarea" 
-                    placeholder="Paste your order details here including:\n• Order ID\n• Items list\n• Delivery address\n• Pickup location\n• Special instructions\n\nYou can copy from your previous order summary or type manually." 
-                    required>${orderDetails}</textarea>
-                <p class="textarea-helper">
-                    <i class="fas fa-info-circle"></i> Your profile information has been pre-filled. Please add any additional details for the delivery assistant.
-                </p>
-            </div>
-            
-            <button class="send-delivery-request-btn" onclick="sendDeliveryRequest()">
-                <i class="fab fa-whatsapp"></i> Send Pickup Request via WhatsApp
-            </button>
-        `;
-        
-        deliveryModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeDeliveryModal() {
-        const deliveryModal = document.getElementById('deliveryRequestModal');
-        if (deliveryModal) {
-            deliveryModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            selectedAssistant = null;
-        }
-    }
-    
-    async function sendDeliveryRequest() {
-        if (!userProfile || !userProfile.uid) {
-            showNotification('Please sign in first', 'error');
+        // Validation
+        if (!franchiseeName || !franchiseePhone || !franchiseeLocation) {
+            showNotification('Please fill in all required fields', 'error');
             return;
         }
         
-        const orderDetails = document.getElementById('orderDetails').value.trim();
-        
-        if (!orderDetails) {
-            showNotification('Please paste your order details', 'error');
+        if (cart.length === 0) {
+            showNotification('Your cart is empty. Add products before submitting.', 'error');
             return;
         }
         
-        if (!selectedAssistant) {
-            showNotification('No delivery assistant selected', 'error');
-            return;
-        }
+        // Calculate totals
+        const totals = calculateCartTotal();
+        
+        // Build order data with Firebase user info
+        const orderData = {
+            action: 'submitFranchiseOrder',
+            franchiseeName: franchiseeName,
+            franchiseePhone: franchiseePhone,
+            franchiseeLocation: franchiseeLocation,
+            orderNotes: orderNotes,
+            items: cart,
+            subtotal: totals.subtotal,
+            total: totals.total,
+            orderDate: new Date().toISOString(),
+            orderId: 'FR-' + Date.now().toString().slice(-8),
+            firebaseUser: {
+                uid: userProfile.uid,
+                email: userProfile.email,
+                name: userProfile.name
+            }
+        };
         
         try {
-            // Get franchisee info from user profile
-            const franchiseeName = userProfile.displayName || userProfile.email || userProfile.phoneNumber;
-            const franchiseePhone = userProfile.phoneNumber || document.getElementById('franchiseePhone')?.value.trim() || '';
-            const franchiseeLocation = userProfile.location || document.getElementById('franchiseeLocation')?.value.trim() || '';
+            // Submit to franchise backend
+            const response = await fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
             
-            // Generate order ID
-            const orderId = 'FR-' + Date.now().toString().slice(-8);
-            
-            // Build WhatsApp message
-            let whatsappMessage = `*DELIVERY PICKUP REQUEST - DSOG FRANCHISE*%0A%0A`;
-            whatsappMessage += `*Request ID:* ${orderId}%0A`;
-            whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
-            whatsappMessage += `*Time:* ${new Date().toLocaleTimeString()}%0A%0A`;
-            
-            whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
-            whatsappMessage += `Name: ${franchiseeName}%0A`;
-            whatsappMessage += `Phone: ${franchiseePhone}%0A`;
-            whatsappMessage += `Location: ${franchiseeLocation}%0A%0A`;
-            
-            whatsappMessage += `*ASSIGNED DELIVERY ASSISTANT*%0A`;
-            whatsappMessage += `Name: ${selectedAssistant.name}%0A`;
-            whatsappMessage += `ID: ${selectedAssistant.id}%0A`;
-            whatsappMessage += `Phone: ${selectedAssistant.phone}%0A`;
-            whatsappMessage += `Vehicle: ${selectedAssistant.vehicle}%0A%0A`;
-            
-            whatsappMessage += `*ORDER DETAILS*%0A`;
-            whatsappMessage += `${orderDetails.replace(/\n/g, '%0A')}%0A%0A`;
-            
-            whatsappMessage += `_This pickup request was sent via DSOG Franchise Platform_%0A`;
-            whatsappMessage += `_Please acknowledge receipt and provide ETA_`;
-            
-            // Clean phone number for WhatsApp
-            const assistantPhone = selectedAssistant.phone.replace(/\D/g, '');
-            let whatsappUrl;
-            
-            if (!assistantPhone.startsWith('254')) {
-                const cleanedPhone = assistantPhone.startsWith('0') ? '254' + assistantPhone.substring(1) : '254' + assistantPhone;
-                whatsappUrl = `https://wa.me/${cleanedPhone}?text=${whatsappMessage}`;
+            if (response.ok) {
+                // Build WhatsApp message
+                let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
+                whatsappMessage += `*Order ID:* ${orderData.orderId}%0A`;
+                whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+                whatsappMessage += `*Firebase Account:* ${userProfile.email}%0A%0A`;
+                
+                whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
+                whatsappMessage += `Name: ${franchiseeName}%0A`;
+                whatsappMessage += `Phone: ${franchiseePhone}%0A`;
+                whatsappMessage += `Location: ${franchiseeLocation}%0A`;
+                
+                if (orderNotes) {
+                    whatsappMessage += `Notes: ${orderNotes}%0A`;
+                }
+                
+                whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
+                
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
+                });
+                
+                whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
+                whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
+                whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
+                
+                // Open WhatsApp
+                const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
+                window.open(whatsappUrl, '_blank');
+                
+                // Clear cart but keep form data (it's auto-filled from profile)
+                cart = [];
+                localStorage.removeItem('dsog_franchise_cart');
+                updateCartBadge();
+                renderCart();
+                
+                document.getElementById('orderNotes').value = '';
+                
+                showNotification('Order submitted successfully! Opening WhatsApp...');
+                
             } else {
-                whatsappUrl = `https://wa.me/${assistantPhone}?text=${whatsappMessage}`;
-            }
-            
-            window.open(whatsappUrl, '_blank');
-            
-            // Also send copy to support
-            const supportMessage = `*NEW DELIVERY REQUEST - ${selectedAssistant.name}*%0A%0A${whatsappMessage}`;
-            const supportWhatsappUrl = `https://wa.me/254733737983?text=${supportMessage}`;
-            window.open(supportWhatsappUrl, '_blank');
-            
-            showNotification('Pickup request sent to delivery assistant!');
-            closeDeliveryModal();
-            
-            // Update assistant status locally
-            const assistantIndex = deliveryAssistants.findIndex(a => a.id === selectedAssistant.id);
-            if (assistantIndex > -1) {
-                deliveryAssistants[assistantIndex].status = 'busy';
-                deliveryAssistants[assistantIndex].currentCapacity = Math.min(
-                    deliveryAssistants[assistantIndex].currentCapacity + 1,
-                    deliveryAssistants[assistantIndex].maxCapacity
-                );
-                filterDeliveryAssistants();
+                throw new Error('Failed to submit order to backend');
             }
             
         } catch (error) {
-            console.error('Error sending delivery request:', error);
-            showNotification('Failed to send pickup request. Please try again.', 'error');
+            console.error('Order submission error:', error);
+            
+            // Fallback: Direct WhatsApp order
+            submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes);
         }
     }
     
-    // ============================================
-    // PWA MANAGEMENT
-    // ============================================
+    function submitDirectWhatsAppOrder(franchiseeName, franchiseePhone, franchiseeLocation, orderNotes) {
+        // Build WhatsApp message
+        let whatsappMessage = `*FRANCHISE ORDER - DSOG STORES*%0A%0A`;
+        whatsappMessage += `*Order ID:* FR-${Date.now().toString().slice(-8)}%0A`;
+        whatsappMessage += `*Date:* ${new Date().toLocaleDateString()}%0A`;
+        whatsappMessage += `*Firebase Account:* ${userProfile.email}%0A%0A`;
+        
+        whatsappMessage += `*FRANCHISEE INFORMATION*%0A`;
+        whatsappMessage += `Name: ${franchiseeName}%0A`;
+        whatsappMessage += `Phone: ${franchiseePhone}%0A`;
+        whatsappMessage += `Location: ${franchiseeLocation}%0A`;
+        
+        if (orderNotes) {
+            whatsappMessage += `Notes: ${orderNotes}%0A`;
+        }
+        
+        whatsappMessage += `%0A*ORDER SUMMARY*%0A`;
+        
+        const totals = calculateCartTotal();
+        
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            whatsappMessage += `${index + 1}. ${item.quantity}x ${item.name} - KSh ${item.price} each = KSh ${itemTotal}%0A`;
+        });
+        
+        whatsappMessage += `%0ASubtotal: KSh ${totals.subtotal}%0A`;
+        whatsappMessage += `*Total: KSh ${totals.total}*%0A%0A`;
+        whatsappMessage += `_This order was placed via DSOG Franchise Platform_`;
+        
+        // Open WhatsApp
+        const whatsappUrl = `https://wa.me/254733737983?text=${whatsappMessage}`;
+        window.open(whatsappUrl, '_blank');
+        
+        // Clear cart but keep form data
+        cart = [];
+        localStorage.removeItem('dsog_franchise_cart');
+        updateCartBadge();
+        renderCart();
+        
+        document.getElementById('orderNotes').value = '';
+        
+        showNotification('Opening WhatsApp to submit your order...');
+    }
     
+    // PWA Installation
     function initPWA() {
         if (window.matchMedia('(display-mode: standalone)').matches || 
             window.navigator.standalone === true) {
@@ -5741,20 +5150,35 @@
         const installLaterBtn = document.getElementById('pwaInstallLater');
         const installCloseBtn = document.getElementById('pwaInstallClose');
         
-        if (installBtn) installBtn.addEventListener('click', showInstallPrompt);
-        if (installNowBtn) installNowBtn.addEventListener('click', installPWA);
-        if (installLaterBtn) installLaterBtn.addEventListener('click', hideInstallPrompt);
-        if (installCloseBtn) installCloseBtn.addEventListener('click', hideInstallPrompt);
+        if (installBtn) {
+            installBtn.addEventListener('click', showInstallPrompt);
+        }
+        
+        if (installNowBtn) {
+            installNowBtn.addEventListener('click', installPWA);
+        }
+        
+        if (installLaterBtn) {
+            installLaterBtn.addEventListener('click', hideInstallPrompt);
+        }
+        
+        if (installCloseBtn) {
+            installCloseBtn.addEventListener('click', hideInstallPrompt);
+        }
     }
     
     function showInstallButton() {
         const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) installBtn.style.display = 'flex';
+        if (installBtn) {
+            installBtn.style.display = 'flex';
+        }
     }
     
     function hideInstallButton() {
         const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) installBtn.style.display = 'none';
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
     }
     
     function showInstallPrompt() {
@@ -5777,7 +5201,9 @@
     
     function hideInstallPrompt() {
         const installPrompt = document.getElementById('pwaInstallPrompt');
-        if (installPrompt) installPrompt.style.display = 'none';
+        if (installPrompt) {
+            installPrompt.style.display = 'none';
+        }
     }
     
     async function installPWA() {
@@ -5806,19 +5232,8 @@
         }
     }
     
-    // ============================================
-    // NOTIFICATION SYSTEM
-    // ============================================
-    
+    // Notification system
     function showNotification(message, type = 'success') {
-        // Remove existing notifications
-        const existingNotifications = document.querySelectorAll('.notification');
-        existingNotifications.forEach(notification => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        });
-        
         const notification = document.createElement('div');
         notification.className = 'notification';
         
@@ -5830,151 +5245,15 @@
         }
         
         notification.textContent = message;
-        notification.style.animation = 'slideIn 0.3s ease';
         
         document.body.appendChild(notification);
         
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
+                notification.remove();
             }
         }, 3000);
     }
-    
-    // Add slideOut animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
-    // Add this to your existing JavaScript (replace or add these functions)
-
-    function togglePasswordVisibility() {
-        const passwordInput = document.getElementById('authPassword');
-        const toggleButton = document.querySelector('.toggle-password i');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleButton.className = 'fas fa-eye-slash';
-        } else {
-            passwordInput.type = 'password';
-            toggleButton.className = 'fas fa-eye';
-        }
-    }
-    
-    function showAuthLoading(show = true) {
-        const authForm = document.getElementById('emailSigninForm');
-        const authLoading = document.getElementById('authLoading');
-        const signInBtn = document.getElementById('signInBtn');
-        
-        if (authForm) authForm.style.display = show ? 'none' : 'block';
-        if (authLoading) authLoading.style.display = show ? 'block' : 'none';
-        if (signInBtn) signInBtn.disabled = show;
-    }
-    
-    function showAuthError(message) {
-        // Create or show error message
-        let errorDiv = document.getElementById('authError');
-        
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.id = 'authError';
-            errorDiv.className = 'auth-error';
-            const authContainer = document.querySelector('.auth-form-container');
-            if (authContainer) {
-                authContainer.insertBefore(errorDiv, authContainer.firstChild);
-            }
-        }
-        
-        errorDiv.innerHTML = `
-            <i class="fas fa-exclamation-circle"></i>
-            <p>${message}</p>
-        `;
-        errorDiv.classList.add('show');
-        
-        // Hide error after 5 seconds
-        setTimeout(() => {
-            errorDiv.classList.remove('show');
-        }, 5000);
-    }
-    
-    // Enhanced sign-in function
-    async function signInWithEmail() {
-        const email = document.getElementById('authEmail').value.trim();
-        const password = document.getElementById('authPassword').value.trim();
-        
-        if (!email || !password) {
-            showAuthError('Please enter both email and password');
-            return;
-        }
-        
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showAuthError('Please enter a valid email address');
-            return;
-        }
-        
-        // Show loading state
-        showAuthLoading(true);
-        
-        try {
-            // Sign in with Firebase
-            await firebaseAuth.signInWithEmailAndPassword(email, password);
-            
-            // Success - handled by onAuthStateChanged
-            
-        } catch (error) {
-            console.error('Sign-in error:', error);
-            showAuthLoading(false);
-            
-            let errorMessage = 'Sign-in failed. ';
-            
-            switch (error.code) {
-                case 'auth/invalid-email':
-                    errorMessage = 'Invalid email address. Please use a valid DSOG admin email.';
-                    break;
-                case 'auth/user-disabled':
-                    errorMessage = 'This account has been disabled. Please contact support.';
-                    break;
-                case 'auth/user-not-found':
-                    errorMessage = 'No account found with this email. Please check your email or contact support.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMessage = 'Incorrect password. Please try again.';
-                    break;
-                case 'auth/too-many-requests':
-                    errorMessage = 'Too many failed attempts. Please try again later.';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Network error. Please check your internet connection.';
-                    break;
-                default:
-                    errorMessage = 'Unable to sign in. Please try again or contact support.';
-            }
-            
-            showAuthError(errorMessage);
-        }
-    }
-    
-    // Add auto-focus on email field
-    function focusOnEmailField() {
-        const emailField = document.getElementById('authEmail');
-        if (emailField) {
-            emailField.focus();
-        }
-    }
-    
-    // Call this when auth modal is shown
-    setTimeout(focusOnEmailField, 500);
-</script>
+    </script>
 </body>
 </html>
