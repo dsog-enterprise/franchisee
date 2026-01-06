@@ -5855,6 +5855,126 @@
         }
     `;
     document.head.appendChild(style);
+    // Add this to your existing JavaScript (replace or add these functions)
+
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('authPassword');
+        const toggleButton = document.querySelector('.toggle-password i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleButton.className = 'fas fa-eye-slash';
+        } else {
+            passwordInput.type = 'password';
+            toggleButton.className = 'fas fa-eye';
+        }
+    }
+    
+    function showAuthLoading(show = true) {
+        const authForm = document.getElementById('emailSigninForm');
+        const authLoading = document.getElementById('authLoading');
+        const signInBtn = document.getElementById('signInBtn');
+        
+        if (authForm) authForm.style.display = show ? 'none' : 'block';
+        if (authLoading) authLoading.style.display = show ? 'block' : 'none';
+        if (signInBtn) signInBtn.disabled = show;
+    }
+    
+    function showAuthError(message) {
+        // Create or show error message
+        let errorDiv = document.getElementById('authError');
+        
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'authError';
+            errorDiv.className = 'auth-error';
+            const authContainer = document.querySelector('.auth-form-container');
+            if (authContainer) {
+                authContainer.insertBefore(errorDiv, authContainer.firstChild);
+            }
+        }
+        
+        errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <p>${message}</p>
+        `;
+        errorDiv.classList.add('show');
+        
+        // Hide error after 5 seconds
+        setTimeout(() => {
+            errorDiv.classList.remove('show');
+        }, 5000);
+    }
+    
+    // Enhanced sign-in function
+    async function signInWithEmail() {
+        const email = document.getElementById('authEmail').value.trim();
+        const password = document.getElementById('authPassword').value.trim();
+        
+        if (!email || !password) {
+            showAuthError('Please enter both email and password');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showAuthError('Please enter a valid email address');
+            return;
+        }
+        
+        // Show loading state
+        showAuthLoading(true);
+        
+        try {
+            // Sign in with Firebase
+            await firebaseAuth.signInWithEmailAndPassword(email, password);
+            
+            // Success - handled by onAuthStateChanged
+            
+        } catch (error) {
+            console.error('Sign-in error:', error);
+            showAuthLoading(false);
+            
+            let errorMessage = 'Sign-in failed. ';
+            
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Invalid email address. Please use a valid DSOG admin email.';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'This account has been disabled. Please contact support.';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'No account found with this email. Please check your email or contact support.';
+                    break;
+                case 'auth/wrong-password':
+                    errorMessage = 'Incorrect password. Please try again.';
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Too many failed attempts. Please try again later.';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Network error. Please check your internet connection.';
+                    break;
+                default:
+                    errorMessage = 'Unable to sign in. Please try again or contact support.';
+            }
+            
+            showAuthError(errorMessage);
+        }
+    }
+    
+    // Add auto-focus on email field
+    function focusOnEmailField() {
+        const emailField = document.getElementById('authEmail');
+        if (emailField) {
+            emailField.focus();
+        }
+    }
+    
+    // Call this when auth modal is shown
+    setTimeout(focusOnEmailField, 500);
 </script>
 </body>
 </html>
